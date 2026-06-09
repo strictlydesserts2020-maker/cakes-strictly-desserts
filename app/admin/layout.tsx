@@ -4,7 +4,7 @@ import AdminNav from "@/components/admin/AdminNav";
 export const dynamic = "force-dynamic";
 export default async function AdminLayout({children}:{children:React.ReactNode}) {
   const supabase = createClient();
-  const {data:{suser}} = await supabase.auth.getUser();
+  const {data:{user:suser}} = await supabase.auth.getUser();
   if (!suser) return <>{children}</>;
   const {data:adminRow} = await supabase.from("admin_users").select("id").eq("id",suser.id).maybeSingle();
   if (!adminRow) { await supabase.auth.signOut(); redirect("/admin/login?error=not_admin"); }

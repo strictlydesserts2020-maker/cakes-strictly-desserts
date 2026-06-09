@@ -6,7 +6,7 @@ import { cleanText, validEmailOrPhone } from "@/lib/utils";
 export async function POST(req:Request) {
   let body:any;
   try { body = await req.json(); } catch { return NextResponse.json({error:"Invalid JSON"},{status:400}); }
-  const name=cleanText(body?.name,60),contact=cleanText(body?.contact,80),message=cleanText(body?.message,4000),category=cleanText(body?.category,60);source=body?.source==="customise"?"customise":"contact",payload=typeof body?.payload==="object"&&body?.payload?body.payload:{};
+  const name=cleanText(body?.name,60),contact=cleanText(body?.contact,80),message=cleanText(body?.message,4000),category=cleanText(body?.category,60),source=body?.source==="customise"?"customise":"contact",payload=typeof body?.payload==="object"&&body?.payload?body.payload:{};
   if (!name||!message) return NextResponse.json({error:"Name and message are required."},{status:400});
   if (contact&&!validEmailOrPhone(contact)) return NextResponse.json({error:"Invalid contact."},{status:400});
   const supabase=process.env.SUPABASE_SERVICE_ROLE_KEY?createAdminClient():createClient();
