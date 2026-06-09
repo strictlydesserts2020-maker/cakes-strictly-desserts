@@ -1,0 +1,1239 @@
+"use client";
+
+import { useState, useEffect, useMemo, useCallback } from "react";
+import type { Category, Product, CartItem } from "@/lib/types";
+import {
+  inr,
+  safeImg,
+  stars,
+  weightOpts,
+  cleanText,
+  validPhone,
+  validEmailOrPhone,
+  FLAVOURS,
+  waLink,
+} from "@/lib/utils";
+import { LOGO_DATA_URI } from "@/lib/brand";
+
+type View = "home" | "shop" | "categories" | "about" | "contact";
+type Toast = { id: number; msg: string };
+
+interface Filters {
+  search: string;
+  category: string;
+  occasion: string;
+  egg: boolean;
+  min: number | null;
+  max: number | null;
+  sort: string;
+}
+
+const FREE = 2000;
+const DEL = 60;
+
+function onImgError(e: React.SyntheticEvent<HTMLImageElement>) {
+  e.currentTarget.dataset.broken = "1";
+}
+
+export default function Storefront({
+  categories,
+  products,
+}: {
+  categories: Category[];
+  products: Product[];
+}) {
+  const [view, setView] = useState<View>("home");
+  const [scrolled, setScrolled] = useState(true);
+  const [navOpen, setNavOpen] = useState(false);
+  const [loaded, setLoaded] = useState(false);
+  const [toasts, setToasts] = useState<Toast[]>([]);
+
+  // cart
+  const [cart, setCart] = useState<CartItem[]>([]);
+  const [drawerOpen, setDrawerOpen] = useState(false);
+  const [coupon, setCoupon] = useState<{ code: string; disc: number }>({ code: "", disc: 0 });
+  const [couponInput, setCouponInput] = useState("");
+  const [couponMsg, setCouponMsg] = useState<{ text: string; ok: boolean }>({ text: "", ok: true });
+  const [orderNote, setOrderNote] = useState("");
+  const [fulfil, setFulfil] = useState<{ mode: string; date: string; time: string; addr: string }>({
+    mode: "",
+    date: "",
+    time: "",
+    addr: "",
+  });
+
+  // filters
+  const [F, setF] = useState<Filters>({
+    search: "",
+    category: "",
+    occasion: "",
+    egg: false,
+    min: null,
+    max: null,
+    sort: "pop",
+  });
+
+  // quick view
+  const [qv, setQv] = useState<{ open: boolean; product: Product | null; wIdx: number; flav: string; egg: boolean; qty: number }>(
+    { open: false, product: null, wIdx: 0, flav: FLAVOURS[0], egg: false, qty: 1 }
+  );
+
+  // customise modal
+  const [custOpen, setCustOpen] = useState(false);
+
+  const notify = useCallback((msg: string) => {
+    const id = Date.now() + Math.random();
+    setToasts((t) => [...t, { id, msg }]);
+    setTimeout(() => setToasts((t) => t.filter((x) => x.id !== id)), 2400);
+  }, []);
+
+  // brand loader + navbar scroll + admin deep-link hint
+  useEffect(() => {
+    const tmo = requestAnimationFrame(() => setLoaded(true));
+    const onScroll = () => setScrolled(window.scrollY > 10 || true);
+    window.addEventListener("scroll", onScroll);
+    // The old #manage-sd local editor is replaced by the secured /admin dashboard.
+    if (window.location.hash === "#manage-sd") {
+      window.location.href = "/admin";
+    }
+    return () => {
+      cancelAnimationFrame(tmo);
+      window.removeEventListener("scroll", onScroll);
+    };
+  }, []);
+
+  const go = useCallback((v: View) => {
+    setView(v);
+    setNavOpen(false);
+    window.scrollTo({ top: 0, behavior: "smooth" });
+  }, []);
+
+  // ---------- cart helpers ----------
+  const cartCount = useMemo(() => cart.reduce((n, i) => n + i.qty, 0), [cart]);
+  const subtotal = useMemo(() => cart.reduce((s, i) => s + i.unit * i.qty, 0), [cart]);
+
+  const addToCart = useCallback((it: CartItem) => {
+    setCart((items) => {
+      const idx = items.findIndex(
+        (i) => i.pid === it.pid && i.weight === it.weight && i.flavour === it.flavour && i.egg === it.egg
+      );
+      if (idx >= 0) {
+        const copy = items.slice();
+        copy[idx] = { ...copy[idx], qty: copy[idx].qty + it.qty };
+        return copy;
+      }
+      return [...items, it];
+    });
+  }, []);
+
+  const changeQty = useCallback((idx: number, d: number) => {
+    setCart((items) => {
+      const copy = items.slice();
+      if (!copy[idx]) return items;
+      copy[idx] = { ...copy[idx], qty: copy[idx].qty + d };
+      if (copy[idx].qty < 1) copy.splice(idx, 1);
+      return copy;
+    });
+  }, []);
+
+  const removeAt = useCallback((idx: number) => {
+    setCart((items) => items.filter((_, i) => i !== idx));
+    notify("Item removed");
+  }, [notify]);
+
+  const applyCoupon = useCallback(() => {
+    const v = (couponInput || "").trim().toUpperCase();
+    if (v === "SWEET10") {
+      setCoupon({ code: v, disc: Math.round(subtotal * 0.1) });
+      setCouponMsg({ text: "\u2713 10% off applied!", ok: true });
+    } else if (v === "FREESHIP") {
+      setCoupon({ code: v, disc: 0 });
+      setCouponMsg({ text: "\u2713 Free shipping applied!", ok: true });
+    } else {
+      setCoupon({ code: "", disc: 0 });
+      setCouponMsg({ text: "\u2717 Invalid code (try SWEET10)", ok: false });
+    }
+  }, [couponInput, subtotal]);
+
+  const del = fulfil.mode === "pickup" ? 0 : subtotal >= FREE ? 0 : DEL;
+  const total = subtotal + del - coupon.disc;
+
+  const placeOrder = useCallback(() => {
+    if (!cart.length) {
+      notify("Your cart is empty");
+      return;
+    }
+    if (!fulfil.mode) {
+      notify("Please choose Pickup or Delivery");
+      setDrawerOpen(true);
+      return;
+    }
+    if (fulfil.mode === "delivery" && !fulfil.addr.trim()) {
+      notify("Please enter your delivery address");
+      setDrawerOpen(true);
+      return;
+    }
+    if (!fulfil.date || !fulfil.time) {
+      notify("Please choose a date and time");
+      setDrawerOpen(true);
+      return;
+    }
+    const fmtDate = (d: string) => {
+      const p = d.split("-");
+      return new Date(+p[0], +p[1] - 1, +p[2]).toLocaleDateString("en-IN", {
+        weekday: "short",
+        day: "numeric",
+        month: "short",
+        year: "numeric",
+      });
+    };
+    const fmtTime = (t: string) => {
+      const p = t.split(":");
+      let h = parseInt(p[0], 10);
+      const ap = h >= 12 ? "PM" : "AM";
+      let h12 = h % 12;
+      if (h12 === 0) h12 = 12;
+      return h12 + ":" + p[1] + " " + ap;
+    };
+    const L: string[] = [];
+    L.push("Hi Strictly Desserts! I'd like to place an order:");
+    L.push("");
+    cart.forEach((it) =>
+      L.push(
+        "\u2022 " +
+          it.qty +
+          " x " +
+          it.name +
+          " (" +
+          it.weight +
+          ", " +
+          it.flavour +
+          (it.egg ? ", Eggless" : "") +
+          ") \u2014 " +
+          inr(it.unit * it.qty)
+      )
+    );
+    L.push("");
+    L.push("Subtotal: " + inr(subtotal));
+    L.push((fulfil.mode === "pickup" ? "Pickup: " : "Delivery: ") + (del === 0 ? "FREE" : inr(del)));
+    if (coupon.disc > 0) L.push("Coupon (" + coupon.code + "): -" + inr(coupon.disc));
+    L.push("Total: " + inr(total));
+    L.push("");
+    if (fulfil.mode === "pickup") {
+      L.push("\uD83C\uDFEC Pickup");
+    } else {
+      L.push("\uD83D\uDEF5 Delivery");
+      L.push("Address: " + fulfil.addr.trim());
+    }
+    L.push("Date: " + fmtDate(fulfil.date));
+    L.push("Time: " + fmtTime(fulfil.time));
+    if (orderNote.trim()) {
+      L.push("");
+      L.push("Special instructions: " + orderNote.trim());
+    }
+    window.open(waLink(L.join("\n")), "_blank", "noopener");
+    notify("Opening WhatsApp to confirm your order \uD83C\uDF82");
+    setCart([]);
+    setCoupon({ code: "", disc: 0 });
+    setCouponInput("");
+    setOrderNote("");
+    setFulfil({ mode: "", date: "", time: "", addr: "" });
+    setDrawerOpen(false);
+  }, [cart, fulfil, subtotal, del, coupon, total, orderNote, notify]);
+
+  // ---------- quick view ----------
+  const openQuick = useCallback((p: Product) => {
+    setQv({ open: true, product: p, wIdx: 0, flav: FLAVOURS[0], egg: p.is_eggless, qty: 1 });
+  }, []);
+
+  const qvUnit = useMemo(() => {
+    if (!qv.product) return 0;
+    const wo = weightOpts(qv.product.category_name);
+    return Math.round(Number(qv.product.price) * wo[qv.wIdx].m);
+  }, [qv]);
+
+  const qvAdd = useCallback(() => {
+    if (!qv.product) return;
+    const wo = weightOpts(qv.product.category_name);
+    addToCart({
+      pid: qv.product.id,
+      name: qv.product.name,
+      img: safeImg(qv.product.image_url),
+      weight: wo[qv.wIdx].l,
+      flavour: qv.flav,
+      egg: qv.egg,
+      unit: qvUnit,
+      qty: qv.qty,
+    });
+    setQv((s) => ({ ...s, open: false }));
+    setDrawerOpen(true);
+    notify("Added to cart \uD83C\uDF70");
+  }, [qv, qvUnit, addToCart, notify]);
+
+  // ---------- filters / shop ----------
+  const filtered = useMemo(() => {
+    let list = products.filter((p) => {
+      const cat = p.category_name || "";
+      if (
+        F.search &&
+        p.name.toLowerCase().indexOf(F.search.toLowerCase()) < 0 &&
+        cat.toLowerCase().indexOf(F.search.toLowerCase()) < 0
+      )
+        return false;
+      if (F.category && cat.toLowerCase() !== F.category.toLowerCase()) return false;
+      if (F.occasion && (p.occasions || []).indexOf(F.occasion) < 0) return false;
+      if (F.egg && !p.is_eggless) return false;
+      if (F.min != null && Number(p.price) < F.min) return false;
+      if (F.max != null && Number(p.price) > F.max) return false;
+      return true;
+    });
+    if (F.sort === "price_asc") list = list.slice().sort((a, b) => Number(a.price) - Number(b.price));
+    else if (F.sort === "price_desc") list = list.slice().sort((a, b) => Number(b.price) - Number(a.price));
+    else if (F.sort === "rating") list = list.slice().sort((a, b) => Number(b.rating) - Number(a.rating));
+    return list;
+  }, [products, F]);
+
+  const featured = useMemo(() => products.slice(0, 6), [products]);
+
+  const activeTags = useMemo(() => {
+    const tags: [string, string][] = [];
+    if (F.category) tags.push(["Category: " + F.category, "category"]);
+    if (F.occasion) tags.push(["Occasion: " + F.occasion, "occasion"]);
+    if (F.egg) tags.push(["Eggless", "egg"]);
+    if (F.search) tags.push(['Search: "' + F.search + '"', "search"]);
+    if (F.min != null || F.max != null)
+      tags.push(["Price " + inr(F.min || 0) + "\u2013" + (F.max != null ? inr(F.max) : "\u221E"), "price"]);
+    return tags;
+  }, [F]);
+
+  const clearTag = (k: string) =>
+    setF((f) => {
+      const n = { ...f };
+      if (k === "price") {
+        n.min = null;
+        n.max = null;
+      } else if (k === "search") n.search = "";
+      else if (k === "egg") n.egg = false;
+      else if (k === "category") n.category = "";
+      else if (k === "occasion") n.occasion = "";
+      return n;
+    });
+
+  const goCategory = (name: string) => {
+    setF({ search: "", category: name, occasion: "", egg: false, min: null, max: null, sort: F.sort });
+    go("shop");
+  };
+
+  // ---------- product card ----------
+  const ProductCard = ({ p }: { p: Product }) => (
+    <div className="product-card" data-pid={p.id}>
+      <div className="product-img" onClick={() => openQuick(p)} style={{ cursor: "pointer" }}>
+        <img
+          src={safeImg(p.image_url)}
+          alt={p.name}
+          loading="lazy"
+          decoding="async"
+          width={700}
+          height={525}
+          onError={onImgError}
+        />
+        {p.badge ? (
+          <span className="product-badge" style={{ position: "absolute", top: 12, left: 12, zIndex: 3 }}>
+            {p.badge}
+          </span>
+        ) : null}
+        {p.is_eggless ? (
+          <span className="badge badge-veg" style={{ position: "absolute", top: 12, right: 12, zIndex: 3 }}>
+            Eggless
+          </span>
+        ) : null}
+      </div>
+      <div className="product-info">
+        <h3 className="product-name">{p.name}</h3>
+        <div className="p-rating" aria-label={`Rated ${Number(p.rating).toFixed(1)} out of 5`}>
+          {stars(Number(p.rating))} <span style={{ color: "var(--muted)" }}>{Number(p.rating).toFixed(1)}</span>
+        </div>
+        <div style={{ display: "flex", alignItems: "center", justifyContent: "space-between", marginTop: "auto", paddingTop: ".5rem" }}>
+          <span className="product-price">{inr(Number(p.price))}</span>
+          <button className="btn btn-gold add-btn" onClick={() => openQuick(p)} aria-label={`Add ${p.name} to cart`}>
+            Add +
+          </button>
+        </div>
+      </div>
+    </div>
+  );
+
+  const viewClass = (v: View) => "view" + (view === v ? " active view-anim" : "");
+
+  return (
+    <>
+      {/* BRAND LOADER */}
+      <div id="brandLoader" className={loaded ? "hide" : ""}>
+        <img src={LOGO_DATA_URI} alt="Cakes by Strictly Desserts" />
+        <div className="ld-bar">
+          <i />
+        </div>
+        <div className="ld-text">Plating something sweet…</div>
+      </div>
+
+      {/* NAVBAR */}
+      <nav className={"navbar" + (scrolled ? " scrolled" : "")}>
+        <div className="nav-inner">
+          <a href="#" className="nav-logo" onClick={(e) => { e.preventDefault(); go("home"); }}>
+            <img src={LOGO_DATA_URI} alt="logo" />
+            <span className="lw">
+              Cakes <span>by</span> Strictly Desserts
+            </span>
+          </a>
+          <ul className={"nav-links" + (navOpen ? " open" : "")} id="navLinks">
+            {(["home", "categories", "shop", "about", "contact"] as View[]).map((v) => (
+              <li key={v}>
+                <a
+                  href="#"
+                  className={view === v ? "active" : ""}
+                  onClick={(e) => { e.preventDefault(); go(v); }}
+                >
+                  {v[0].toUpperCase() + v.slice(1)}
+                </a>
+              </li>
+            ))}
+          </ul>
+          <div className="nav-actions">
+            <button className="nav-icon-btn" onClick={() => setDrawerOpen(true)} style={{ position: "relative" }} aria-label="Cart">
+              <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.6">
+                <circle cx="9" cy="21" r="1" />
+                <circle cx="20" cy="21" r="1" />
+                <path d="M1 1h4l2.68 13.39a2 2 0 0 0 2 1.61h9.72a2 2 0 0 0 2-1.61L23 6H6" />
+              </svg>
+              <span className="cart-count" style={{ display: cartCount > 0 ? "flex" : "none" }}>
+                {cartCount}
+              </span>
+            </button>
+            <a href="#" className="btn-nav-login" onClick={(e) => { e.preventDefault(); go("contact"); }}>
+              Order Now
+            </a>
+            <button className="nav-toggle" onClick={() => setNavOpen((o) => !o)} aria-label="Menu">
+              <span />
+            </button>
+          </div>
+        </div>
+      </nav>
+
+      {/* HOME */}
+      <div className={viewClass("home")}>
+        <header className="hero">
+          <div className="container">
+            <div className="hero-grid">
+              <div className="hero-copy">
+                <span className="section-eyebrow">Handcrafted in Chennai</span>
+                <h1>
+                  Cakes worth
+                  <br />
+                  <em>celebrating</em>
+                </h1>
+                <p>Freshly baked, hand-finished cakes &amp; luxury desserts — made to order and styled to be the centrepiece of every celebration.</p>
+                <div className="hero-cta">
+                  <button className="btn btn-gold btn-lg" onClick={() => go("shop")}>Explore the Collection</button>
+                  <button className="btn btn-ghost btn-lg" onClick={() => go("categories")}>Shop by Category</button>
+                </div>
+                <div className="hero-stats">
+                  <div><b>2,400+</b><span>CAKES BAKED</span></div>
+                  <div><b>4.9★</b><span>AVG RATING</span></div>
+                  <div><b>100%</b><span>FRESH CREAM</span></div>
+                </div>
+              </div>
+              <div className="hero-art">
+                <div className="blob" />
+                <div className="ph main">
+                  <img src="https://images.unsplash.com/photo-1578985545062-69928b1d9587?auto=format&fit=crop&w=900&q=72" onError={onImgError} decoding="async" alt="" />
+                </div>
+                <div className="ph small">
+                  <img src="https://images.unsplash.com/photo-1563729784474-d77dbb933a9e?auto=format&fit=crop&w=600&q=72" onError={onImgError} decoding="async" alt="" />
+                </div>
+                <div className="chipf a"><span className="dot">✨</span><div><small>Starting at</small><b>₹699</b></div></div>
+                <div className="chipf b"><span className="dot">🚚</span><div><small>Same-day</small><b>Delivery</b></div></div>
+              </div>
+            </div>
+          </div>
+        </header>
+
+        <section className="block">
+          <div className="container">
+            <div className="center" style={{ marginBottom: "2rem" }}>
+              <span className="section-eyebrow eyebrow-c">Find your perfect cake</span>
+              <h2 className="sec-title">Shop by <em>Category</em></h2>
+            </div>
+            <div className="cat-strip">
+              {categories.map((c) => (
+                <div key={c.id} className="cat-tile" onClick={() => goCategory(c.name)}>
+                  <div className="ph">
+                    <img src={safeImg(c.image_url)} alt={c.name} loading="lazy" decoding="async" onError={onImgError} />
+                  </div>
+                  <span className="label">{c.name}</span>
+                </div>
+              ))}
+            </div>
+          </div>
+        </section>
+
+        <section className="block" style={{ paddingTop: 0 }}>
+          <div className="container">
+            <div className="center" style={{ marginBottom: "2rem" }}>
+              <span className="section-eyebrow eyebrow-c">Freshly baked</span>
+              <h2 className="sec-title">Our <em>Signature</em> Bakes</h2>
+            </div>
+            <div className="products-grid">
+              {featured.map((p) => <ProductCard key={p.id} p={p} />)}
+            </div>
+            <div className="center" style={{ marginTop: "2.5rem" }}>
+              <button className="btn btn-ghost btn-lg" onClick={() => go("shop")}>View All Cakes →</button>
+            </div>
+          </div>
+        </section>
+
+        <section className="block" style={{ paddingTop: 0 }}>
+          <div className="container">
+            <div className="features">
+              <div className="feature"><div className="ic"><img src="https://images.unsplash.com/photo-1578985545062-69928b1d9587?auto=format&fit=crop&w=80&h=80&q=60" alt="Cake" style={{width:"48px",height:"48px",objectFit:"cover",borderRadius:"50%"}} /></div><h4>Baked Fresh Daily</h4><p>Every cake is made to order with premium ingredients — never frozen.</p></div>
+              <div className="feature"><div className="ic"><img src="https://images.unsplash.com/photo-1563729784474-d77dbb933a9e?auto=format&fit=crop&w=80&h=80&q=60" alt="Eggless" style={{width:"48px",height:"48px",objectFit:"cover",borderRadius:"50%"}} /></div><h4>Eggless Options</h4><p>Most of our cakes come in delicious eggless variants.</p></div>
+              <div className="feature"><div className="ic"><img src="https://images.unsplash.com/photo-1542826438-bd32f43d626f?auto=format&fit=crop&w=80&h=80&q=60" alt="Custom" style={{width:"48px",height:"48px",objectFit:"cover",borderRadius:"50%"}} /></div><h4>Custom Designs</h4><p>Share your idea and we&apos;ll craft a cake that&apos;s uniquely yours.</p></div>
+              <div className="feature"><div className="ic"><img src="https://images.unsplash.com/photo-1464349095431-e9a21285b5f3?auto=format&fit=crop&w=80&h=80&q=60" alt="Delivery" style={{width:"48px",height:"48px",objectFit:"cover",borderRadius:"50%"}} /></div><h4>On-time Delivery</h4><p>Same-day &amp; scheduled delivery across Chennai.</p></div>
+            </div>
+          </div>
+        </section>
+
+        <section className="block" style={{ paddingTop: 0 }}>
+          <div className="container">
+            <div className="testi">
+              <div className="stars">★★★★★</div>
+              <div className="q">&quot;The most beautiful and delicious cake we&apos;ve ever had. It made our daughter&apos;s first birthday absolutely magical.&quot;</div>
+              <div className="who">— Priya R., Anna Nagar</div>
+            </div>
+          </div>
+        </section>
+
+        <section className="block" style={{ paddingTop: 0 }}>
+          <div className="container">
+            <div className="cta-band">
+              <h2>Ready to order something special?</h2>
+              <p>Tell us about your celebration and we&apos;ll bake the perfect cake.</p>
+              <button className="btn btn-lg" onClick={() => go("contact")}>Get in Touch</button>
+            </div>
+          </div>
+        </section>
+      </div>
+
+      {/* SHOP */}
+      <div className={viewClass("shop")}>
+        <div className="container">
+          <div className="page-head">
+            <span className="section-eyebrow eyebrow-c">Handcrafted in Chennai</span>
+            <h1>Our <em>Collection</em></h1>
+            <p>Bento · Birthday · Wedding · Custom — every one made to order</p>
+          </div>
+          <div className="shop-layout">
+            <aside className="sidebar">
+              <div className="sb-sec">
+                <span className="sb-title">Search</span>
+                <div className="search-wrap">
+                  <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+                    <circle cx="11" cy="11" r="8" /><path d="M21 21l-4.35-4.35" />
+                  </svg>
+                  <input
+                    type="text"
+                    className="search-input"
+                    placeholder="Search cakes..."
+                    value={F.search}
+                    onChange={(e) => setF((f) => ({ ...f, search: e.target.value }))}
+                  />
+                </div>
+              </div>
+              <div className="sb-sec">
+                <span className="sb-title">Category</span>
+                <div className="filter-chips">
+                  {categories.map((c) => (
+                    <span
+                      key={c.id}
+                      className={"chip" + (F.category === c.name ? " active" : "")}
+                      role="button"
+                      tabIndex={0}
+                      onClick={() => setF((f) => ({ ...f, category: f.category === c.name ? "" : c.name }))}
+                    >
+                      {c.name}
+                    </span>
+                  ))}
+                </div>
+              </div>
+              <div className="sb-sec">
+                <span className="sb-title">Occasion</span>
+                <div className="filter-chips">
+                  {["Birthday", "Anniversary", "Wedding", "Baby Shower"].map((o) => (
+                    <span
+                      key={o}
+                      className={"chip" + (F.occasion === o ? " active" : "")}
+                      role="button"
+                      tabIndex={0}
+                      onClick={() => setF((f) => ({ ...f, occasion: f.occasion === o ? "" : o }))}
+                    >
+                      {o}
+                    </span>
+                  ))}
+                </div>
+              </div>
+              <div className="sb-sec">
+                <span className="sb-title">Dietary</span>
+                <div className="filter-chips">
+                  <span
+                    className={"chip" + (F.egg ? " active" : "")}
+                    role="button"
+                    tabIndex={0}
+                    onClick={() => setF((f) => ({ ...f, egg: !f.egg }))}
+                  >
+                    🌱 Eggless Only
+                  </span>
+                </div>
+              </div>
+              <div className="sb-sec">
+                <span className="sb-title">Price Range (₹)</span>
+                <div className="price-range">
+                  <input
+                    type="number"
+                    placeholder="Min"
+                    min={0}
+                    value={F.min ?? ""}
+                    onChange={(e) => setF((f) => ({ ...f, min: e.target.value ? parseInt(e.target.value, 10) : null }))}
+                  />
+                  <span>–</span>
+                  <input
+                    type="number"
+                    placeholder="Max"
+                    min={0}
+                    value={F.max ?? ""}
+                    onChange={(e) => setF((f) => ({ ...f, max: e.target.value ? parseInt(e.target.value, 10) : null }))}
+                  />
+                </div>
+              </div>
+              <button
+                className="clear-filters"
+                onClick={() => setF({ search: "", category: "", occasion: "", egg: false, min: null, max: null, sort: F.sort })}
+              >
+                ✕ Clear All Filters
+              </button>
+            </aside>
+            <div className="shop-main">
+              <div className="sort-bar">
+                <span className="result-count">
+                  <b>{filtered.length}</b> cake{filtered.length === 1 ? "" : "s"} found
+                </span>
+                <select className="sort-select" value={F.sort} onChange={(e) => setF((f) => ({ ...f, sort: e.target.value }))}>
+                  <option value="pop">Most Popular</option>
+                  <option value="price_asc">Price: Low to High</option>
+                  <option value="price_desc">Price: High to Low</option>
+                  <option value="rating">Highest Rated</option>
+                </select>
+              </div>
+              <div className="active-filters">
+                {activeTags.map(([label, k]) => (
+                  <span className="active-tag" key={k}>
+                    {label} <button onClick={() => clearTag(k)} aria-label="Clear filter">×</button>
+                  </span>
+                ))}
+              </div>
+              <div className="products-grid">
+                {filtered.length ? (
+                  filtered.map((p) => <ProductCard key={p.id} p={p} />)
+                ) : (
+                  <div className="no-results">
+                    <div className="i"><img src="https://images.unsplash.com/photo-1565958011703-44f9829ba187?auto=format&fit=crop&w=120&h=120&q=60" alt="No cakes" style={{width:"80px",height:"80px",objectFit:"cover",borderRadius:"50%",margin:"0 auto"}} /></div>
+                    <p>No cakes match your filters.</p>
+                  </div>
+                )}
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      {/* CATEGORIES */}
+      <div className={viewClass("categories")}>
+        <div className="container">
+          <div className="page-head">
+            <span className="section-eyebrow eyebrow-c">Find your perfect cake</span>
+            <h1>Shop by <em>Category</em></h1>
+            <p>Pick a category to explore every cake in that collection.</p>
+          </div>
+          <div className="cat-grid">
+            {/* Customise Your Cake tile (first) */}
+            <article className="ccard cust-tile" onClick={() => setCustOpen(true)}>
+              <div className="ph cust-ph"><span className="cust-q">?</span></div>
+              <div className="body">
+                <h3>Customise Your Cake</h3>
+                <p>Don&apos;t see what you want? Design your own cake from scratch — any category, any flavour.</p>
+                <span className="go">
+                  Start customising{" "}
+                  <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><path d="M5 12h14M13 6l6 6-6 6" /></svg>
+                </span>
+              </div>
+            </article>
+            {categories.map((c) => (
+              <article key={c.id} className="ccard" onClick={() => goCategory(c.name)}>
+                <div className="ph">
+                  <img src={safeImg(c.image_url)} alt={c.name} loading="lazy" decoding="async" onError={onImgError} />
+                </div>
+                <div className="body">
+                  <h3>{c.name}</h3>
+                  <p>{c.description || ""}</p>
+                  <span className="go">
+                    View cakes{" "}
+                    <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><path d="M5 12h14M13 6l6 6-6 6" /></svg>
+                  </span>
+                </div>
+              </article>
+            ))}
+          </div>
+        </div>
+      </div>
+
+      {/* ABOUT */}
+      <div className={viewClass("about")}>
+        <div className="container">
+          <div className="page-head">
+            <span className="section-eyebrow eyebrow-c">Our Story</span>
+            <h1>About <em>Strictly Desserts</em></h1>
+          </div>
+          <div className="about-grid" style={{ paddingBottom: "5rem" }}>
+            <div className="ph">
+              <img src="https://images.unsplash.com/photo-1488477181946-6428a0291777?auto=format&fit=crop&w=800&q=72" onError={onImgError} loading="lazy" decoding="async" alt="" />
+            </div>
+            <div>
+              <h2 className="sec-title">Baked with love, <em>finished by hand</em></h2>
+              <p>Cakes by Strictly Desserts began with a simple belief — that every celebration deserves a centrepiece as special as the moment itself. From our Chennai studio, we craft fresh, made-to-order cakes using premium ingredients and real fresh cream.</p>
+              <p>Whether it&apos;s a bento cake for two or a towering wedding showpiece, every order is handmade, never mass-produced. We&apos;re now opening our very own café in Anna Nagar — a home for everything we love about dessert.</p>
+              <button className="btn btn-gold" style={{ marginTop: "1.4rem" }} onClick={() => go("shop")}>Explore the Cakes</button>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      {/* CONTACT */}
+      <div className={viewClass("contact")}>
+        <div className="container">
+          <div className="page-head">
+            <span className="section-eyebrow eyebrow-c">Get in touch</span>
+            <h1>Order or <em>Enquire</em></h1>
+          </div>
+          <ContactSection notify={notify} />
+        </div>
+      </div>
+
+      {/* FOOTER */}
+      <footer className="site-footer">
+        <div className="container">
+          <div className="footer-grid">
+            <div className="footer-brand">
+              <img src={LOGO_DATA_URI} alt="logo" />
+              <p>Handcrafted cakes &amp; luxury desserts, baked fresh in Chennai and styled to make every celebration unforgettable.</p>
+            </div>
+            <div className="footer-col">
+              <h4>Shop</h4>
+              <ul>
+                <li><a href="#" onClick={(e) => { e.preventDefault(); go("shop"); }}>All Cakes</a></li>
+                <li><a href="#" onClick={(e) => { e.preventDefault(); go("categories"); }}>Categories</a></li>
+                <li><a href="#" onClick={(e) => { e.preventDefault(); goCategory("Birthday"); }}>Birthday</a></li>
+                <li><a href="#" onClick={(e) => { e.preventDefault(); goCategory("Wedding"); }}>Wedding</a></li>
+              </ul>
+            </div>
+            <div className="footer-col">
+              <h4>Company</h4>
+              <ul>
+                <li><a href="#" onClick={(e) => { e.preventDefault(); go("about"); }}>About</a></li>
+                <li><a href="#" onClick={(e) => { e.preventDefault(); go("contact"); }}>Contact</a></li>
+                <li><a href="#" onClick={(e) => { e.preventDefault(); setDrawerOpen(true); }}>Your Cart</a></li>
+              </ul>
+            </div>
+            <div className="footer-col">
+              <h4>Stay in touch</h4>
+              <p style={{ color: "#B5A299", fontSize: ".86rem", marginBottom: "1rem" }}>Follow the latest bakes &amp; launches.</p>
+              <div className="footer-social">
+                <a href="https://www.instagram.com/cakesbystrictlydesserts" target="_blank" rel="noopener" aria-label="Instagram">
+                  <svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.6"><rect x="2" y="2" width="20" height="20" rx="5" /><circle cx="12" cy="12" r="4" /><circle cx="17.5" cy="6.5" r="1" fill="currentColor" stroke="none" /></svg>
+                </a>
+                <a href={waLink("Hi Strictly Desserts!")} target="_blank" rel="noopener" aria-label="WhatsApp">
+                  <svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.6"><path d="M21 11.5a8.5 8.5 0 0 1-12.6 7.4L3 21l2.2-5.3A8.5 8.5 0 1 1 21 11.5z" /></svg>
+                </a>
+              </div>
+            </div>
+          </div>
+          <div className="footer-bottom">
+            <span>© 2026 Cakes by Strictly Desserts. Made with love in Chennai.</span>
+            <span>Privacy · Terms · Refunds</span>
+          </div>
+        </div>
+      </footer>
+
+      {/* WHATSAPP FAB */}
+      <a className="wa-fab" href={waLink("Hi Strictly Desserts! I'd like to enquire about a cake.")} target="_blank" rel="noopener" aria-label="Chat with us on WhatsApp">
+        <svg viewBox="0 0 24 24" fill="currentColor" aria-hidden="true">
+          <path d="M17.47 14.38c-.3-.15-1.74-.86-2.01-.96-.27-.1-.47-.15-.66.15-.2.3-.76.96-.93 1.16-.17.2-.34.22-.64.07-.3-.15-1.25-.46-2.38-1.47-.88-.78-1.47-1.75-1.64-2.05-.17-.3-.02-.46.13-.61.13-.13.3-.34.45-.51.15-.17.2-.3.3-.5.1-.2.05-.37-.02-.52-.08-.15-.66-1.59-.9-2.18-.24-.57-.48-.5-.66-.5-.17-.01-.37-.01-.57-.01s-.52.07-.79.37c-.27.3-1.04 1.01-1.04 2.46s1.06 2.86 1.21 3.06c.15.2 2.09 3.2 5.07 4.49.71.31 1.26.49 1.69.62.71.23 1.36.2 1.87.12.57-.08 1.74-.71 1.99-1.4.24-.69.24-1.28.17-1.4-.07-.13-.27-.2-.57-.35zM12.04 21.5h-.01a9.45 9.45 0 0 1-4.82-1.32l-.35-.21-3.58.94.96-3.49-.23-.36a9.42 9.42 0 0 1-1.45-5.03c0-5.21 4.25-9.46 9.47-9.46 2.53 0 4.9.99 6.69 2.78a9.4 9.4 0 0 1 2.77 6.69c0 5.22-4.25 9.46-9.46 9.46zm8.06-17.52A11.36 11.36 0 0 0 12.04.5C5.78.5.69 5.59.69 11.85c0 2.09.55 4.13 1.59 5.93L.6 23.5l5.86-1.54a11.3 11.3 0 0 0 5.57 1.42h.01c6.26 0 11.35-5.09 11.35-11.35 0-3.03-1.18-5.88-3.33-8.03z" />
+        </svg>
+        <span className="wa-label">Chat with us</span>
+      </a>
+
+      {/* CART DRAWER */}
+      <div className={"drawer-overlay" + (drawerOpen ? " open" : "")} onClick={() => setDrawerOpen(false)} />
+      <aside className={"drawer" + (drawerOpen ? " open" : "")}>
+        <div className="drawer-head">
+          <h3>Your Cart</h3>
+          <button className="drawer-close" onClick={() => setDrawerOpen(false)}>×</button>
+        </div>
+        <div className="drawer-body">
+          {!cart.length ? (
+            <div className="empty-cart-d">
+              <img src={LOGO_DATA_URI} alt="" width={72} height={72} />
+              <p>Your cart is empty.</p>
+            </div>
+          ) : (
+            cart.map((it, i) => (
+              <div className="citem" key={i}>
+                <div className="ph">
+                  <img src={safeImg(it.img)} alt={it.name} loading="lazy" onError={onImgError} />
+                </div>
+                <div>
+                  <div className="nm">{it.name}</div>
+                  <div className="mt">{it.weight} · {it.flavour}{it.egg ? " · Eggless" : ""}</div>
+                  <div className="qc">
+                    <button onClick={() => changeQty(i, -1)} aria-label="Decrease quantity">−</button>
+                    <span>{it.qty}</span>
+                    <button onClick={() => changeQty(i, 1)} aria-label="Increase quantity">+</button>
+                  </div>
+                </div>
+                <div>
+                  <div className="pr">{inr(it.unit * it.qty)}</div>
+                  <button className="rmv" onClick={() => removeAt(i)}>Remove</button>
+                </div>
+              </div>
+            ))
+          )}
+        </div>
+        {cart.length > 0 && (
+          <div className="drawer-foot">
+            <div className="sum-row"><span>Subtotal</span><span>{inr(subtotal)}</span></div>
+            {fulfil.mode === "pickup" ? (
+              <div className="sum-row free"><span>Pickup</span><span>FREE</span></div>
+            ) : del === 0 ? (
+              <div className="sum-row free"><span>Delivery</span><span>FREE</span></div>
+            ) : (
+              <div className="sum-row"><span>Delivery</span><span>{inr(del)}</span></div>
+            )}
+            {coupon.disc > 0 && (
+              <div className="sum-row free"><span>Coupon ({coupon.code})</span><span>−{inr(coupon.disc)}</span></div>
+            )}
+            {fulfil.mode !== "pickup" && subtotal > 0 && subtotal < FREE && (
+              <div className="dbar">
+                Add {inr(FREE - subtotal)} more for free delivery
+                <div className="trk"><div className="fil" style={{ width: Math.min((subtotal / FREE) * 100, 100) + "%" }} /></div>
+              </div>
+            )}
+            <div className="coupon-row">
+              <input className="coupon-input" placeholder="Promo code" value={couponInput} onChange={(e) => setCouponInput(e.target.value)} />
+              <button className="coupon-btn" onClick={applyCoupon}>Apply</button>
+            </div>
+            {couponMsg.text && (
+              <div style={{ fontSize: ".74rem", minHeight: "1em", marginBottom: ".3rem", color: couponMsg.ok ? "#5aa46e" : "var(--rose)" }}>
+                {couponMsg.text}
+              </div>
+            )}
+            <div className="fulfil-row" style={{ margin: ".5rem 0 .2rem" }}>
+              <label style={{ display: "block", fontFamily: "var(--font-b)", fontSize: ".74rem", fontWeight: 600, color: "var(--cream2)", marginBottom: ".4rem" }}>
+                How would you like your order?
+              </label>
+              <div style={{ display: "flex", gap: ".5rem", marginBottom: ".55rem" }}>
+                {(["pickup", "delivery"] as const).map((m) => {
+                  const on = fulfil.mode === m;
+                  return (
+                    <button
+                      key={m}
+                      type="button"
+                      onClick={() => setFulfil((f) => ({ ...f, mode: f.mode === m ? "" : m }))}
+                      style={{
+                        flex: 1, padding: ".55rem",
+                        border: "1px solid " + (on ? "transparent" : "var(--border2)"),
+                        borderRadius: 100, fontFamily: "var(--font-b)", fontSize: ".8rem", fontWeight: 600, cursor: "pointer",
+                        background: on ? "var(--gold-grad)" : "var(--surface)", color: on ? "#fff" : "var(--cream2)",
+                      }}
+                    >
+                      {m === "pickup" ? "🏬 Pickup" : "🚵 Delivery"}
+                    </button>
+                  );
+                })}
+              </div>
+              {fulfil.mode === "delivery" && (
+                <textarea
+                  placeholder="Your delivery address..."
+                  value={fulfil.addr}
+                  onChange={(e) => setFulfil((f) => ({ ...f, addr: e.target.value }))}
+                  style={{ width: "100%", padding: ".55rem .7rem", background: "var(--bg)", border: "1px solid var(--border2)", borderRadius: "var(--r-sm)", fontFamily: "var(--font-b)", fontSize: ".82rem", color: "var(--cream)", outline: "none", minHeight: 56, resize: "vertical", marginBottom: ".5rem" }}
+                />
+              )}
+              {(fulfil.mode === "pickup" || fulfil.mode === "delivery") && (
+                <div style={{ display: "flex", gap: ".5rem" }}>
+                  <input type="date" value={fulfil.date} onChange={(e) => setFulfil((f) => ({ ...f, date: e.target.value }))}
+                    style={{ flex: 1, padding: ".55rem .7rem", background: "var(--bg)", border: "1px solid var(--border2)", borderRadius: "var(--r-sm)", fontFamily: "var(--font-b)", fontSize: ".82rem", color: "var(--cream)", outline: "none" }} />
+                  <input type="time" value={fulfil.time} onChange={(e) => setFulfil((f) => ({ ...f, time: e.target.value }))}
+                    style={{ flex: 1, padding: ".55rem .7rem", background: "var(--bg)", border: "1px solid var(--border2)", borderRadius: "var(--r-sm)", fontFamily: "var(--font-b)", fontSize: ".82rem", color: "var(--cream)", outline: "none" }} />
+                </div>
+              )}
+            </div>
+            <div className="note-row" style={{ margin: ".5rem 0 .2rem" }}>
+              <label style={{ display: "block", fontFamily: "var(--font-b)", fontSize: ".74rem", fontWeight: 600, color: "var(--cream2)", marginBottom: ".35rem" }}>
+                Special instructions <span style={{ color: "var(--muted)", fontWeight: 400 }}>(optional)</span>
+              </label>
+              <textarea
+                placeholder="Name on cake, flavour, allergies, message card..."
+                value={orderNote}
+                onChange={(e) => setOrderNote(e.target.value)}
+                style={{ width: "100%", minHeight: 60, padding: ".6rem .8rem", background: "var(--bg)", border: "1px solid var(--border2)", borderRadius: "var(--r-sm)", fontFamily: "var(--font-b)", fontSize: ".82rem", color: "var(--cream)", outline: "none", resize: "vertical" }}
+              />
+            </div>
+            <div className="sum-row total"><span>Total</span><span>{inr(total)}</span></div>
+            <button className="btn btn-gold" style={{ width: "100%", marginTop: ".8rem" }} onClick={placeOrder}>
+              Order on WhatsApp →
+            </button>
+          </div>
+        )}
+      </aside>
+
+      {/* QUICK VIEW */}
+      {qv.open && qv.product && (
+        <div className="modal-overlay show" onClick={(e) => { if (e.target === e.currentTarget) setQv((s) => ({ ...s, open: false })); }}>
+          <div className="modal qv" style={{ position: "relative" }}>
+            <button className="qv-close" onClick={() => setQv((s) => ({ ...s, open: false }))} aria-label="Close">×</button>
+            <div className="ph">
+              <img src={safeImg(qv.product.image_url)} alt={qv.product.name} decoding="async" onError={onImgError} />
+            </div>
+            <div className="qv-body">
+              <div className="p-rating">{stars(Number(qv.product.rating))} <span style={{ color: "var(--muted)" }}>{Number(qv.product.rating).toFixed(1)}</span></div>
+              <h3>{qv.product.name}</h3>
+              <div className="p-meta">{qv.product.category_name} · made to order</div>
+              <div className="qv-price">{inr(qvUnit)}</div>
+              <label style={{ fontSize: ".7rem", fontWeight: 600, letterSpacing: ".06em", textTransform: "uppercase", color: "var(--gold2)" }}>Size</label>
+              <div className="opt-row">
+                {weightOpts(qv.product.category_name).map((w, i) => (
+                  <span key={w.l} className={"opt" + (i === qv.wIdx ? " sel" : "")} role="button" tabIndex={0} onClick={() => setQv((s) => ({ ...s, wIdx: i }))}>{w.l}</span>
+                ))}
+              </div>
+              <label style={{ fontSize: ".7rem", fontWeight: 600, letterSpacing: ".06em", textTransform: "uppercase", color: "var(--gold2)", marginTop: ".8rem", display: "block" }}>Flavour</label>
+              <div className="opt-row">
+                {FLAVOURS.map((f) => (
+                  <span key={f} className={"opt" + (f === qv.flav ? " sel" : "")} role="button" tabIndex={0} onClick={() => setQv((s) => ({ ...s, flav: f }))}>{f}</span>
+                ))}
+              </div>
+              <div style={{ display: "flex", alignItems: "center", gap: "1rem", marginTop: "1rem" }}>
+                <div className="qc">
+                  <button onClick={() => setQv((s) => ({ ...s, qty: Math.max(1, s.qty - 1) }))}>−</button>
+                  <span>{qv.qty}</span>
+                  <button onClick={() => setQv((s) => ({ ...s, qty: s.qty + 1 }))}>+</button>
+                </div>
+                <label style={{ display: "flex", alignItems: "center", gap: ".4rem", fontSize: ".8rem", color: "var(--cream2)", cursor: "pointer" }}>
+                  <input type="checkbox" checked={qv.egg} onChange={(e) => setQv((s) => ({ ...s, egg: e.target.checked }))} /> Eggless
+                </label>
+              </div>
+              <button className="btn btn-gold" style={{ width: "100%", marginTop: "1.3rem" }} onClick={qvAdd}>Add to Cart</button>
+            </div>
+          </div>
+        </div>
+      )}
+
+      {/* CUSTOMISE YOUR CAKE */}
+      {custOpen && (
+        <CustomiseModal
+          categories={categories}
+          initialCat={F.category || "All"}
+          onClose={() => setCustOpen(false)}
+          notify={notify}
+        />
+      )}
+
+      {/* TOASTS */}
+      <div className="toast-container">
+        {toasts.map((t) => (
+          <div className="toast info" key={t.id}>{t.msg}</div>
+        ))}
+      </div>
+    </>
+  );
+}
+
+/* ============================================================
+   CONTACT SECTION — stores enquiry in Supabase + opens WhatsApp
+   ============================================================ */
+function ContactSection({ notify }: { notify: (m: string) => void }) {
+  const [name, setName] = useState("");
+  const [email, setEmail] = useState("");
+  const [msg, setMsg] = useState("");
+  const [sending, setSending] = useState(false);
+
+  const send = useCallback(async () => {
+    const nm = cleanText(name, 60);
+    const em = cleanText(email, 80);
+    const ms = cleanText(msg, 1000);
+    if (!nm || !ms) {
+      notify("Please add your name and a message");
+      return;
+    }
+    if (em && !validEmailOrPhone(em)) {
+      notify("Please enter a valid email or phone number");
+      return;
+    }
+    setSending(true);
+    try {
+      await fetch("/api/enquiries", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ name: nm, contact: em, message: ms, source: "contact" }),
+      });
+    } catch {
+      /* even if storage fails, still open WhatsApp so the customer isn't blocked */
+    }
+    const L = ["Hi Strictly Desserts! I'd like to enquire about a cake.", ""];
+    L.push("Name: " + nm);
+    if (em) L.push("Contact: " + em);
+    L.push("");
+    L.push(ms);
+    window.open(waLink(L.join("\n")), "_blank", "noopener");
+    notify("Opening WhatsApp to send your enquiry 💕");
+    setName("");
+    setEmail("");
+    setMsg("");
+    setSending(false);
+  }, [name, email, msg, notify]);
+
+  return (
+    <div className="contact-grid" style={{ paddingBottom: "5rem" }}>
+      <div className="contact-card">
+        <div className="contact-item"><div className="ic">📍</div><div><b>Visit us</b><span>D16, 8th Street, Second Avenue, W Ext Rd,<br />Annanagar East, Chennai, Tamil Nadu 600102</span></div></div>
+        <div className="contact-item"><div className="ic">📞</div><div><b>Call / WhatsApp</b><span><a href="tel:+917299047979" style={{ color: "inherit", textDecoration: "none" }}>+91 72990 47979</a></span></div></div>
+        <div className="contact-item"><div className="ic">📷</div><div><b>Instagram</b><span><a href="https://www.instagram.com/cakesbystrictlydesserts" target="_blank" rel="noopener" style={{ color: "inherit", textDecoration: "none" }}>@cakesbystrictlydesserts</a></span></div></div>
+        <div className="contact-item"><div className="ic">🕐</div><div><b>Hours</b><span>Mon–Sun · 9 AM – 9 PM</span></div></div>
+      </div>
+      <div className="contact-card">
+        <div className="form-row"><label>Your name</label><input className="field" value={name} onChange={(e) => setName(e.target.value)} placeholder="Jane Doe" /></div>
+        <div className="form-row"><label>Email / Phone</label><input className="field" value={email} onChange={(e) => setEmail(e.target.value)} placeholder="you@email.com" /></div>
+        <div className="form-row"><label>Tell us about your cake</label><textarea className="field" value={msg} onChange={(e) => setMsg(e.target.value)} placeholder="Occasion, flavour, date, servings..." /></div>
+        <button className="btn btn-gold" style={{ width: "100%" }} onClick={send} disabled={sending}>
+          {sending ? "Sending…" : "Send Enquiry"}
+        </button>
+      </div>
+    </div>
+  );
+}
+
+/* ============================================================
+   CUSTOMISE MODAL — stores enquiry in Supabase + opens WhatsApp
+   ============================================================ */
+function CustomiseModal({
+  categories,
+  initialCat,
+  onClose,
+  notify,
+}: {
+  categories: Category[];
+  initialCat: string;
+  onClose: () => void;
+  notify: (m: string) => void;
+}) {
+  const catNames = useMemo(() => ["All", ...categories.map((c) => c.name)], [categories]);
+  const [cat, setCat] = useState(catNames.includes(initialCat) ? initialCat : "All");
+  const [weight, setWeight] = useState("");
+  const [serv, setServ] = useState("");
+  const [flav, setFlav] = useState(FLAVOURS[0]);
+  const [theme, setTheme] = useState("");
+  const [tier, setTier] = useState("Single tier");
+  const [design, setDesign] = useState("");
+  const [cakeMsg, setCakeMsg] = useState("");
+  const [date, setDate] = useState("");
+  const [time, setTime] = useState("");
+  const [transit, setTransit] = useState("Delivery");
+  const [name, setName] = useState("");
+  const [addr, setAddr] = useState("");
+  const [ph1, setPh1] = useState("");
+  const [ph2, setPh2] = useState("");
+  const [refName, setRefName] = useState("");
+  const [prev, setPrev] = useState("");
+  const [err, setErr] = useState("");
+
+  const today = useMemo(
+    () => new Date(Date.now() - new Date().getTimezoneOffset() * 60000).toISOString().split("T")[0],
+    []
+  );
+
+  const onFile = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const f = e.target.files && e.target.files[0];
+    const clear = (m: string) => { setRefName(""); setPrev(""); e.target.value = ""; if (m) setErr(m); };
+    if (!f) return clear("");
+    const FILE_TYPES = ["image/jpeg", "image/png", "image/webp"];
+    if (FILE_TYPES.indexOf(f.type) === -1 || !/\.(jpe?g|png|webp)$/i.test(f.name)) return clear("Please upload a JPG, PNG or WEBP image.");
+    if (f.size > 5 * 1024 * 1024) return clear("Image is too large — maximum size is 5 MB.");
+    setErr("");
+    setRefName(f.name);
+    const rd = new FileReader();
+    rd.onload = (ev) => {
+      const src = String(ev.target?.result || "");
+      if (!/^data:image\/(png|jpe?g|webp);/i.test(src)) return clear("That file is not a valid image.");
+      setPrev(src);
+    };
+    rd.onerror = () => clear("Could not read that file.");
+    rd.readAsDataURL(f);
+  };
+
+  const send = useCallback(async () => {
+    const nm = cleanText(name, 60);
+    if (!nm || !ph1) { setErr("Please add at least your name and primary contact number."); return; }
+    if (!validPhone(ph1)) { setErr("Please enter a valid primary contact number (10–15 digits)."); return; }
+    if (ph2 && !validPhone(ph2)) { setErr("Secondary number doesn't look valid."); return; }
+    setErr("");
+
+    const fmtDate = (d: string) => {
+      if (!d) return "";
+      const p = d.split("-");
+      return new Date(+p[0], +p[1] - 1, +p[2]).toLocaleDateString("en-IN", { weekday: "short", day: "numeric", month: "short", year: "numeric" });
+    };
+    const fmtTime = (t: string) => {
+      if (!t) return "";
+      const p = t.split(":");
+      let h = parseInt(p[0], 10);
+      const ap = h >= 12 ? "PM" : "AM";
+      let h12 = h % 12;
+      if (h12 === 0) h12 = 12;
+      return h12 + ":" + p[1] + " " + ap;
+    };
+    const dt = [fmtDate(date), fmtTime(time)].filter(Boolean).join(", ");
+
+    const L: string[] = [];
+    L.push("Hi Strictly Desserts! 🎂 I'd like to customise a cake.");
+    L.push("");
+    L.push("CATEGORY: " + cat);
+    L.push("");
+    L.push("CUSTOMISATION REQUEST");
+    L.push("Weight: " + (cleanText(weight, 300) || "-"));
+    L.push("Servings: " + (cleanText(serv, 300) || "-"));
+    L.push("Cake flavor: " + flav);
+    L.push("Theme / Reference image: " + (cleanText(theme, 300) || "-"));
+    L.push("Single tier / Mini tier: " + tier);
+    if (design) { L.push(""); L.push("Specific design to recreate: " + cleanText(design, 300)); }
+    L.push("");
+    L.push("ORDER ITEMS");
+    L.push("Cake flavor: " + flav);
+    L.push("Design: " + (cleanText(design, 300) || cleanText(theme, 300) || "-"));
+    L.push("Msg on cake: " + (cleanText(cakeMsg, 300) || "-"));
+    L.push("");
+    L.push("DATE & TIME: " + (dt || "-"));
+    L.push("NAME: " + nm);
+    L.push("ADDRESS: " + (cleanText(addr, 300) || "-"));
+    L.push("CONTACT (primary): " + ph1);
+    L.push("CONTACT (secondary): " + (ph2 || "-"));
+    L.push("ORDER TRANSIT: " + transit);
+    if (refName) { L.push(""); L.push('📎 Reference image: I\'ll attach "' + refName + '" here in this chat.'); }
+
+    try {
+      await fetch("/api/enquiries", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          name: nm,
+          contact: ph1,
+          message: L.join("\n"),
+          category: cat,
+          source: "customise",
+          payload: { weight, serv, flav, theme, tier, design, cakeMsg, date, time, transit, addr, ph1, ph2, refName },
+        }),
+      });
+    } catch {
+      /* non-blocking */
+    }
+
+    window.open(waLink(L.join("\n")), "_blank", "noopener");
+    onClose();
+    notify(refName ? "Opening WhatsApp — don't forget to attach your reference image 📎" : "Opening WhatsApp to send your customisation 🎂");
+  }, [name, ph1, ph2, cat, weight, serv, flav, theme, tier, design, cakeMsg, date, time, transit, addr, refName, onClose, notify]);
+
+  return (
+    <div className="modal-overlay show" onClick={(e) => { if (e.target === e.currentTarget) onClose(); }}>
+      <div className="modal cust-modal">
+        <button className="qv-close" onClick={onClose}>×</button>
+        <h3>Customise Your Cake <em>{cat && cat !== "All" ? "(" + cat + ")" : ""}</em></h3>
+        <p className="cust-sub">Tell us exactly what you&apos;d like and we&apos;ll craft it for you. Everything below is sent to us in one WhatsApp message. 🎂</p>
+
+        <label>Category</label>
+        <select className="field" value={cat} onChange={(e) => setCat(e.target.value)}>
+          {catNames.map((n) => <option key={n} value={n}>{n}</option>)}
+        </select>
+
+        <div className="cust-grid">
+          <div><label>Weight</label><input className="field" value={weight} onChange={(e) => setWeight(e.target.value)} placeholder="e.g. 1 kg" /></div>
+          <div><label>Servings</label><input className="field" value={serv} onChange={(e) => setServ(e.target.value)} placeholder="e.g. 8–10 people" /></div>
+        </div>
+
+        <label>Cake flavour <span style={{ textTransform: "none", fontWeight: 400, color: "var(--muted)" }}>(choose from catalogue)</span></label>
+        <select className="field" value={flav} onChange={(e) => setFlav(e.target.value)}>
+          {FLAVOURS.map((f) => <option key={f} value={f}>{f}</option>)}
+        </select>
+
+        <label>Theme / Reference</label>
+        <input className="field" value={theme} onChange={(e) => setTheme(e.target.value)} placeholder="e.g. Pastel floral, jungle theme, gold drip…" />
+
+        <label>Reference image</label>
+        <input type="file" accept="image/jpeg,image/png,image/webp" className="cust-file" onChange={onFile} />
+        {prev && <img className="preview-img" src={prev} style={{ display: "block", width: "100%", objectFit: "cover", marginTop: ".6rem" }} alt="reference preview" />}
+        <p className="cust-hint">Pick your reference here so it&apos;s ready — after you tap send, simply attach this same image in the WhatsApp chat (links can&apos;t carry the file across automatically).</p>
+
+        <label>Tier</label>
+        <div className="cust-pills">
+          {["Single tier", "Mini tier"].map((t) => (
+            <span key={t} className={"cpill" + (tier === t ? " sel" : "")} role="button" tabIndex={0} onClick={() => setTier(t)}>{t}</span>
+          ))}
+        </div>
+
+        <label>Specific design to recreate <span style={{ textTransform: "none", fontWeight: 400, color: "var(--muted)" }}>(optional)</span></label>
+        <textarea className="field" style={{ minHeight: 70 }} value={design} onChange={(e) => setDesign(e.target.value)} placeholder="If you have any specific design to be recreated, please share the details here…" />
+
+        <div className="cust-divider">Order items</div>
+        <label>Message on cake</label>
+        <input className="field" value={cakeMsg} onChange={(e) => setCakeMsg(e.target.value)} placeholder="e.g. Happy Birthday Riya!" />
+
+        <div className="cust-divider">Date &amp; time</div>
+        <div className="cust-grid">
+          <div><label>Date</label><input type="date" className="field" min={today} value={date} onChange={(e) => setDate(e.target.value)} /></div>
+          <div><label>Time</label><input type="time" className="field" value={time} onChange={(e) => setTime(e.target.value)} /></div>
+        </div>
+
+        <label>Order transit</label>
+        <div className="cust-pills">
+          {[["Delivery", "🚵 Delivery"], ["Pickup", "🏢 Pickup"]].map(([v, l]) => (
+            <span key={v} className={"cpill" + (transit === v ? " sel" : "")} role="button" tabIndex={0} onClick={() => setTransit(v)}>{l}</span>
+          ))}
+        </div>
+
+        <div className="cust-divider">Your details</div>
+        <label>Name</label><input className="field" value={name} onChange={(e) => setName(e.target.value)} placeholder="Your name" />
+        <label>Address</label><textarea className="field" style={{ minHeight: 70 }} value={addr} onChange={(e) => setAddr(e.target.value)} placeholder="Full delivery address (for delivery orders)" />
+        <div className="cust-grid">
+          <div><label>Contact — primary</label><input className="field" value={ph1} onChange={(e) => setPh1(e.target.value)} placeholder="Primary number" /></div>
+          <div><label>Contact — secondary</label><input className="field" value={ph2} onChange={(e) => setPh2(e.target.value)} placeholder="Secondary number" /></div>
+        </div>
+
+        <div className="cust-note">
+          <b>Please note</b>
+          Delivery charges are paid directly to the cab driver on receiving the cake, as per the app&apos;s actual charges. Pickup can be done from our Anna Nagar East outlet.<br /><br />
+          Payment details will be shared once we receive the details above. 😊
+        </div>
+
+        <div className="err">{err}</div>
+        <div className="modal-actions">
+          <button className="btn btn-ghost" onClick={onClose}>Cancel</button>
+          <button className="btn btn-gold" onClick={send}>Send on WhatsApp →</button>
+        </div>
+      </div>
+    </div>
+  );
+}
