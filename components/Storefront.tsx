@@ -1133,7 +1133,24 @@ function CustomiseModal({
     L.push("CONTACT (primary): " + ph1);
     L.push("CONTACT (secondary): " + (ph2 || "-"));
     L.push("ORDER TRANSIT: " + transit);
-    if (refName) { L.push(""); L.push('📎 Reference image: I\'ll attach "' + refName + '" here in this chat.'); }
+    // Upload reference image to Supabase Storage and get a shareable URL
+    let imageUrl = "";
+    if (prev && refName) {
+      try {
+        const upRes = await fetch("/api/upload-image", {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({ dataUri: prev, fileName: refName }),
+        });
+        const upData = await upRes.json();
+        if (upData.url) imageUrl = upData.url;
+      } catch { /* non-blocking */ }
+    }
+
+    if (refName) {
+      L.push("");
+      L.push("📎 Reference image: " + (imageUrl || refName));
+    }
 
     try {
       await fetch("/api/enquiries", {
@@ -1145,7 +1162,7 @@ function CustomiseModal({
           message: L.join("\n"),
           category: cat,
           source: "customise",
-          payload: { weight, serv, flav, theme, tier, design, cakeMsg, date, time, transit, addr, ph1, ph2, refName },
+          payload: { weight, serv, flav, theme, tier, design, cakeMsg, date, time, transit, addr, ph1, ph2, refName, imageUrl },
         }),
       });
     } catch {
@@ -1154,8 +1171,8 @@ function CustomiseModal({
 
     window.open(waLink(L.join("\n")), "_blank", "noopener");
     onClose();
-    notify(refName ? "Opening WhatsApp — don't forget to attach your reference image 📎" : "Opening WhatsApp to send your customisation 🎂");
-  }, [name, ph1, ph2, cat, weight, serv, flav, theme, tier, design, cakeMsg, date, time, transit, addr, refName, onClose, notify]);
+    notify("Opening WhatsApp to send your customisation 🎂");
+  }, [name, ph1, ph2, cat, weight, serv, flav, theme, tier, design, cakeMsg, date, time, transit, addr, refName, prev, onClose, notify]);
 
   return (
     <div className="modal-overlay show" onClick={(e) => { if (e.target === e.currentTarget) onClose(); }}>
@@ -1185,7 +1202,7 @@ function CustomiseModal({
         <label>Reference image</label>
         <input type="file" accept="image/jpeg,image/png,image/webp" className="cust-file" onChange={onFile} />
         {prev && <img className="preview-img" src={prev} style={{ display: "block", width: "100%", objectFit: "cover", marginTop: ".6rem" }} alt="reference preview" />}
-        <p className="cust-hint">Pick your reference here so it&apos;s ready — after you tap send, simply attach this same image in the WhatsApp chat (links can&apos;t carry the file across automatically).</p>
+        <p className="cust-hint">Pick your reference image — it will be uploaded automatically and the link included in your WhatsApp message. 📎</p>
 
         <label>Tier</label>
         <div className="cust-pills">
