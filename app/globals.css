@@ -551,7 +551,7 @@ section.block{padding:5rem 0}
 textarea.field{resize:vertical;min-height:110px}
 
 /* MODALS */
-.imodal-overlay{position:fixed;inset:0;z-index:5000;background:rgba(43,33,29,.5);backdrop-filter:blur(5px);display:none;align-items:center;justify-content:center;padding:1.5rem}
+.modal-overlay{position:fixed;inset:0;z-index:5000;background:rgba(43,33,29,.5);backdrop-filter:blur(5px);display:none;align-items:center;justify-content:center;padding:1.5rem}
 .modal-overlay.show{display:flex;animation:fadeUp .25s}
 .modal{width:100%;max-width:440px;background:var(--surface);border-radius:var(--r-lg);box-shadow:var(--shadow-lg);padding:1.8rem;max-height:90vh;overflow:auto}
 .modal h3{font-family:var(--font-d);font-size:1.5rem;font-weight:500;color:var(--cream);margin-bottom:.4rem}
