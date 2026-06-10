@@ -41,6 +41,9 @@ export interface Enquiry {
   payload: Record<string, unknown>;
   is_handled: boolean;
   created_at: string;
+  order_status: "pending" | "accepted" | "rejected";
+  final_payment: number | null;
+  delivery_date: string | null;
 }
 
 // Cart item used client-side only.

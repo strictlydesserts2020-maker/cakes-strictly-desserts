@@ -22,3 +22,24 @@ export async function GET() {
   if (error) return NextResponse.json({error:error.message},{status:500});
   return NextResponse.json({data});
 }
+
+export async function PATCH(req: Request) {
+  const admin = await getAdmin();
+  if (!admin) return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
+  let body: any;
+  try { body = await req.json(); } catch { return NextResponse.json({ error: "Invalid JSON" }, { status: 400 }); }
+  const { id, order_status, final_payment, delivery_date, is_handled } = body;
+  if (!id) return NextResponse.json({ error: "Missing id" }, { status: 400 });
+  const update: Record<string, unknown> = {};
+  if (order_status !== undefined) {
+    if (!["pending", "accepted", "rejected"].includes(order_status)) return NextResponse.json({ error: "Invalid order_status" }, { status: 400 });
+    update.order_status = order_status;
+  }
+  if (final_payment !== undefined) update.final_payment = final_payment === "" ? null : Number(final_payment);
+  if (delivery_date !== undefined) update.delivery_date = delivery_date === "" ? null : delivery_date;
+  if (is_handled !== undefined) update.is_handled = Boolean(is_handled);
+  const supabase = createAdminClient();
+  const { error } = await supabase.from("enquiries").update(update).eq("id", id);
+  if (error) return NextResponse.json({ error: error.message }, { status: 500 });
+  return NextResponse.json({ ok: true });
+}
