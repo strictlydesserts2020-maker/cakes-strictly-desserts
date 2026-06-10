@@ -20,7 +20,8 @@ async function exportToExcel(rows: Enquiry[]) {
   const XLSX = window.XLSX;
 
   const data = rows.map((e) => ({
-    "Date": new Date(e.created_at).toLocaleString("en-IN"),
+    "Order Date": new Date(e.created_at).toLocaleDateString("en-IN"),
+    "Order Time": new Date(e.created_at).toLocaleTimeString("en-IN"),
     "Name": e.name,
     "Contact": e.contact ?? "",
     "Type": e.source,
@@ -38,7 +39,7 @@ async function exportToExcel(rows: Enquiry[]) {
 
   // Column widths
   ws["!cols"] = [
-    { wch: 20 }, { wch: 18 }, { wch: 16 }, { wch: 12 }, { wch: 14 },
+    { wch: 14 }, { wch: 12 }, { wch: 18 }, { wch: 16 }, { wch: 12 }, { wch: 14 },
     { wch: 10 }, { wch: 14 }, { wch: 18 }, { wch: 16 }, { wch: 60 },
   ];
 
@@ -137,7 +138,8 @@ export default function EnquiriesManager() {
           <table className="atable">
             <thead>
               <tr>
-                <th>When</th>
+                <th>Order Date</th>
+                <th>Order Time</th>
                 <th>Name</th>
                 <th>Contact</th>
                 <th>Type</th>
@@ -158,7 +160,10 @@ export default function EnquiriesManager() {
                     <tr>
                       {/* When */}
                       <td style={{ color: "var(--muted)", whiteSpace: "nowrap", fontSize: ".82rem" }}>
-                        {new Date(e.created_at).toLocaleString("en-IN")}
+                        {new Date(e.created_at).toLocaleDateString("en-IN")}
+                      </td>
+                      <td style={{ color: "var(--muted)", whiteSpace: "nowrap", fontSize: ".82rem" }}>
+                        {new Date(e.created_at).toLocaleTimeString("en-IN")}
                       </td>
                       {/* Name */}
                       <td>{e.name}</td>
@@ -254,7 +259,7 @@ export default function EnquiriesManager() {
                     {/* Expandable message row */}
                     {open === e.id && (
                       <tr>
-                        <td colSpan={9} style={{ background: "var(--surface2)" }}>
+                        <td colSpan={10} style={{ background: "var(--surface2)" }}>
                           {e.category && <p style={{ marginBottom: ".4rem" }}><b>Category:</b> {e.category}</p>}
                           <pre style={{
                             whiteSpace: "pre-wrap", fontFamily: "var(--font-b)",
