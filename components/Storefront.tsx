@@ -55,6 +55,9 @@ export default function Storefront({
   const [couponInput, setCouponInput] = useState("");
   const [couponMsg, setCouponMsg] = useState<{ text: string; ok: boolean }>({ text: "", ok: true });
   const [orderNote, setOrderNote] = useState("");
+  const [customerName, setCustomerName] = useState("");
+  const [customerPhone, setCustomerPhone] = useState("");
+  const [orderErr, setOrderErr] = useState("");
   const [fulfil, setFulfil] = useState<{ mode: string; date: string; time: string; addr: string }>({
     mode: "",
     date: "",
@@ -178,6 +181,17 @@ export default function Storefront({
       setDrawerOpen(true);
       return;
     }
+    if (!customerName.trim()) {
+      setOrderErr("Please enter your name.");
+      setDrawerOpen(true);
+      return;
+    }
+    if (!validPhone(customerPhone)) {
+      setOrderErr("Please enter a valid 10-digit phone number.");
+      setDrawerOpen(true);
+      return;
+    }
+    setOrderErr("");
     const fmtDate = (d: string) => {
       const p = d.split("-");
       return new Date(+p[0], +p[1] - 1, +p[2]).toLocaleDateString("en-IN", {
@@ -227,6 +241,9 @@ export default function Storefront({
     }
     L.push("Date: " + fmtDate(fulfil.date));
     L.push("Time: " + fmtTime(fulfil.time));
+    L.push("");
+    L.push("Name: " + customerName.trim());
+    L.push("Phone: " + customerPhone.trim());
     if (orderNote.trim()) {
       L.push("");
       L.push("Special instructions: " + orderNote.trim());
@@ -237,9 +254,12 @@ export default function Storefront({
     setCoupon({ code: "", disc: 0 });
     setCouponInput("");
     setOrderNote("");
+    setCustomerName("");
+    setCustomerPhone("");
+    setOrderErr("");
     setFulfil({ mode: "", date: "", time: "", addr: "" });
     setDrawerOpen(false);
-  }, [cart, fulfil, subtotal, del, coupon, total, orderNote, notify]);
+  }, [cart, fulfil, subtotal, del, coupon, total, orderNote, customerName, customerPhone, notify]);
 
   // ---------- quick view ----------
   const openQuick = useCallback((p: Product) => {
@@ -895,6 +915,34 @@ export default function Storefront({
                 style={{ width: "100%", minHeight: 60, padding: ".6rem .8rem", background: "var(--bg)", border: "1px solid var(--border2)", borderRadius: "var(--r-sm)", fontFamily: "var(--font-b)", fontSize: ".82rem", color: "var(--cream)", outline: "none", resize: "vertical" }}
               />
             </div>
+            {/* ── Customer details ── */}
+            <div style={{ margin: ".6rem 0 .2rem" }}>
+              <label style={{ display: "block", fontFamily: "var(--font-b)", fontSize: ".74rem", fontWeight: 600, color: "var(--cream2)", marginBottom: ".35rem" }}>
+                Your Name <span style={{ color: "var(--rose)" }}>*</span>
+              </label>
+              <input
+                type="text"
+                placeholder="Full name"
+                value={customerName}
+                onChange={(e) => { setCustomerName(e.target.value); setOrderErr(""); }}
+                style={{ width: "100%", padding: ".55rem .7rem", background: "var(--bg)", border: "1px solid " + (orderErr && !customerName.trim() ? "var(--rose)" : "var(--border2)"), borderRadius: "var(--r-sm)", fontFamily: "var(--font-b)", fontSize: ".82rem", color: "var(--cream)", outline: "none", boxSizing: "border-box" }}
+              />
+            </div>
+            <div style={{ margin: ".4rem 0 .2rem" }}>
+              <label style={{ display: "block", fontFamily: "var(--font-b)", fontSize: ".74rem", fontWeight: 600, color: "var(--cream2)", marginBottom: ".35rem" }}>
+                Phone Number <span style={{ color: "var(--rose)" }}>*</span>
+              </label>
+              <input
+                type="tel"
+                placeholder="10-digit mobile number"
+                value={customerPhone}
+                onChange={(e) => { setCustomerPhone(e.target.value.replace(/\D/g, "").slice(0, 15)); setOrderErr(""); }}
+                style={{ width: "100%", padding: ".55rem .7rem", background: "var(--bg)", border: "1px solid " + (orderErr && !validPhone(customerPhone) ? "var(--rose)" : "var(--border2)"), borderRadius: "var(--r-sm)", fontFamily: "var(--font-b)", fontSize: ".82rem", color: "var(--cream)", outline: "none", boxSizing: "border-box" }}
+              />
+            </div>
+            {orderErr && (
+              <p style={{ color: "var(--rose)", fontSize: ".78rem", margin: ".2rem 0 .3rem", fontFamily: "var(--font-b)" }}>{orderErr}</p>
+            )}
             <div className="sum-row total"><span>Total</span><span>{inr(total)}</span></div>
             <button className="btn btn-gold" style={{ width: "100%", marginTop: ".8rem" }} onClick={placeOrder}>
               Order on WhatsApp →
