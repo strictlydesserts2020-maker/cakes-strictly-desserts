@@ -104,6 +104,31 @@ export default function Storefront({
       window.removeEventListener("scroll", onScroll);
     };
   }, []);
+  // Lock body scroll on iOS Safari when any modal is open
+  useEffect(() => {
+    const anyOpen = qv.open || custOpen;
+    if (anyOpen) {
+      const scrollY = window.scrollY;
+      document.body.style.overflow = 'hidden';
+      document.body.style.position = 'fixed';
+      document.body.style.top = `-${scrollY}px`;
+      document.body.style.width = '100%';
+    } else {
+      const top = document.body.style.top;
+      document.body.style.overflow = '';
+      document.body.style.position = '';
+      document.body.style.top = '';
+      document.body.style.width = '';
+      if (top) window.scrollTo(0, -parseInt(top || '0'));
+    }
+    return () => {
+      document.body.style.overflow = '';
+      document.body.style.position = '';
+      document.body.style.top = '';
+      document.body.style.width = '';
+    };
+  }, [qv.open, custOpen]);
+
 
   const go = useCallback((v: View) => {
     setView(v);
@@ -953,8 +978,8 @@ export default function Storefront({
 
       {/* QUICK VIEW */}
       {qv.open && qv.product && (
-        <div className="modal-overlay show" onClick={(e) => { if (e.target === e.currentTarget) setQv((s) => ({ ...s, open: false })); }}>
-          <div className="modal qv" style={{ position: "relative" }}>
+        <div className="modal-overlay show" onTouchMove={(e) => e.preventDefault()} onClick={(e) => { if (e.target === e.currentTarget) setQv((s) => ({ ...s, open: false })); }}>
+          <div className="modal qv" style={{ position: "relative" }} onTouchMove={(e) => e.stopPropagation()}>
             <button className="qv-close" onClick={() => setQv((s) => ({ ...s, open: false }))} aria-label="Close">×</button>
             <div className="ph">
               <img src={safeImg(qv.product.image_url)} alt={qv.product.name} decoding="async" onError={onImgError} />
@@ -1223,7 +1248,7 @@ function CustomiseModal({
   }, [name, ph1, ph2, cat, weight, serv, flav, theme, tier, design, cakeMsg, date, time, transit, addr, refName, prev, onClose, notify]);
 
   return (
-    <div className="modal-overlay show" onClick={(e) => { if (e.target === e.currentTarget) onClose(); }}>
+    <div className="modal-overlay show" onTouchMove={(e) => e.preventDefault()} onClick={(e) => { if (e.target === e.currentTarget) onClose(); }}>
       <div className="modal cust-modal">
         <button className="qv-close" onClick={onClose}>×</button>
         <h3>Customise Your Cake <em>{cat && cat !== "All" ? "(" + cat + ")" : ""}</em></h3>
