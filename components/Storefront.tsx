@@ -544,9 +544,6 @@ export default function Storefront({
                 <p>Freshly made &amp; delivered right to your door across Chennai</p>
               </div>
             </div>
-            <div className="center" style={{ marginTop: "2.5rem" }}>
-              <button className="btn btn-gold btn-lg" onClick={() => go("contact")}>Order on WhatsApp</button>
-            </div>
           </div>
         </section>
 
