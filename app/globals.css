@@ -8,39 +8,39 @@
 /* ---------- Design Tokens ---------- */
 :root {
   /* Surfaces & background */
-  --bg:        #FBF4EF;   /* warm off-white */
-  --bg2:       #F6EBE4;   /* soft beige */
-  --surface:   #FFFFFF;   /* cards */
-  --surface2:  #FBEFEA;   /* blush tint */
-  --surface3:  #F4E5DE;   /* deeper blush */
+  --bg:        #EFE6DB;   /* Filter Coffee Beige */
+  --bg2:       #E7DDD1;   /* soft beige */
+  --surface:   #F8F2EA;   /* Warm Cream — cards */
+  --surface2:  #F3EAE0;   /* tinted cream */
+  --surface3:  #EDE1D5;   /* deeper cream */
 
   /* Text (token names kept from old dark theme, values inverted to dark) */
-  --cream:     #43342E;   /* primary text — light chocolate / espresso */
-  --cream2:    #6E5950;   /* secondary text */
-  --muted:     #A6948D;   /* muted text */
+  --cream:     #2E241F;   /* primary text — light chocolate / espresso */
+  --cream2:    #5C3724;   /* secondary text */
+  --muted:     #8A6A55;   /* muted text */
 
   /* Borders */
-  --border:    #F0E3DB;
-  --border2:   #ECDCD3;
+  --border:    #DDD3C6;
+  --border2:   #D4C9BB;
 
   /* Brand accent — dusty rose / rose-gold (ties to the cherry in the logo) */
-  --gold:      #C2748A;
-  --gold2:     #A8546F;
-  --gold-dim:  #F8E8ED;
-  --gold-grad: linear-gradient(135deg, #D58CA1 0%, #B45C78 100%);
+  --gold:      #B75A2A;
+  --gold2:     #5C3724;
+  --gold-dim:  #F5E3D5;
+  --gold-grad: linear-gradient(135deg, #D4714A 0%, #9E4A1E 100%);
 
   /* Soft pastel palette */
-  --lav:       #BCA9DD;
-  --lav-soft:  #EFEAF8;
+  --lav:       #C4A882;
+  --lav-soft:  #F2E8DC;
   --peach:     #F4BC9C;
   --peach-soft:#FCEDE3;
-  --pink:      #F6C9D6;
-  --pink-soft: #FCEDF1;
+  --pink:      #C97A50;
+  --pink-soft: #F7E5D8;
   --cocoa:     #C9A28A;
   --cocoa-soft:#F4E8DF;
 
   /* Status */
-  --rose:      #D24F66;   /* error / remove */
+  --rose:      #C0392B;   /* error / remove */
 
   /* Type */
   --font-d: 'Fraunces', Georgia, 'Times New Roman', serif;
@@ -53,11 +53,11 @@
   --r-xl: 36px;
 
   /* Shadows — soft, warm-tinted for the bakery feel */
-  --shadow-xs: 0 2px 8px rgba(168,118,118,0.06);
-  --shadow-sm: 0 6px 18px rgba(168,118,118,0.08);
-  --shadow:    0 16px 40px rgba(150,100,100,0.10);
-  --shadow-lg: 0 28px 70px rgba(140,90,90,0.16);
-  --shadow-gold: 0 14px 34px rgba(180,92,120,0.30);
+  --shadow-xs: 0 2px 8px rgba(92,55,36,0.06);
+  --shadow-sm: 0 6px 18px rgba(92,55,36,0.08);
+  --shadow:    0 16px 40px rgba(92,55,36,0.10);
+  --shadow-lg: 0 28px 70px rgba(92,55,36,0.16);
+  --shadow-gold: 0 14px 34px rgba(183,90,42,0.30);
 
   --nav-h: 76px;
   --maxw: 1200px;
@@ -145,7 +145,7 @@ button { font-family: inherit; }
   color: #fff;
   box-shadow: var(--shadow-gold);
 }
-.btn-gold:hover { box-shadow: 0 20px 44px rgba(180,92,120,0.42); filter: saturate(1.05); }
+.btn-gold:hover { box-shadow: 0 20px 44px rgba(183,90,42,0.42); filter: saturate(1.05); }
 
 .btn-ghost {
   background: var(--surface);
@@ -171,7 +171,7 @@ button { font-family: inherit; }
 .navbar.scrolled {
   background: rgba(255,253,251,0.88);
   border-bottom-color: var(--border2);
-  box-shadow: 0 8px 30px rgba(150,100,100,0.07);
+  box-shadow: 0 8px 30px rgba(92,55,36,0.07);
 }
 .nav-inner {
   width: 100%; max-width: var(--maxw); margin: 0 auto;
@@ -221,7 +221,7 @@ button { font-family: inherit; }
   position: absolute; top: -5px; right: -5px; min-width: 19px; height: 19px; padding: 0 5px;
   background: var(--gold-grad); color: #fff; border-radius: 100px;
   font-size: 0.64rem; font-weight: 700; display: flex; align-items: center; justify-content: center;
-  box-shadow: 0 3px 8px rgba(180,92,120,0.4); border: 1.5px solid var(--bg);
+  box-shadow: 0 3px 8px rgba(183,90,42,0.4); border: 1.5px solid var(--bg);
 }
 .btn-nav-login {
   display: inline-flex; align-items: center; gap: 0.4rem;
@@ -230,7 +230,7 @@ button { font-family: inherit; }
   font-size: 0.76rem; font-weight: 600; letter-spacing: 0.04em;
   box-shadow: var(--shadow-gold); transition: transform .3s, box-shadow .3s;
 }
-.btn-nav-login:hover { transform: translateY(-2px); box-shadow: 0 18px 40px rgba(180,92,120,0.4); }
+.btn-nav-login:hover { transform: translateY(-2px); box-shadow: 0 18px 40px rgba(183,90,42,0.4); }
 
 /* ---------- Image frames (bulletproof: pastel gradient shows if photo fails) ---------- */
 .ph {
@@ -609,7 +609,7 @@ textarea.field{resize:vertical;min-height:110px}
 .wa-fab .wa-label{font-family:var(--font-b);font-size:.86rem;font-weight:600;white-space:nowrap}
 @keyframes waPulse{0%,100%{box-shadow:0 8px 22px rgba(37,211,102,.45)}50%{box-shadow:0 8px 22px rgba(37,211,102,.45),0 0 0 12px rgba(37,211,102,0)}}
 @media(max-width:560px){.wa-fab{height:54px;padding:0 16px}.wa-fab .wa-label{display:none}}
-.drawer{position:fixed;top:0;right:0;bottom:0;width:400px;max-width:92vw;z-index:5600;background:var(--bg);box-shadow:-20px 0 60px rgba(140,90,90,.2);transform:translateX(100%);transition:transform .4s cubic-bezier(.2,.8,.2,1);display:flex;flex-direction:column}
+.drawer{position:fixed;top:0;right:0;bottom:0;width:400px;max-width:92vw;z-index:5600;background:var(--bg);box-shadow:-20px 0 60px rgba(92,55,36,.2);transform:translateX(100%);transition:transform .4s cubic-bezier(.2,.8,.2,1);display:flex;flex-direction:column}
 .drawer.open{transform:none}
 .drawer-head{padding:1.4rem 1.5rem;display:flex;align-items:center;justify-content:space-between;border-bottom:1px solid var(--border2)}
 .drawer-head h3{font-family:var(--font-d);font-size:1.3rem;font-weight:500;color:var(--cream)}
