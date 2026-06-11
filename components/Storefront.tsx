@@ -641,7 +641,7 @@ export default function Storefront({
         </section>
 
         {/* GIFT HAMPERS BANNER */}
-        <section className="block hamper-banner-section" style={{ padding: "2rem 0" }}>
+        <section className="block hamper-banner-section" style={{ padding: "1.2rem 0" }}>
           <div className="container">
             <div className="hamper-banner">
               <div className="hamper-banner-badge">🎁 Gift Hampers</div>
@@ -1181,7 +1181,7 @@ function DeliveryProcessPage({ go, waLink }: { go: (v: any) => void; waLink: (ms
       </section>
 
       {/* PICKUP VS DELIVERY */}
-      <section className="block dp-section">
+      <section className="dp-section" style={{ paddingTop: "1.2rem", paddingBottom: "1rem" }}>
         <div className="container">
           <div className="dp-cards">
             <div className="dp-card dp-card-rec">
@@ -1213,7 +1213,7 @@ function DeliveryProcessPage({ go, waLink }: { go: (v: any) => void; waLink: (ms
       </section>
 
       {/* WHAT TO EXPECT */}
-      <section className="dp-section" style={{ padding: "2rem 0" }}>
+      <section className="dp-section" style={{ padding: "1.2rem 0" }}>
         <div className="container">
           <h2 className="dp-sec-title">What To Expect</h2>
           <div className="dp-steps">
@@ -1239,7 +1239,7 @@ function DeliveryProcessPage({ go, waLink }: { go: (v: any) => void; waLink: (ms
       </section>
 
       {/* IMPORTANT POLICY */}
-      <section className="dp-section" style={{ padding: "2rem 0" }}>
+      <section className="dp-section" style={{ padding: "1.2rem 0" }}>
         <div className="container">
           <div className="dp-policy">
             <div className="dp-policy-text">
@@ -1253,7 +1253,7 @@ function DeliveryProcessPage({ go, waLink }: { go: (v: any) => void; waLink: (ms
       </section>
 
       {/* CARE GUIDE + FAQs */}
-      <section className="dp-section" style={{ padding: "2rem 0 3rem" }}>
+      <section className="dp-section" style={{ padding: "1.2rem 0 1.8rem" }}>
         <div className="container">
           <div className="dp-two-col">
             <div>
