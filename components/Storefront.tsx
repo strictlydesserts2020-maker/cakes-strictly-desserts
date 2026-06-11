@@ -15,7 +15,16 @@ import {
 } from "@/lib/utils";
 import { LOGO_DATA_URI } from "@/lib/brand";
 
-type View = "home" | "shop" | "categories" | "about" | "contact";
+type View = "home" | "shop" | "categories" | "about" | "contact" | "gift-hampers" | "delivery-process";
+
+const NAV_LABELS: Record<string, string> = {
+  home: "Home",
+  categories: "Categories",
+  shop: "All Cakes",
+  "gift-hampers": "Gift Hampers",
+  "delivery-process": "Delivery Process",
+  contact: "Contact Us",
+};
 type Toast = { id: number; msg: string };
 
 interface Filters {
@@ -431,7 +440,7 @@ export default function Storefront({
             </span>
           </a>
           <ul className={"nav-links" + (navOpen ? " open" : "")} id="navLinks">
-            {(["home", "categories", "shop", "about", "contact"] as View[]).map((v) => (
+            {(["home", "categories", "shop", "gift-hampers", "delivery-process", "contact"] as View[]).map((v) => (
               <li key={v}>
                 <a
                   href="#"
@@ -760,6 +769,31 @@ export default function Storefront({
         </div>
       </div>
 
+
+      {/* GIFT HAMPERS */}
+      <div className={viewClass("gift-hampers")}>
+        <div className="container" style={{ minHeight: "60vh", display: "flex", flexDirection: "column", alignItems: "center", justifyContent: "center", textAlign: "center", padding: "4rem 1.5rem" }}>
+          <span className="section-eyebrow eyebrow-c" style={{ marginBottom: "1rem" }}>Coming Soon</span>
+          <h2 style={{ fontFamily: "var(--font-d)", fontSize: "clamp(2rem,5vw,3rem)", color: "var(--gold)", marginBottom: "1rem" }}>Gift Hampers</h2>
+          <p style={{ color: "var(--cream2)", maxWidth: "480px", lineHeight: 1.7, fontSize: "1.05rem" }}>
+            We're curating something special — beautiful gift hampers filled with our finest desserts, perfect for every occasion. Stay tuned.
+          </p>
+          <button className="btn btn-gold" style={{ marginTop: "2rem" }} onClick={() => go("contact")}>Notify Me</button>
+        </div>
+      </div>
+
+      {/* DELIVERY PROCESS */}
+      <div className={viewClass("delivery-process")}>
+        <div className="container" style={{ minHeight: "60vh", display: "flex", flexDirection: "column", alignItems: "center", justifyContent: "center", textAlign: "center", padding: "4rem 1.5rem" }}>
+          <span className="section-eyebrow eyebrow-c" style={{ marginBottom: "1rem" }}>How It Works</span>
+          <h2 style={{ fontFamily: "var(--font-d)", fontSize: "clamp(2rem,5vw,3rem)", color: "var(--gold)", marginBottom: "1rem" }}>Delivery Process</h2>
+          <p style={{ color: "var(--cream2)", maxWidth: "480px", lineHeight: 1.7, fontSize: "1.05rem" }}>
+            Detailed information about our delivery process, timelines, and zones is coming soon. Have questions? Reach out to us directly.
+          </p>
+          <button className="btn btn-gold" style={{ marginTop: "2rem" }} onClick={() => go("contact")}>Contact Us</button>
+        </div>
+      </div>
+
       {/* CONTACT */}
       <div className={viewClass("contact")}>
         <div className="container">
@@ -791,8 +825,9 @@ export default function Storefront({
             <div className="footer-col">
               <h4>Company</h4>
               <ul>
-                <li><a href="#" onClick={(e) => { e.preventDefault(); go("about"); }}>About</a></li>
-                <li><a href="#" onClick={(e) => { e.preventDefault(); go("contact"); }}>Contact</a></li>
+                <li><a href="#" onClick={(e) => { e.preventDefault(); go("gift-hampers"); }}>Gift Hampers</a></li>
+                <li><a href="#" onClick={(e) => { e.preventDefault(); go("delivery-process"); }}>Delivery Process</a></li>
+                <li><a href="#" onClick={(e) => { e.preventDefault(); go("contact"); }}>Contact Us</a></li>
                 <li><a href="#" onClick={(e) => { e.preventDefault(); setDrawerOpen(true); }}>Your Cart</a></li>
               </ul>
             </div>
