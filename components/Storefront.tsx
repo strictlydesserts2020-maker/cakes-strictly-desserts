@@ -660,26 +660,6 @@ export default function Storefront({
           </div>
         </section>
 
-        <section className="block" style={{ paddingTop: 0 }}>
-          <div className="container">
-            <div className="features">
-              <div className="feature"><div className="ic"><img src="https://images.unsplash.com/photo-1578985545062-69928b1d9587?auto=format&fit=crop&w=80&h=80&q=60" alt="Cake" style={{width:"48px",height:"48px",objectFit:"cover",borderRadius:"50%"}} /></div><h4>Baked Fresh Daily</h4><p>Every cake is made to order with premium ingredients — never frozen.</p></div>
-              <div className="feature"><div className="ic"><img src="https://images.unsplash.com/photo-1563729784474-d77dbb933a9e?auto=format&fit=crop&w=80&h=80&q=60" alt="Eggless" style={{width:"48px",height:"48px",objectFit:"cover",borderRadius:"50%"}} /></div><h4>Eggless Options</h4><p>Most of our cakes come in delicious eggless variants.</p></div>
-              <div className="feature"><div className="ic"><img src="https://images.unsplash.com/photo-1542826438-bd32f43d626f?auto=format&fit=crop&w=80&h=80&q=60" alt="Custom" style={{width:"48px",height:"48px",objectFit:"cover",borderRadius:"50%"}} /></div><h4>Custom Designs</h4><p>Share your idea and we&apos;ll craft a cake that&apos;s uniquely yours.</p></div>
-              <div className="feature"><div className="ic"><img src="https://images.unsplash.com/photo-1464349095431-e9a21285b5f3?auto=format&fit=crop&w=80&h=80&q=60" alt="Delivery" style={{width:"48px",height:"48px",objectFit:"cover",borderRadius:"50%"}} /></div><h4>On-time Delivery</h4><p>Same-day &amp; scheduled delivery across Chennai.</p></div>
-            </div>
-          </div>
-        </section>
-
-        <section className="block" style={{ paddingTop: 0 }}>
-          <div className="container">
-            <div className="cta-band">
-              <h2>Ready to order something special?</h2>
-              <p>Tell us about your celebration and we&apos;ll bake the perfect cake.</p>
-              <button className="btn btn-lg" onClick={() => go("contact")}>Get in Touch</button>
-            </div>
-          </div>
-        </section>
       </div>
 
       {/* SHOP */}
