@@ -547,6 +547,59 @@ export default function Storefront({
           </div>
         </section>
 
+        {/* EVERYTHING YOU NEED */}
+        <section className="block eyn-section">
+          <div className="container">
+            <div className="center" style={{ marginBottom: "2rem" }}>
+              <h2 className="sec-title">Everything You Need for a <em>Perfect Cake</em></h2>
+            </div>
+            <div className="eyn-grid">
+              <div className="eyn-card">
+                <span className="eyn-emoji">🚚</span>
+                <div>
+                  <h4>Doorstep Delivery Across Chennai</h4>
+                  <p>We deliver fresh to your door — on time, every time.</p>
+                </div>
+              </div>
+              <div className="eyn-card">
+                <span className="eyn-emoji">🎂</span>
+                <div>
+                  <h4>Buttercream That Isn't Too Sweet</h4>
+                  <p>Light, balanced frosting — indulgent without the sugar rush.</p>
+                </div>
+              </div>
+              <div className="eyn-card">
+                <span className="eyn-emoji">🍓</span>
+                <div>
+                  <h4>Signature Dessert-Inspired Flavours</h4>
+                  <p>Unique flavour profiles inspired by our favourite desserts.</p>
+                </div>
+              </div>
+              <div className="eyn-card">
+                <span className="eyn-emoji">🎨</span>
+                <div>
+                  <h4>Pinterest To Reality Designs</h4>
+                  <p>Share your inspiration — we'll bring it to life, exactly as you imagined.</p>
+                </div>
+              </div>
+              <div className="eyn-card">
+                <span className="eyn-emoji">🥚</span>
+                <div>
+                  <h4>Eggless Options Available</h4>
+                  <p>Most of our cakes come in delicious eggless variants — same taste, no compromise.</p>
+                </div>
+              </div>
+              <div className="eyn-card">
+                <span className="eyn-emoji">📦</span>
+                <div>
+                  <h4>From Bento Cakes To Tiered Showstoppers</h4>
+                  <p>Whether it's an intimate celebration or a grand event, we've got you covered.</p>
+                </div>
+              </div>
+            </div>
+          </div>
+        </section>
+
         <section className="block" style={{ paddingTop: 0 }}>
           <div className="container">
             <div className="features">
