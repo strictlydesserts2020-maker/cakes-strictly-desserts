@@ -1198,16 +1198,29 @@ function GiftHampersPage({ go, waLink }: { go: (v: any) => void; waLink: (msg: s
     window.open(waLink(msg), "_blank");
   };
 
-  const categories = [
-    { icon: "🍼", title: "Baby Naming &\nSeeantham Favours",   bg: "#fdf0e6" },
-    { icon: "🎂", title: "Birthday\nReturn Gifts",              bg: "#fdeef0" },
-    { icon: "🍫", title: "Children's\nSnack Boxes",             bg: "#f0f7ee" },
-    { icon: "🪔", title: "Festive Gift\nHampers",               bg: "#fdf6e3" },
-    { icon: "💍", title: "Wedding &\nEvent Favours",            bg: "#f3eeff" },
-    { icon: "🏢", title: "Corporate\nGifting",                  bg: "#e8f4ff" },
-    { icon: "👏", title: "Employee\nAppreciation Gifts",        bg: "#f0fdf4" },
-    { icon: "🎀", title: "Custom Branded\nHampers",             bg: "#fff0f6" },
-  ];
+  const [hamperCats, setHamperCats] = useState<{id:string;title:string;image_url:string|null;icon_emoji:string;bg_color:string}[]>([]);
+  useEffect(() => {
+    import("@/lib/supabase/client").then(({ createClient }) => {
+      createClient()
+        .from("hamper_categories")
+        .select("id,title,image_url,icon_emoji,bg_color,sort_order")
+        .eq("is_active", true)
+        .order("sort_order", { ascending: true })
+        .then(({ data }) => {
+          if (data && data.length > 0) setHamperCats(data);
+          else setHamperCats([
+            { id:"1", icon_emoji:"🍼", title:"Baby Naming & Seemantham Favours", bg_color:"#fdf0e6", image_url:null },
+            { id:"2", icon_emoji:"🎂", title:"Birthday Return Gifts",            bg_color:"#fdeef0", image_url:null },
+            { id:"3", icon_emoji:"🍫", title:"Children's Snack Boxes",           bg_color:"#f0f7ee", image_url:null },
+            { id:"4", icon_emoji:"🪔", title:"Festive Gift Hampers",             bg_color:"#fdf6e3", image_url:null },
+            { id:"5", icon_emoji:"💍", title:"Wedding & Event Favours",          bg_color:"#f3eeff", image_url:null },
+            { id:"6", icon_emoji:"🏢", title:"Corporate Gifting",                bg_color:"#e8f4ff", image_url:null },
+            { id:"7", icon_emoji:"👏", title:"Employee Appreciation Gifts",      bg_color:"#f0fdf4", image_url:null },
+            { id:"8", icon_emoji:"🎀", title:"Custom Branded Hampers",           bg_color:"#fff0f6", image_url:null },
+          ]);
+        });
+    });
+  }, []);
 
   const usps = [
     { icon: "🎯", text: "Fully Customisable\nto Your Budget" },
@@ -1256,10 +1269,14 @@ function GiftHampersPage({ go, waLink }: { go: (v: any) => void; waLink: (msg: s
         <div className="container">
           <h2 className="gh-sec-title">What We Can Create For You</h2>
           <div className="gh-cat-grid">
-            {categories.map(c => (
-              <div className="gh-cat-tile" key={c.title} style={{ background: c.bg }} onClick={scrollToForm}>
-                <div className="gh-cat-img-area">{c.icon}</div>
-                <div className="gh-cat-label">{c.title.replace(/\n/g, " ")}</div>
+            {hamperCats.map(c => (
+              <div className="gh-cat-tile" key={c.id} style={{ background: c.bg_color }} onClick={scrollToForm}>
+                <div className="gh-cat-img-area">
+                  {c.image_url
+                    ? <img src={c.image_url} alt={c.title} style={{width:"100%",height:"100%",objectFit:"cover"}} />
+                    : c.icon_emoji}
+                </div>
+                <div className="gh-cat-label">{c.title}</div>
               </div>
             ))}
           </div>

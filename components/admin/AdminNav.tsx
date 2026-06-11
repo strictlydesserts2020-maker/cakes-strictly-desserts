@@ -10,6 +10,7 @@ const LINKS = [
   { href: "/admin/products", label: "Products" },
   { href: "/admin/categories", label: "Categories" },
   { href: "/admin/enquiries", label: "Enquiries" },
+  { href: "/admin/hamper-categories", label: "Hamper Categories" },
 ];
 
 export default function AdminNav({ email }: { email: string }) {
