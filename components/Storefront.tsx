@@ -1159,61 +1159,38 @@ export default function Storefront({
    CONTACT SECTION — stores enquiry in Supabase + opens WhatsApp
    ============================================================ */
 function ContactSection({ notify }: { notify: (m: string) => void }) {
-  const [name, setName] = useState("");
-  const [email, setEmail] = useState("");
-  const [msg, setMsg] = useState("");
-  const [sending, setSending] = useState(false);
-
-  const send = useCallback(async () => {
-    const nm = cleanText(name, 60);
-    const em = cleanText(email, 80);
-    const ms = cleanText(msg, 1000);
-    if (!nm || !ms) {
-      notify("Please add your name and a message");
-      return;
-    }
-    if (em && !validEmailOrPhone(em)) {
-      notify("Please enter a valid email or phone number");
-      return;
-    }
-    setSending(true);
-    try {
-      await fetch("/api/enquiries", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ name: nm, contact: em, message: ms, source: "contact" }),
-      });
-    } catch {
-      /* even if storage fails, still open WhatsApp so the customer isn't blocked */
-    }
-    const L = ["Hi Strictly Desserts! I'd like to enquire about a cake.", ""];
-    L.push("Name: " + nm);
-    if (em) L.push("Contact: " + em);
-    L.push("");
-    L.push(ms);
-    window.open(waLink(L.join("\n")), "_blank", "noopener");
-    notify("Opening WhatsApp to send your enquiry 💕");
-    setName("");
-    setEmail("");
-    setMsg("");
-    setSending(false);
-  }, [name, email, msg, notify]);
-
   return (
-    <div className="contact-grid" style={{ paddingBottom: "5rem" }}>
-      <div className="contact-card">
-        <div className="contact-item"><div className="ic">📍</div><div><b>Visit us</b><span>D16, 8th Street, Second Avenue, W Ext Rd,<br />Annanagar East, Chennai, Tamil Nadu 600102</span></div></div>
-        <div className="contact-item"><div className="ic">📞</div><div><b>Call / WhatsApp</b><span><a href="tel:+917299047979" style={{ color: "inherit", textDecoration: "none" }}>+91 72990 47979</a></span></div></div>
-        <div className="contact-item"><div className="ic">📷</div><div><b>Instagram</b><span><a href="https://www.instagram.com/cakesbystrictlydesserts" target="_blank" rel="noopener" style={{ color: "inherit", textDecoration: "none" }}>@cakesbystrictlydesserts</a></span></div></div>
-        <div className="contact-item"><div className="ic">🕐</div><div><b>Hours</b><span>Mon–Sun · 9 AM – 9 PM</span></div></div>
+    <div className="contact-info-wrap">
+      <div className="contact-info-grid">
+        <a className="ci-card" href="https://maps.google.com/?q=D16,8th+Street,Second+Avenue,W+Ext+Rd,Annanagar+East,Chennai+600102" target="_blank" rel="noopener">
+          <div className="ci-icon">📍</div>
+          <h4>Visit Us</h4>
+          <p>D16, 8th Street, Second Avenue,<br />W Ext Rd, Annanagar East,<br />Chennai, Tamil Nadu 600102</p>
+        </a>
+        <a className="ci-card" href="tel:+917299047979">
+          <div className="ci-icon">📞</div>
+          <h4>Call / WhatsApp</h4>
+          <p>+91 72990 47979</p>
+          <span className="ci-tag">Tap to call</span>
+        </a>
+        <a className="ci-card" href="https://www.instagram.com/strictlydesserts" target="_blank" rel="noopener">
+          <div className="ci-icon">📸</div>
+          <h4>Instagram</h4>
+          <p>@strictlydesserts</p>
+          <span className="ci-tag">Follow us</span>
+        </a>
+        <div className="ci-card">
+          <div className="ci-icon">🕐</div>
+          <h4>Opening Hours</h4>
+          <p>Monday – Sunday<br />9 AM – 9 PM</p>
+          <span className="ci-tag">Open daily</span>
+        </div>
       </div>
-      <div className="contact-card">
-        <div className="form-row"><label>Your name</label><input className="field" value={name} onChange={(e) => setName(e.target.value)} placeholder="Jane Doe" /></div>
-        <div className="form-row"><label>Email / Phone</label><input className="field" value={email} onChange={(e) => setEmail(e.target.value)} placeholder="you@email.com" /></div>
-        <div className="form-row"><label>Tell us about your cake</label><textarea className="field" value={msg} onChange={(e) => setMsg(e.target.value)} placeholder="Occasion, flavour, date, servings..." /></div>
-        <button className="btn btn-gold" style={{ width: "100%" }} onClick={send} disabled={sending}>
-          {sending ? "Sending…" : "Send Enquiry"}
-        </button>
+      <div className="ci-wa-cta">
+        <p>Ready to place an order? Chat with us directly on WhatsApp — we respond fast! 🎂</p>
+        <a className="btn btn-gold btn-lg" href={waLink("Hi Strictly Desserts! I'd like to place an order.")} target="_blank" rel="noopener">
+          💬 Order on WhatsApp
+        </a>
       </div>
     </div>
   );
