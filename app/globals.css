@@ -461,7 +461,7 @@ section.block{padding:5rem 0}
 .hero-art .chipf b{font-family:var(--font-d);font-size:.92rem;color:var(--cream)}
 
 /* CATEGORY STRIP */
-.cat-strip{display:grid;grid-template-columns:repeat(6,1fr);gap:1rem}
+.cat-strip{display:flex;flex-wrap:wrap;justify-content:center;gap:1rem}.cat-strip .cat-tile{width:220px;flex-shrink:0}
 .cat-tile{position:relative;border-radius:var(--r);overflow:hidden;aspect-ratio:3/3.7;box-shadow:var(--shadow-xs);cursor:pointer;transition:transform .45s cubic-bezier(.2,.8,.2,1),box-shadow .45s}
 .cat-tile:hover{transform:translateY(-6px);box-shadow:var(--shadow)}
 .cat-tile .ph{position:absolute;inset:0}.cat-tile:hover .ph img{transform:scale(1.09)}
@@ -636,9 +636,9 @@ textarea.field{resize:vertical;min-height:110px}
 .coupon-btn{padding:.6rem 1rem;background:var(--gold-dim);border:1px solid rgba(194,116,138,.3);border-radius:100px;color:var(--gold2);font-weight:600;font-size:.76rem;cursor:pointer}
 .empty-cart-d{text-align:center;padding:3rem 1rem;color:var(--muted)}.empty-cart-d img{width:72px;margin:0 auto 1rem;opacity:.85}
 
-@media(max-width:980px){.hero-grid,.about-grid,.contact-grid{grid-template-columns:1fr;gap:2rem}.hero-art{max-width:440px;margin:0 auto;width:100%}.cat-strip{grid-template-columns:repeat(3,1fr)}.features{grid-template-columns:repeat(2,1fr)}}
+@media(max-width:980px){.hero-grid,.about-grid,.contact-grid{grid-template-columns:1fr;gap:2rem}.hero-art{max-width:440px;margin:0 auto;width:100%}.features{grid-template-columns:repeat(2,1fr)}}
 @media(max-width:860px){.shop-layout{grid-template-columns:1fr}.sidebar{position:static}}
-@media(max-width:560px){.cat-strip{grid-template-columns:repeat(2,1fr)}.features{grid-template-columns:1fr}.hero-stats{gap:1.2rem}}/* (stylesheet above is copied verbatim from the original single-file site) */
+@media(max-width:560px){.features{grid-template-columns:1fr}.hero-stats{gap:1.2rem}}/* (stylesheet above is copied verbatim from the original single-file site) */
 
 
 /* Prevent background scroll when modal/QV open (iOS fix) */
