@@ -475,42 +475,6 @@ export default function Storefront({
 
       {/* HOME */}
       <div className={viewClass("home")}>
-        <header className="hero">
-          <div className="container">
-            <div className="hero-grid">
-              <div className="hero-copy">
-                <span className="section-eyebrow">Handcrafted in Chennai</span>
-                <h1>
-                  Cakes worth
-                  <br />
-                  <em>celebrating</em>
-                </h1>
-                <p>Freshly baked, hand-finished cakes &amp; luxury desserts — made to order and styled to be the centrepiece of every celebration.</p>
-                <div className="hero-cta">
-                  <button className="btn btn-gold btn-lg" onClick={() => go("shop")}>Explore the Collection</button>
-                  <button className="btn btn-ghost btn-lg" onClick={() => go("categories")}>Shop by Category</button>
-                </div>
-                <div className="hero-stats">
-                  <div><b>2,400+</b><span>CAKES BAKED</span></div>
-                  <div><b>4.9★</b><span>AVG RATING</span></div>
-                  <div><b>100%</b><span>FRESH CREAM</span></div>
-                </div>
-              </div>
-              <div className="hero-art">
-                <div className="blob" />
-                <div className="ph main">
-                  <img src="https://images.unsplash.com/photo-1578985545062-69928b1d9587?auto=format&fit=crop&w=900&q=72" onError={onImgError} decoding="async" alt="" />
-                </div>
-                <div className="ph small">
-                  <img src="https://images.unsplash.com/photo-1563729784474-d77dbb933a9e?auto=format&fit=crop&w=600&q=72" onError={onImgError} decoding="async" alt="" />
-                </div>
-                <div className="chipf a"><span className="dot">✨</span><div><small>Starting at</small><b>₹699</b></div></div>
-                <div className="chipf b"><span className="dot">🚚</span><div><small>Same-day</small><b>Delivery</b></div></div>
-              </div>
-            </div>
-          </div>
-        </header>
-
         <section className="block">
           <div className="container">
             <div className="center" style={{ marginBottom: "2rem" }}>
