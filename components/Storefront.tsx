@@ -899,28 +899,26 @@ export default function Storefront({
               <p>Handcrafted cakes &amp; luxury desserts, baked fresh in Chennai and styled to make every celebration unforgettable.</p>
             </div>
             <div className="footer-col">
-              <h4>Shop</h4>
+              <h4>Explore</h4>
               <ul>
-                <li><a href="#" onClick={(e) => { e.preventDefault(); go("shop"); }}>All Cakes</a></li>
+                <li><a href="#" onClick={(e) => { e.preventDefault(); go("home"); }}>Home</a></li>
                 <li><a href="#" onClick={(e) => { e.preventDefault(); go("categories"); }}>Categories</a></li>
-                <li><a href="#" onClick={(e) => { e.preventDefault(); goCategory("Birthday"); }}>Birthday</a></li>
-                <li><a href="#" onClick={(e) => { e.preventDefault(); goCategory("Wedding"); }}>Wedding</a></li>
+                <li><a href="#" onClick={(e) => { e.preventDefault(); go("shop"); }}>All Cakes</a></li>
               </ul>
             </div>
             <div className="footer-col">
-              <h4>Company</h4>
+              <h4>Quick Links</h4>
               <ul>
                 <li><a href="#" onClick={(e) => { e.preventDefault(); go("gift-hampers"); }}>Gift Hampers</a></li>
                 <li><a href="#" onClick={(e) => { e.preventDefault(); go("delivery-process"); }}>Delivery Process</a></li>
                 <li><a href="#" onClick={(e) => { e.preventDefault(); go("contact"); }}>Contact Us</a></li>
-                <li><a href="#" onClick={(e) => { e.preventDefault(); setDrawerOpen(true); }}>Your Cart</a></li>
               </ul>
             </div>
             <div className="footer-col">
               <h4>Stay in touch</h4>
               <p style={{ color: "#B5A299", fontSize: ".86rem", marginBottom: "1rem" }}>Follow the latest bakes &amp; launches.</p>
               <div className="footer-social">
-                <a href="https://www.instagram.com/cakesbystrictlydesserts" target="_blank" rel="noopener" aria-label="Instagram">
+                <a href="https://www.instagram.com/strictlydesserts" target="_blank" rel="noopener" aria-label="Instagram">
                   <svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.6"><rect x="2" y="2" width="20" height="20" rx="5" /><circle cx="12" cy="12" r="4" /><circle cx="17.5" cy="6.5" r="1" fill="currentColor" stroke="none" /></svg>
                 </a>
                 <a href={waLink("Hi Strictly Desserts!")} target="_blank" rel="noopener" aria-label="WhatsApp">
