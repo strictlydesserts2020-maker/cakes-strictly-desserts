@@ -857,14 +857,7 @@ export default function Storefront({
 
       {/* GIFT HAMPERS */}
       <div className={viewClass("gift-hampers")}>
-        <div className="container" style={{ minHeight: "60vh", display: "flex", flexDirection: "column", alignItems: "center", justifyContent: "center", textAlign: "center", padding: "4rem 1.5rem" }}>
-          <span className="section-eyebrow eyebrow-c" style={{ marginBottom: "1rem" }}>Coming Soon</span>
-          <h2 style={{ fontFamily: "var(--font-d)", fontSize: "clamp(2rem,5vw,3rem)", color: "var(--gold)", marginBottom: "1rem" }}>Gift Hampers</h2>
-          <p style={{ color: "var(--cream2)", maxWidth: "480px", lineHeight: 1.7, fontSize: "1.05rem" }}>
-            We're curating something special — beautiful gift hampers filled with our finest desserts, perfect for every occasion. Stay tuned.
-          </p>
-          <button className="btn btn-gold" style={{ marginTop: "2rem" }} onClick={() => go("contact")}>Notify Me</button>
-        </div>
+        <GiftHampersPage go={go} waLink={waLink} />
       </div>
 
       {/* DELIVERY PROCESS */}
