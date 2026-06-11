@@ -869,14 +869,7 @@ export default function Storefront({
 
       {/* DELIVERY PROCESS */}
       <div className={viewClass("delivery-process")}>
-        <div className="container" style={{ minHeight: "60vh", display: "flex", flexDirection: "column", alignItems: "center", justifyContent: "center", textAlign: "center", padding: "4rem 1.5rem" }}>
-          <span className="section-eyebrow eyebrow-c" style={{ marginBottom: "1rem" }}>How It Works</span>
-          <h2 style={{ fontFamily: "var(--font-d)", fontSize: "clamp(2rem,5vw,3rem)", color: "var(--gold)", marginBottom: "1rem" }}>Delivery Process</h2>
-          <p style={{ color: "var(--cream2)", maxWidth: "480px", lineHeight: 1.7, fontSize: "1.05rem" }}>
-            Detailed information about our delivery process, timelines, and zones is coming soon. Have questions? Reach out to us directly.
-          </p>
-          <button className="btn btn-gold" style={{ marginTop: "2rem" }} onClick={() => go("contact")}>Contact Us</button>
-        </div>
+        <DeliveryProcessPage go={go} waLink={waLink} />
       </div>
 
       {/* CONTACT */}
@@ -1158,6 +1151,154 @@ export default function Storefront({
 /* ============================================================
    CONTACT SECTION — stores enquiry in Supabase + opens WhatsApp
    ============================================================ */
+
+/* ============================================================
+   DELIVERY PROCESS PAGE
+   ============================================================ */
+function DeliveryProcessPage({ go, waLink }: { go: (v: any) => void; waLink: (msg: string) => string }) {
+  const [openFaq, setOpenFaq] = useState<number | null>(null);
+  const faqs = [
+    { q: "Do you deliver across Chennai?", a: "We deliver across most areas in Chennai via trusted cab services. Delivery availability depends on distance and order size. Contact us to confirm for your area." },
+    { q: "Can I arrange my own pickup partner?", a: "Yes! You can send a trusted person or arrange your own cab to collect the cake from our studio. Just ensure they handle it with care." },
+    { q: "Do you deliver tiered cakes?", a: "For tiered, tall, or highly detailed cakes, we strongly recommend pickup. If delivery is required, it must be via car — never bikes — and extra charges may apply." },
+    { q: "What if the recipient is not available?", a: "Please ensure someone is available at the delivery address. We cannot wait indefinitely, and we are not responsible for delays caused by unavailability." },
+    { q: "Can I change the delivery time?", a: "Delivery time changes can be accommodated based on availability. Please contact us at least 24 hours in advance to reschedule." },
+  ];
+
+  return (
+    <div className="dp-wrap">
+
+      {/* HERO */}
+      <section className="dp-hero">
+        <div className="container">
+          <div className="dp-hero-content">
+            <span className="section-eyebrow eyebrow-c">Delivery Process</span>
+            <h1 className="dp-hero-title">Cake Delivery<br />&amp; Pickup</h1>
+            <p className="dp-hero-tag">Every Cake Deserves a Safe Journey</p>
+            <p className="dp-hero-desc">Our cakes are handcrafted with so much love and care. We follow a safe delivery process to ensure they reach you in the best possible condition.</p>
+          </div>
+        </div>
+      </section>
+
+      {/* PICKUP VS DELIVERY */}
+      <section className="block dp-section">
+        <div className="container">
+          <div className="dp-cards">
+            <div className="dp-card dp-card-rec">
+              <div className="dp-card-icon">🛍️</div>
+              <div className="dp-card-badge">Recommended</div>
+              <h3>Pickup</h3>
+              <p>We highly encourage customers to collect their cakes directly from our Anna Nagar East studio.</p>
+              <ul className="dp-checklist">
+                <li>Direct handover from our team</li>
+                <li>No transit-related risks</li>
+                <li>Ideal for tiered, tall &amp; highly detailed cakes</li>
+                <li>Greater control over handling &amp; transport</li>
+              </ul>
+              <a className="btn dp-card-btn" href="https://maps.google.com/?q=D16,8th+Street,Second+Avenue,W+Ext+Rd,Annanagar+East,Chennai+600102" target="_blank" rel="noopener">📍 Studio Location</a>
+            </div>
+            <div className="dp-card">
+              <div className="dp-card-icon">🚗</div>
+              <h3>Delivery Through Cab Services</h3>
+              <p>If pickup isn&apos;t convenient, we&apos;re happy to arrange delivery through trusted cab partners.</p>
+              <ul className="dp-checklist">
+                <li>We do not dispatch celebration cakes through bikes</li>
+                <li>Cakes are transported via car for greater safety</li>
+                <li>Carefully packed to provide maximum stability</li>
+              </ul>
+              <button className="btn dp-card-btn" onClick={() => go("contact")}>📍 Check Delivery Areas</button>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      {/* WHAT TO EXPECT */}
+      <section className="dp-section" style={{ padding: "2rem 0" }}>
+        <div className="container">
+          <h2 className="dp-sec-title">What To Expect</h2>
+          <div className="dp-steps">
+            {[
+              { icon: "📋", title: "Quality Checked", desc: "Every cake goes through a final quality check" },
+              { icon: "📸", title: "Photographed", desc: "We click a picture of your cake before dispatch" },
+              { icon: "📦", title: "Securely Packaged", desc: "Carefully packed with multiple layers of protection" },
+              { icon: "🚗", title: "Cab Dispatch", desc: "We dispatch via trusted cab partners, not bikes" },
+              { icon: "🎉", title: "Celebration Time!", desc: "Your cake is on its way to make your celebration special" },
+            ].map((s, i, arr) => (
+              <>
+                <div className="dp-step" key={s.title}>
+                  <div className="dp-step-icon">{s.icon}</div>
+                  <div className="dp-step-num">{i + 1}</div>
+                  <h4>{s.title}</h4>
+                  <p>{s.desc}</p>
+                </div>
+                {i < arr.length - 1 && <div className="dp-step-arrow" key={"a" + i}>→</div>}
+              </>
+            ))}
+          </div>
+        </div>
+      </section>
+
+      {/* IMPORTANT POLICY */}
+      <section className="dp-section" style={{ padding: "2rem 0" }}>
+        <div className="container">
+          <div className="dp-policy">
+            <div className="dp-policy-text">
+              <h3>⚠️ Important Delivery Policy</h3>
+              <p>While we take every precaution to package your cake safely, delivery is carried out by third-party transportation services.</p>
+              <p>As a result, Strictly Desserts cannot take responsibility for damage that may occur during transit after the cake has been dispatched from our kitchen.</p>
+              <div className="dp-policy-note">🛡️ By opting for delivery, customers acknowledge and accept this risk.</div>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      {/* CARE GUIDE + FAQs */}
+      <section className="dp-section" style={{ padding: "2rem 0 3rem" }}>
+        <div className="container">
+          <div className="dp-two-col">
+            <div>
+              <h3 className="dp-sec-title" style={{ textAlign: "left", marginBottom: "1.2rem" }}>Cake Care Guide</h3>
+              <ul className="dp-care-list">
+                {["Keep the cake on a flat surface", "Avoid direct sunlight and heat", "Refrigerate if instructed", "Bring to room temperature before serving", "Handle with care while carrying", "Follow any specific instructions shared with you"].map(tip => (
+                  <li key={tip}>📌 {tip}</li>
+                ))}
+              </ul>
+            </div>
+            <div>
+              <h3 className="dp-sec-title" style={{ textAlign: "left", marginBottom: "1.2rem" }}>Delivery FAQs</h3>
+              <div className="dp-faq">
+                {faqs.map((f, i) => (
+                  <div className="dp-faq-item" key={i} onClick={() => setOpenFaq(openFaq === i ? null : i)}>
+                    <div className="dp-faq-q">{f.q} <span>{openFaq === i ? "−" : "+"}</span></div>
+                    {openFaq === i && <div className="dp-faq-a">{f.a}</div>}
+                  </div>
+                ))}
+              </div>
+              <div style={{ display: "flex", gap: "1rem", marginTop: "1.2rem", flexWrap: "wrap" }}>
+                <button className="btn btn-ghost" onClick={() => go("contact")}>Still have questions?</button>
+                <a className="btn btn-gold" href={waLink("Hi! I have a question about delivery.")} target="_blank" rel="noopener">💬 WhatsApp Us</a>
+              </div>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      {/* FOOTER CTA */}
+      <section className="dp-footer-cta">
+        <div className="container">
+          <h2>We Want Your Cake To Reach You<br />As Beautiful As It Leaves Us</h2>
+          <p>If you have concerns about transportation, venue distance, outdoor events or large celebration cakes, our team will help you choose the safest option.</p>
+          <div className="dp-footer-cta-btns">
+            <a className="btn btn-gold btn-lg" href={waLink("Hi! I need help choosing the safest delivery option.")} target="_blank" rel="noopener">💬 Get in Touch</a>
+            <a className="btn btn-ghost btn-lg" href="tel:+917299047979">📞 Call us at +91 72990 47979</a>
+          </div>
+        </div>
+      </section>
+
+    </div>
+  );
+}
+
 function ContactSection({ notify }: { notify: (m: string) => void }) {
   return (
     <div className="contact-info-wrap">
