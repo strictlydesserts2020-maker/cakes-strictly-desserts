@@ -667,96 +667,7 @@ export default function Storefront({
             <h1>Our <em>Collection</em></h1>
             <p>Bento · Birthday · Wedding · Custom — every one made to order</p>
           </div>
-          <div className="shop-layout">
-            <aside className="sidebar">
-              <div className="sb-sec">
-                <span className="sb-title">Search</span>
-                <div className="search-wrap">
-                  <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
-                    <circle cx="11" cy="11" r="8" /><path d="M21 21l-4.35-4.35" />
-                  </svg>
-                  <input
-                    type="text"
-                    className="search-input"
-                    placeholder="Search cakes..."
-                    value={F.search}
-                    onChange={(e) => setF((f) => ({ ...f, search: e.target.value }))}
-                  />
-                </div>
-              </div>
-              <div className="sb-sec">
-                <span className="sb-title">Category</span>
-                <div className="filter-chips">
-                  {categories.map((c) => (
-                    <span
-                      key={c.id}
-                      className={"chip" + (F.category === c.name ? " active" : "")}
-                      role="button"
-                      tabIndex={0}
-                      onClick={() => setF((f) => ({ ...f, category: f.category === c.name ? "" : c.name }))}
-                    >
-                      {c.name}
-                    </span>
-                  ))}
-                </div>
-              </div>
-              <div className="sb-sec">
-                <span className="sb-title">Occasion</span>
-                <div className="filter-chips">
-                  {["Birthday", "Anniversary", "Wedding", "Baby Shower"].map((o) => (
-                    <span
-                      key={o}
-                      className={"chip" + (F.occasion === o ? " active" : "")}
-                      role="button"
-                      tabIndex={0}
-                      onClick={() => setF((f) => ({ ...f, occasion: f.occasion === o ? "" : o }))}
-                    >
-                      {o}
-                    </span>
-                  ))}
-                </div>
-              </div>
-              <div className="sb-sec">
-                <span className="sb-title">Dietary</span>
-                <div className="filter-chips">
-                  <span
-                    className={"chip" + (F.egg ? " active" : "")}
-                    role="button"
-                    tabIndex={0}
-                    onClick={() => setF((f) => ({ ...f, egg: !f.egg }))}
-                  >
-                    🌱 Eggless Only
-                  </span>
-                </div>
-              </div>
-              <div className="sb-sec">
-                <span className="sb-title">Price Range (₹)</span>
-                <div className="price-range">
-                  <input
-                    type="number"
-                    placeholder="Min"
-                    min={0}
-                    value={F.min ?? ""}
-                    onChange={(e) => setF((f) => ({ ...f, min: e.target.value ? parseInt(e.target.value, 10) : null }))}
-                  />
-                  <span>–</span>
-                  <input
-                    type="number"
-                    placeholder="Max"
-                    min={0}
-                    value={F.max ?? ""}
-                    onChange={(e) => setF((f) => ({ ...f, max: e.target.value ? parseInt(e.target.value, 10) : null }))}
-                  />
-                </div>
-              </div>
-              <button
-                className="clear-filters"
-                onClick={() => setF({ search: "", category: "", occasion: "", egg: false, min: null, max: null, sort: F.sort })}
-              >
-                ✕ Clear All Filters
-              </button>
-            </aside>
-            <div className="shop-main">
+          <div className="shop-main">
               <div className="sort-bar">
                 <span className="result-count">
                   <b>{filtered.length}</b> cake{filtered.length === 1 ? "" : "s"} found
@@ -797,7 +708,6 @@ export default function Storefront({
                   </div>
                 )}
               </div>
-            </div>
           </div>
         </div>
       </div>
