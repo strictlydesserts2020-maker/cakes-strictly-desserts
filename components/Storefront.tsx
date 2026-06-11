@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useEffect, useMemo, useCallback } from "react";
+import { useState, useEffect, useMemo, useCallback, useRef } from "react";
 import type { Category, Product, CartItem } from "@/lib/types";
 import {
   inr,
@@ -1155,6 +1155,269 @@ export default function Storefront({
 /* ============================================================
    DELIVERY PROCESS PAGE
    ============================================================ */
+
+/* ============================================================
+   GIFT HAMPERS PAGE
+   ============================================================ */
+function GiftHampersPage({ go, waLink }: { go: (v: any) => void; waLink: (msg: string) => string }) {
+  const formRef = useRef<HTMLDivElement>(null);
+  const scrollToForm = () => formRef.current?.scrollIntoView({ behavior: "smooth", block: "start" });
+
+  const [form, setForm] = useState({
+    lookingFor: "", occasion: "", quantity: "", budget: "",
+    date: "", delivery: "", branding: "",
+    includes: [] as string[], notes: "",
+  });
+
+  const toggleInclude = (item: string) =>
+    setForm(f => ({
+      ...f,
+      includes: f.includes.includes(item)
+        ? f.includes.filter(x => x !== item)
+        : [...f.includes, item],
+    }));
+
+  const handleSubmit = () => {
+    const msg = [
+      "🎁 *Gift Hamper Enquiry*",
+      `Looking for: ${form.lookingFor || "N/A"}`,
+      `Occasion: ${form.occasion || "N/A"}`,
+      `Quantity: ${form.quantity || "N/A"}`,
+      `Budget per gift: ${form.budget || "N/A"}`,
+      `Need by: ${form.date || "N/A"}`,
+      `Delivery: ${form.delivery || "N/A"}`,
+      `Custom branding: ${form.branding || "N/A"}`,
+      `Include: ${form.includes.length ? form.includes.join(", ") : "N/A"}`,
+      `Notes: ${form.notes || "N/A"}`,
+    ].join("\n");
+    window.open(waLink(msg), "_blank");
+  };
+
+  const categories = [
+    { icon: "🍼", title: "Baby Naming &\nSeeantham Favours",   bg: "#fdf0e6" },
+    { icon: "🎂", title: "Birthday\nReturn Gifts",              bg: "#fdeef0" },
+    { icon: "🍫", title: "Children's\nSnack Boxes",             bg: "#f0f7ee" },
+    { icon: "🪔", title: "Festive Gift\nHampers",               bg: "#fdf6e3" },
+    { icon: "💍", title: "Wedding &\nEvent Favours",            bg: "#f3eeff" },
+    { icon: "🏢", title: "Corporate\nGifting",                  bg: "#e8f4ff" },
+    { icon: "👏", title: "Employee\nAppreciation Gifts",        bg: "#f0fdf4" },
+    { icon: "🎀", title: "Custom Branded\nHampers",             bg: "#fff0f6" },
+  ];
+
+  const usps = [
+    { icon: "🎯", text: "Fully Customisable\nto Your Budget" },
+    { icon: "📦", text: "Low Minimum\nQuantities" },
+    { icon: "🏷️", text: "Custom Branding\n& Packaging" },
+    { icon: "🚗", text: "Chennai-wide\nDelivery" },
+    { icon: "🤝", text: "One-point\nCoordination" },
+  ];
+
+  const includeItems = [
+    "Chocolates", "Savouries", "Cookies", "Dry Fruits",
+    "Brownies", "Tea / Coffee", "Cakes", "Children's Treats",
+    "Traditional Sweets", "Surprise Me",
+  ];
+
+  const galleryColors = ["#f5e6d3","#ede0f5","#d9efd9","#fde8d0","#d8eaf7","#f9dce5"];
+
+  return (
+    <div className="gh-wrap">
+
+      {/* HERO */}
+      <section className="gh-hero">
+        <div className="container">
+          <div className="gh-hero-inner">
+            <div className="gh-hero-text">
+              <span className="section-eyebrow">Thoughtful Gifts, Made With Love</span>
+              <h1 className="gh-hero-title">Thoughtful Gifts<br />For Every Occasion</h1>
+              <p className="gh-hero-desc">
+                From baby naming ceremonies to festive celebrations, corporate events and everything in between —
+                we create hampers and return gifts that leave a lasting impression.
+              </p>
+              <div className="gh-hero-btns">
+                <button className="btn btn-gold" onClick={scrollToForm}>Start Your Enquiry →</button>
+                <a className="btn btn-ghost" href="#gh-cats">See Our Hampers →</a>
+              </div>
+            </div>
+            <div className="gh-hero-visual">
+              <div className="gh-hero-box">🎁</div>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      {/* WHAT WE CREATE */}
+      <section className="gh-section" id="gh-cats">
+        <div className="container">
+          <h2 className="gh-sec-title">What We Can Create For You</h2>
+          <div className="gh-cat-grid">
+            {categories.map(c => (
+              <div className="gh-cat-tile" key={c.title} style={{ background: c.bg }} onClick={scrollToForm}>
+                <div className="gh-cat-img-area">{c.icon}</div>
+                <div className="gh-cat-label">{c.title.replace(/\n/g, " ")}</div>
+              </div>
+            ))}
+          </div>
+        </div>
+      </section>
+
+      {/* USP STRIP */}
+      <div className="gh-usp-strip">
+        <div className="container gh-usp-inner">
+          {usps.map(u => (
+            <div className="gh-usp" key={u.text}>
+              <span className="gh-usp-icon">{u.icon}</span>
+              <span>{u.text.replace(/\n/g, " ")}</span>
+            </div>
+          ))}
+        </div>
+      </div>
+
+      {/* FORM + GALLERY */}
+      <section className="gh-section" ref={formRef}>
+        <div className="container">
+          <div className="gh-fg-wrap">
+
+            {/* FORM */}
+            <div className="gh-form-col">
+              <h2 className="gh-sec-title" style={{ textAlign: "left", marginBottom: "1.2rem" }}>Tell Us About Your Requirement</h2>
+              <div className="gh-form">
+                <div className="gh-form-row">
+                  <div className="gh-field">
+                    <label>1. What are you looking for? *</label>
+                    <select value={form.lookingFor} onChange={e => setForm(f => ({ ...f, lookingFor: e.target.value }))}>
+                      <option value="">Select an option</option>
+                      <option>Return Gifts</option>
+                      <option>Gift Hampers</option>
+                      <option>Corporate Gifting</option>
+                      <option>Custom Branded Boxes</option>
+                      <option>Not Sure Yet</option>
+                    </select>
+                  </div>
+                  <div className="gh-field">
+                    <label>2. What&apos;s the occasion? *</label>
+                    <input type="text" placeholder="E.g., Baby Naming, Diwali, Birthday Party"
+                      value={form.occasion} onChange={e => setForm(f => ({ ...f, occasion: e.target.value }))} />
+                  </div>
+                </div>
+                <div className="gh-form-row">
+                  <div className="gh-field">
+                    <label>3. How many gifts do you need? *</label>
+                    <select value={form.quantity} onChange={e => setForm(f => ({ ...f, quantity: e.target.value }))}>
+                      <option value="">Select quantity</option>
+                      <option>Less than 25</option>
+                      <option>25 – 50</option>
+                      <option>50 – 100</option>
+                      <option>100 – 250</option>
+                      <option>250+</option>
+                    </select>
+                  </div>
+                  <div className="gh-field">
+                    <label>4. Approx. budget per gift? *</label>
+                    <select value={form.budget} onChange={e => setForm(f => ({ ...f, budget: e.target.value }))}>
+                      <option value="">Select budget</option>
+                      <option>Under ₹200</option>
+                      <option>₹200 – ₹500</option>
+                      <option>₹500 – ₹1,000</option>
+                      <option>₹1,000 – ₹2,000</option>
+                      <option>₹2,000+</option>
+                    </select>
+                  </div>
+                </div>
+                <div className="gh-form-row">
+                  <div className="gh-field">
+                    <label>5. When do you need it? *</label>
+                    <input type="date" value={form.date} onChange={e => setForm(f => ({ ...f, date: e.target.value }))} />
+                  </div>
+                  <div className="gh-field">
+                    <label>6. Delivery Requirement *</label>
+                    <select value={form.delivery} onChange={e => setForm(f => ({ ...f, delivery: e.target.value }))}>
+                      <option value="">Select an option</option>
+                      <option>Pickup from Studio</option>
+                      <option>Delivery within Chennai</option>
+                      <option>Outstation Delivery</option>
+                    </select>
+                  </div>
+                </div>
+
+                <div className="gh-form-row gh-form-row-wrap">
+                  <div className="gh-field">
+                    <label>7. Would you like custom branding?</label>
+                    <div className="gh-radio-grp">
+                      {["Yes","No","Maybe"].map(opt => (
+                        <label key={opt} className="gh-radio">
+                          <input type="radio" name="gh-branding" value={opt}
+                            checked={form.branding === opt}
+                            onChange={() => setForm(f => ({ ...f, branding: opt }))} />
+                          {opt}
+                        </label>
+                      ))}
+                    </div>
+                  </div>
+                  <div className="gh-field gh-field-wide">
+                    <label>8. What would you like to include? <span className="gh-label-hint">(Select all that apply)</span></label>
+                    <div className="gh-check-grid">
+                      {includeItems.map(item => (
+                        <label key={item} className="gh-check">
+                          <input type="checkbox" checked={form.includes.includes(item)}
+                            onChange={() => toggleInclude(item)} />
+                          {item}
+                        </label>
+                      ))}
+                    </div>
+                  </div>
+                </div>
+
+                <div className="gh-field">
+                  <label>9. Tell us more about your requirement</label>
+                  <textarea rows={3} placeholder="Share details about your theme, preferences, packaging, message on the box, colours, etc."
+                    value={form.notes} onChange={e => setForm(f => ({ ...f, notes: e.target.value }))} />
+                </div>
+
+                <div className="gh-form-actions">
+                  <button className="btn btn-gold" onClick={handleSubmit}>Submit Enquiry →</button>
+                  <a className="gh-wa-text" href={waLink("Hi! I’d like to enquire about gift hampers.")} target="_blank" rel="noopener">
+                    💬 Prefer to talk? Chat with us on WhatsApp
+                  </a>
+                </div>
+              </div>
+            </div>
+
+            {/* GALLERY */}
+            <div className="gh-gallery-col">
+              <h2 className="gh-sec-title" style={{ textAlign: "left", marginBottom: "1rem" }}>Recent Creations</h2>
+              <div className="gh-gallery-grid">
+                {galleryColors.map((bg, i) => (
+                  <div className="gh-gallery-item" key={i} style={{ background: bg }}>
+                    🎁
+                  </div>
+                ))}
+              </div>
+              <button className="btn btn-ghost gh-view-more" onClick={scrollToForm}>View More Creations →</button>
+            </div>
+
+          </div>
+        </div>
+      </section>
+
+      {/* FOOTER CTA */}
+      <section className="gh-footer-cta">
+        <div className="container">
+          <h2>Let&apos;s Create Something<br />Your Guests Will Remember</h2>
+          <p>Share your occasion, quantity and budget and we&apos;ll get back with ideas tailored just for you.</p>
+          <div className="gh-footer-btns">
+            <button className="btn btn-gold btn-lg" onClick={scrollToForm}>Get in Touch →</button>
+            <a className="btn btn-ghost btn-lg" href={waLink("Hi! I want to discuss gift hampers for my event.")} target="_blank" rel="noopener">
+              💬 Order on WhatsApp
+            </a>
+          </div>
+        </div>
+      </section>
+
+    </div>
+  );
+}
+
 function DeliveryProcessPage({ go, waLink }: { go: (v: any) => void; waLink: (msg: string) => string }) {
   const [openFaq, setOpenFaq] = useState<number | null>(null);
   const faqs = [
