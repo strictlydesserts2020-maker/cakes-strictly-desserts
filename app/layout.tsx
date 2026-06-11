@@ -2,12 +2,12 @@ import type { Metadata, Viewport } from "next";
 import "./globals.css";
 
 export const metadata: Metadata = {
-  title: "Cakes by Strictly Desserts — Luxury Custom Cakes in Anna Nagar, Chennai",
+  title: "Strictly Desserts — Luxury Custom Cakes in Anna Nagar, Chennai",
   description:
-    "Handcrafted birthday, wedding, bento & customised cakes baked fresh in Anna Nagar, Chennai. Order online or on WhatsApp from Cakes by Strictly Desserts.",
+    "Handcrafted birthday, wedding, bento & customised cakes baked fresh in Anna Nagar, Chennai. Order online or on WhatsApp from Strictly Desserts.",
   keywords:
     "cakes Chennai, custom cakes Anna Nagar, birthday cake Chennai, wedding cake Chennai, bento cake, eggless cake Chennai, Strictly Desserts",
-  authors: [{ name: "Cakes by Strictly Desserts" }],
+  authors: [{ name: "Strictly Desserts" }],
   robots: "index, follow",
 };
 

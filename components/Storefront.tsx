@@ -414,7 +414,7 @@ export default function Storefront({
     <>
       {/* BRAND LOADER */}
       <div id="brandLoader" className={loaded ? "hide" : ""}>
-        <img src={LOGO_DATA_URI} alt="Cakes by Strictly Desserts" />
+        <img src={LOGO_DATA_URI} alt="Strictly Desserts" />
         <div className="ld-bar">
           <i />
         </div>
@@ -427,7 +427,7 @@ export default function Storefront({
           <a href="#" className="nav-logo" onClick={(e) => { e.preventDefault(); go("home"); }}>
             <img src={LOGO_DATA_URI} alt="logo" />
             <span className="lw">
-              Cakes <span>by</span> Strictly Desserts
+              Strictly Desserts
             </span>
           </a>
           <ul className={"nav-links" + (navOpen ? " open" : "")} id="navLinks">
@@ -752,7 +752,7 @@ export default function Storefront({
             </div>
             <div>
               <h2 className="sec-title">Baked with love, <em>finished by hand</em></h2>
-              <p>Cakes by Strictly Desserts began with a simple belief — that every celebration deserves a centrepiece as special as the moment itself. From our Chennai studio, we craft fresh, made-to-order cakes using premium ingredients and real fresh cream.</p>
+              <p>Strictly Desserts began with a simple belief — that every celebration deserves a centrepiece as special as the moment itself. From our Chennai studio, we craft fresh, made-to-order cakes using premium ingredients and real fresh cream.</p>
               <p>Whether it&apos;s a bento cake for two or a towering wedding showpiece, every order is handmade, never mass-produced. We&apos;re now opening our very own café in Anna Nagar — a home for everything we love about dessert.</p>
               <button className="btn btn-gold" style={{ marginTop: "1.4rem" }} onClick={() => go("shop")}>Explore the Cakes</button>
             </div>
@@ -810,7 +810,7 @@ export default function Storefront({
             </div>
           </div>
           <div className="footer-bottom">
-            <span>© 2026 Cakes by Strictly Desserts. Made with love in Chennai.</span>
+            <span>© 2026 Strictly Desserts. Made with love in Chennai.</span>
             <span>Privacy · Terms · Refunds</span>
           </div>
         </div>
