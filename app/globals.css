@@ -646,6 +646,23 @@ body.noscroll{overflow:hidden !important;position:fixed;width:100%;height:100%}
 
 
 
+
+/* ── Gift Hampers Banner ───────────────────────────────── */
+.hamper-banner{background:linear-gradient(135deg,var(--gold2) 0%,var(--gold) 100%);border-radius:var(--r-lg);padding:3rem 3.5rem;display:flex;flex-direction:column;align-items:flex-start;gap:1.1rem;position:relative;overflow:hidden}
+.hamper-banner::before{content:"🎁";position:absolute;right:3rem;top:50%;transform:translateY(-50%);font-size:8rem;opacity:.12;pointer-events:none}
+.hamper-banner-badge{background:rgba(255,255,255,.18);color:#fff;font-size:.72rem;font-weight:700;letter-spacing:.1em;text-transform:uppercase;padding:.3rem .9rem;border-radius:20px;border:1px solid rgba(255,255,255,.3)}
+.hamper-banner-title{font-family:var(--font-d);font-size:clamp(1.6rem,4vw,2.4rem);color:#fff;line-height:1.2;margin:0}
+.hamper-banner-title em{font-style:italic;opacity:.9}
+.hamper-banner-desc{font-size:.92rem;color:rgba(255,255,255,.88);line-height:1.7;max-width:560px;margin:0}
+.hamper-banner-tags{display:flex;flex-wrap:wrap;gap:.5rem}
+.hamper-banner-tags span{background:rgba(255,255,255,.15);color:#fff;font-size:.75rem;padding:.3rem .75rem;border-radius:20px;border:1px solid rgba(255,255,255,.25)}
+.hamper-banner-btn{background:#fff;color:var(--gold2);font-weight:700;font-size:.85rem;padding:.75rem 1.8rem;border-radius:30px;border:none;cursor:pointer;transition:transform .2s,box-shadow .2s;letter-spacing:.03em}
+.hamper-banner-btn:hover{transform:translateY(-2px);box-shadow:0 8px 24px rgba(0,0,0,.2)}
+@media(max-width:640px){
+  .hamper-banner{padding:2rem 1.5rem}
+  .hamper-banner::before{display:none}
+}
+
 /* ── Google Reviews Marquee ────────────────────────────── */
 .reviews-section{overflow:hidden;padding-bottom:2rem}
 .marquee-wrap{overflow:hidden;width:100%;cursor:default}

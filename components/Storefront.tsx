@@ -640,6 +640,26 @@ export default function Storefront({
           </div>
         </section>
 
+        {/* GIFT HAMPERS BANNER */}
+        <section className="block hamper-banner-section" style={{ padding: "2rem 0" }}>
+          <div className="container">
+            <div className="hamper-banner">
+              <div className="hamper-banner-badge">🎁 Gift Hampers</div>
+              <h2 className="hamper-banner-title">Gifts, Favours &amp; Hampers<br /><em>Made Easy</em></h2>
+              <p className="hamper-banner-desc">Celebrating a new arrival, planning a birthday, organising a corporate event or preparing festive gifting? Let us create thoughtfully curated hampers and edible gifts your guests will remember.</p>
+              <div className="hamper-banner-tags">
+                <span>🎂 Birthdays</span>
+                <span>💼 Corporate Gifting</span>
+                <span>🎉 Festive Hampers</span>
+                <span>👶 Baby Showers</span>
+              </div>
+              <button className="btn hamper-banner-btn" onClick={() => go("gift-hampers")}>
+                Let&apos;s Create Something Special →
+              </button>
+            </div>
+          </div>
+        </section>
+
         <section className="block" style={{ paddingTop: 0 }}>
           <div className="container">
             <div className="features">
