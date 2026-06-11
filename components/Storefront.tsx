@@ -779,6 +779,18 @@ export default function Storefront({
                 ))}
               </div>
               <div className="products-grid">
+                {/* Customise Your Cake — always first */}
+                <article className="ccard cust-tile" onClick={() => setCustOpen(true)}>
+                  <div className="ph cust-ph"><span className="cust-q">?</span></div>
+                  <div className="body">
+                    <h3>Customise Your Cake</h3>
+                    <p>Don&apos;t see what you want? Design your own cake from scratch — any category, any flavour.</p>
+                    <span className="go">
+                      Start customising{" "}
+                      <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><path d="M5 12h14M13 6l6 6-6 6" /></svg>
+                    </span>
+                  </div>
+                </article>
                 {filtered.length ? (
                   filtered.map((p) => <ProductCard key={p.id} p={p} />)
                 ) : (
