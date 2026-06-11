@@ -548,7 +548,7 @@ export default function Storefront({
         </section>
 
         {/* EVERYTHING YOU NEED */}
-        <section className="block eyn-section">
+        <section className="block eyn-section" style={{ padding: "2.5rem 0 1.5rem" }}>
           <div className="container">
             <div className="center" style={{ marginBottom: "2rem" }}>
               <h2 className="sec-title">Everything You Need for a <em>Perfect Cake</em></h2>
@@ -601,7 +601,7 @@ export default function Storefront({
         </section>
 
         {/* GOOGLE REVIEWS MARQUEE */}
-        <section className="block reviews-section">
+        <section className="block reviews-section" style={{ padding: "1.5rem 0 2rem" }}>
           <div className="container">
             <div className="center" style={{ marginBottom: "1.8rem" }}>
               <span className="section-eyebrow eyebrow-c">Real Customers · Google Reviews</span>
