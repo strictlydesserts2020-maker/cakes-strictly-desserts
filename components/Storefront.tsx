@@ -509,7 +509,7 @@ export default function Storefront({
         </section>
 
         {/* HOW TO ORDER */}
-        <section className="block hto-section">
+        <section className="block hto-section" style={{ padding: "1.8rem 0 1.5rem" }}>
           <div className="container">
             <div className="center" style={{ marginBottom: "2.8rem" }}>
               <span className="section-eyebrow eyebrow-c">Simple &amp; Easy</span>
