@@ -497,8 +497,7 @@ export default function Storefront({
         <section className="block" style={{ paddingTop: 0 }}>
           <div className="container">
             <div className="center" style={{ marginBottom: "2rem" }}>
-              <span className="section-eyebrow eyebrow-c">Freshly baked</span>
-              <h2 className="sec-title">Our <em>Signature</em> Bakes</h2>
+              <h2 className="sec-title">Best Seller <em>Designs</em></h2>
             </div>
             <div className="products-grid">
               {featured.map((p) => <ProductCard key={p.id} p={p} />)}
