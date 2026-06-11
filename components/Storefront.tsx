@@ -600,6 +600,46 @@ export default function Storefront({
           </div>
         </section>
 
+        {/* GOOGLE REVIEWS MARQUEE */}
+        <section className="block reviews-section">
+          <div className="container">
+            <div className="center" style={{ marginBottom: "1.8rem" }}>
+              <span className="section-eyebrow eyebrow-c">Real Customers · Google Reviews</span>
+              <h2 className="sec-title">What Our <em>Customers</em> Say</h2>
+            </div>
+          </div>
+          <div className="marquee-wrap">
+            <div className="marquee-track">
+              {/* 8 reviews × 2 for seamless loop */}
+              {[
+                { name: "Umar Mohammed", review: "Thank you so much for the beautiful, custom cake! The design was exquisite and matched our theme perfectly. Everyone was in awe and it made our celebration so memorable. We will definitely be back like forever. 🥳🎂😍" },
+                { name: "Swathi Raju", review: "I ordered a vintage butterscotch cake and it was absolutely amazing. The buttercream was luscious, very tasty, and truly indulgent. The three-tiered vintage design was stunning. One of the best dessert experiences I've had so far!" },
+                { name: "Bernadette Sheeba", review: "We ordered a customized mini three tiered 1kg cake and the customisation exceeded our expectations!! The cake was yum 😋 as usual 😍❤️ Thank you for the timely delivery 🙌✨" },
+                { name: "Grace Nungsihring", review: "Heartfelt thanks for the beautiful cake for Shiloh's 1st birthday. Everything was just perfect! It was definitely worth the 18 kilometres we drove — no regrets at all! 😍" },
+                { name: "Natesh Nandhini", review: "Birthday cake order — got 100% accurate ordered design and the taste was so good. Absolutely loved it!" },
+                { name: "Amirthavarshini S.", review: "I ordered 3 bento cakes — vanilla with strawberry, chunky Nutella, vanilla with blueberry. Absolutely delicious! Light on stomach, balanced flavours and we loved every bite of it!" },
+                { name: "Janet Vincent", review: "Thank you for the two tasty bento cakes. I gave a Pinterest reference in a short time, they delivered on time and it was exactly as I imagined. Definitely ordering more from you!" },
+                { name: "Saranya Saran", review: "I ordered Opera cake from Strictly Desserts — it was awesome 😍. Tried their ice cream too, especially Salted Caramel and Rose Milk — top notch! Highly recommended for any occasion. Keep up the great work! 😍" },
+              ].concat([
+                { name: "Umar Mohammed", review: "Thank you so much for the beautiful, custom cake! The design was exquisite and matched our theme perfectly. Everyone was in awe and it made our celebration so memorable. We will definitely be back like forever. 🥳🎂😍" },
+                { name: "Swathi Raju", review: "I ordered a vintage butterscotch cake and it was absolutely amazing. The buttercream was luscious, very tasty, and truly indulgent. The three-tiered vintage design was stunning. One of the best dessert experiences I've had so far!" },
+                { name: "Bernadette Sheeba", review: "We ordered a customized mini three tiered 1kg cake and the customisation exceeded our expectations!! The cake was yum 😋 as usual 😍❤️ Thank you for the timely delivery 🙌✨" },
+                { name: "Grace Nungsihring", review: "Heartfelt thanks for the beautiful cake for Shiloh's 1st birthday. Everything was just perfect! It was definitely worth the 18 kilometres we drove — no regrets at all! 😍" },
+                { name: "Natesh Nandhini", review: "Birthday cake order — got 100% accurate ordered design and the taste was so good. Absolutely loved it!" },
+                { name: "Amirthavarshini S.", review: "I ordered 3 bento cakes — vanilla with strawberry, chunky Nutella, vanilla with blueberry. Absolutely delicious! Light on stomach, balanced flavours and we loved every bite of it!" },
+                { name: "Janet Vincent", review: "Thank you for the two tasty bento cakes. I gave a Pinterest reference in a short time, they delivered on time and it was exactly as I imagined. Definitely ordering more from you!" },
+                { name: "Saranya Saran", review: "I ordered Opera cake from Strictly Desserts — it was awesome 😍. Tried their ice cream too, especially Salted Caramel and Rose Milk — top notch! Highly recommended for any occasion. Keep up the great work! 😍" },
+              ]).map((r, i) => (
+                <div className="rev-card" key={i}>
+                  <div className="rev-stars">★★★★★</div>
+                  <p className="rev-text">&ldquo;{r.review}&rdquo;</p>
+                  <div className="rev-name">— {r.name}</div>
+                </div>
+              ))}
+            </div>
+          </div>
+        </section>
+
         <section className="block" style={{ paddingTop: 0 }}>
           <div className="container">
             <div className="features">
@@ -607,16 +647,6 @@ export default function Storefront({
               <div className="feature"><div className="ic"><img src="https://images.unsplash.com/photo-1563729784474-d77dbb933a9e?auto=format&fit=crop&w=80&h=80&q=60" alt="Eggless" style={{width:"48px",height:"48px",objectFit:"cover",borderRadius:"50%"}} /></div><h4>Eggless Options</h4><p>Most of our cakes come in delicious eggless variants.</p></div>
               <div className="feature"><div className="ic"><img src="https://images.unsplash.com/photo-1542826438-bd32f43d626f?auto=format&fit=crop&w=80&h=80&q=60" alt="Custom" style={{width:"48px",height:"48px",objectFit:"cover",borderRadius:"50%"}} /></div><h4>Custom Designs</h4><p>Share your idea and we&apos;ll craft a cake that&apos;s uniquely yours.</p></div>
               <div className="feature"><div className="ic"><img src="https://images.unsplash.com/photo-1464349095431-e9a21285b5f3?auto=format&fit=crop&w=80&h=80&q=60" alt="Delivery" style={{width:"48px",height:"48px",objectFit:"cover",borderRadius:"50%"}} /></div><h4>On-time Delivery</h4><p>Same-day &amp; scheduled delivery across Chennai.</p></div>
-            </div>
-          </div>
-        </section>
-
-        <section className="block" style={{ paddingTop: 0 }}>
-          <div className="container">
-            <div className="testi">
-              <div className="stars">★★★★★</div>
-              <div className="q">&quot;The most beautiful and delicious cake we&apos;ve ever had. It made our daughter&apos;s first birthday absolutely magical.&quot;</div>
-              <div className="who">— Priya R., Anna Nagar</div>
             </div>
           </div>
         </section>

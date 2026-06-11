@@ -645,6 +645,21 @@ textarea.field{resize:vertical;min-height:110px}
 body.noscroll{overflow:hidden !important;position:fixed;width:100%;height:100%}
 
 
+
+/* ── Google Reviews Marquee ────────────────────────────── */
+.reviews-section{overflow:hidden;padding-bottom:2rem}
+.marquee-wrap{overflow:hidden;width:100%;cursor:default}
+.marquee-track{display:flex;gap:1rem;width:max-content;animation:marquee-scroll 40s linear infinite}
+.marquee-wrap:hover .marquee-track{animation-play-state:paused}
+@keyframes marquee-scroll{
+  0%{transform:translateX(0)}
+  100%{transform:translateX(-50%)}
+}
+.rev-card{flex-shrink:0;width:300px;background:var(--surface);border:1px solid var(--border);border-radius:var(--r);padding:1.3rem 1.2rem;display:flex;flex-direction:column;gap:.6rem}
+.rev-stars{color:#E8A020;font-size:1rem;letter-spacing:.1em}
+.rev-text{font-size:.82rem;color:var(--cream2);line-height:1.6;flex:1}
+.rev-name{font-size:.78rem;font-weight:700;color:var(--gold);margin-top:.2rem}
+
 /* ── Everything You Need ───────────────────────────────── */
 .eyn-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:1rem}
 .eyn-card{display:flex;align-items:flex-start;gap:.9rem;background:var(--surface);border:1px solid var(--border);border-radius:var(--r);padding:1.2rem 1.1rem;transition:box-shadow .3s,transform .3s}
