@@ -463,9 +463,6 @@ export default function Storefront({
                 {cartCount}
               </span>
             </button>
-            <a href="#" className="btn-nav-login" onClick={(e) => { e.preventDefault(); go("contact"); }}>
-              Order Now
-            </a>
             <button className="nav-toggle" onClick={() => setNavOpen((o) => !o)} aria-label="Menu">
               <span />
             </button>
