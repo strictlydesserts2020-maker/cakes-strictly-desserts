@@ -1173,7 +1173,7 @@ function DeliveryProcessPage({ go, waLink }: { go: (v: any) => void; waLink: (ms
         <div className="container">
           <div className="dp-hero-content">
             <span className="section-eyebrow eyebrow-c">Delivery Process</span>
-            <h1 className="dp-hero-title">Cake Delivery<br />&amp; Pickup</h1>
+            <h1 className="dp-hero-title">Cake Delivery & Pickup</h1>
             <p className="dp-hero-tag">Every Cake Deserves a Safe Journey</p>
             <p className="dp-hero-desc">Our cakes are handcrafted with so much love and care. We follow a safe delivery process to ensure they reach you in the best possible condition.</p>
           </div>

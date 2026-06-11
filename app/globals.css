@@ -769,7 +769,7 @@ body.noscroll{overflow:hidden !important;position:fixed;width:100%;height:100%}
 
 /* Hero */
 .dp-hero { background: linear-gradient(135deg, var(--cream2) 0%, var(--gold2) 100%); padding: 2rem 0 1.5rem; color: #fff; text-align: center; }
-.dp-hero-title { font-size: clamp(1.6rem, 4vw, 2.4rem); font-weight: 800; margin: .25rem 0; color: #fff; line-height: 1.15; }
+.dp-hero-title { white-space: nowrap; font-size: clamp(1.6rem, 4vw, 2.4rem); font-weight: 800; margin: .25rem 0; color: #fff; line-height: 1.15; }
 .dp-hero-tag { font-size: .95rem; opacity: .85; margin: .3rem 0; font-style: italic; }
 .dp-hero-desc { max-width: 500px; margin: .5rem auto 0; opacity: .9; font-size: .88rem; line-height: 1.6; }
 
