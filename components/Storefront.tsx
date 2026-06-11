@@ -508,6 +508,48 @@ export default function Storefront({
           </div>
         </section>
 
+        {/* HOW TO ORDER */}
+        <section className="block hto-section">
+          <div className="container">
+            <div className="center" style={{ marginBottom: "2.8rem" }}>
+              <span className="section-eyebrow eyebrow-c">Simple &amp; Easy</span>
+              <h2 className="sec-title">How to <em>Order</em></h2>
+            </div>
+            <div className="hto-steps">
+              <div className="hto-step">
+                <div className="hto-icon">🎂</div>
+                <div className="hto-num">1</div>
+                <h4>Choose Design</h4>
+                <p>Browse our collection or share your own inspiration photo</p>
+              </div>
+              <div className="hto-arrow">→</div>
+              <div className="hto-step">
+                <div className="hto-icon">📋</div>
+                <div className="hto-num">2</div>
+                <h4>Share Details</h4>
+                <p>Tell us the flavour, size, message &amp; your delivery date</p>
+              </div>
+              <div className="hto-arrow">→</div>
+              <div className="hto-step">
+                <div className="hto-icon">✅</div>
+                <div className="hto-num">3</div>
+                <h4>Confirm Order</h4>
+                <p>We confirm availability &amp; begin crafting your cake</p>
+              </div>
+              <div className="hto-arrow">→</div>
+              <div className="hto-step">
+                <div className="hto-icon">🚚</div>
+                <div className="hto-num">4</div>
+                <h4>Delivered Fresh</h4>
+                <p>Freshly made &amp; delivered right to your door across Chennai</p>
+              </div>
+            </div>
+            <div className="center" style={{ marginTop: "2.5rem" }}>
+              <button className="btn btn-gold btn-lg" onClick={() => go("contact")}>Order on WhatsApp</button>
+            </div>
+          </div>
+        </section>
+
         <section className="block" style={{ paddingTop: 0 }}>
           <div className="container">
             <div className="features">

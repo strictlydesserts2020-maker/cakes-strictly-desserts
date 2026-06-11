@@ -643,6 +643,22 @@ textarea.field{resize:vertical;min-height:110px}
 
 /* Prevent background scroll when modal/QV open (iOS fix) */
 body.noscroll{overflow:hidden !important;position:fixed;width:100%;height:100%}
+
+/* ── How to Order ──────────────────────────────────────── */
+.hto-section{background:var(--surface);border-radius:var(--r-lg);margin:0 0 2rem}
+.hto-steps{display:flex;align-items:flex-start;justify-content:center;gap:0;flex-wrap:wrap}
+.hto-step{flex:1;min-width:160px;max-width:200px;display:flex;flex-direction:column;align-items:center;text-align:center;padding:1.5rem 1rem;position:relative}
+.hto-icon{font-size:2.4rem;margin-bottom:.6rem;line-height:1}
+.hto-num{width:28px;height:28px;border-radius:50%;background:var(--gold);color:#fff;font-size:.75rem;font-weight:700;display:flex;align-items:center;justify-content:center;margin-bottom:.75rem}
+.hto-step h4{font-size:.95rem;font-weight:700;color:var(--cream);margin-bottom:.4rem}
+.hto-step p{font-size:.82rem;color:var(--cream2);line-height:1.55}
+.hto-arrow{font-size:1.4rem;color:var(--gold);padding-top:3.2rem;flex-shrink:0;opacity:.7}
+@media(max-width:640px){
+  .hto-steps{flex-direction:column;align-items:center;gap:.5rem}
+  .hto-arrow{transform:rotate(90deg);padding:0}
+  .hto-step{max-width:280px;width:100%}
+}
+
 /* ============================================================
    ADMIN DASHBOARD  (reuses the storefront design tokens)
    ============================================================ */
