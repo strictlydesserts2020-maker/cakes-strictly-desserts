@@ -447,7 +447,7 @@ export default function Storefront({
                   className={view === v ? "active" : ""}
                   onClick={(e) => { e.preventDefault(); go(v); }}
                 >
-                  {v[0].toUpperCase() + v.slice(1)}
+                  {NAV_LABELS[v] ?? v[0].toUpperCase() + v.slice(1)}
                 </a>
               </li>
             ))}
