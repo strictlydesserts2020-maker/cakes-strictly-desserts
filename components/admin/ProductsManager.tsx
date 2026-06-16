@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useState, useCallback } from "react";
+import { useEffect, useState, useCallback, useMemo } from "react";
 import { createClient } from "@/lib/supabase/client";
 import type { Category, Product } from "@/lib/types";
 import { inr, safeImg } from "@/lib/utils";
@@ -35,7 +35,7 @@ const EMPTY = {
 type Form = typeof EMPTY;
 
 export default function ProductsManager() {
-  const supabase = createClient();
+  const supabase = useMemo(() => createClient(), []);
   const [products, setProducts] = useState<Product[]>([]);
   const [categories, setCategories] = useState<Category[]>([]);
   const [loading, setLoading] = useState(true);
@@ -259,7 +259,7 @@ export default function ProductsManager() {
             <tbody>
               {products.map((p) => (
                 <tr key={p.id}>
-                  <td><img src={safeImg(p.image_url) || undefined} alt="" /></td>
+                  <td><img src={safeImg(p.image_url) || undefined} alt="" loading="lazy" style={{width:48,height:48,objectFit:"cover"}} /></td>
                   <td>
                     {p.name}
                     {p.badge ? <span className="badge" style={{ marginLeft: 6 }}>{p.badge}</span> : null}
