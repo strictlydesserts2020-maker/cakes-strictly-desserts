@@ -169,9 +169,18 @@ export default function ProductsManager() {
         </div>
       )}
 
-      {/* EDIT / CREATE PANEL */}
+      {/* EDIT / CREATE PANEL — modal overlay */}
       {editing && (
-        <div className="admin-card">
+        <div
+          onClick={(e) => { if (e.target === e.currentTarget) setEditing(null); }}
+          style={{
+            position: "fixed", inset: 0, zIndex: 9999,
+            background: "rgba(0,0,0,0.65)",
+            display: "flex", alignItems: "flex-start", justifyContent: "center",
+            overflowY: "auto", padding: "2rem 1rem",
+          }}
+        >
+        <div className="admin-card" style={{ width: "100%", maxWidth: 700, margin: "auto" }}>
           <h2 style={{ fontFamily: "var(--font-d)", fontSize: "1.3rem", color: "var(--cream)", marginBottom: ".4rem" }}>
             {editing.id ? "Edit product" : "New product"}
           </h2>
@@ -242,6 +251,7 @@ export default function ProductsManager() {
             <button className="btn btn-ghost" onClick={() => setEditing(null)} disabled={busy}>Cancel</button>
             <button className="btn btn-gold" onClick={save} disabled={busy}>{busy ? "Saving…" : "Save"}</button>
           </div>
+        </div>
         </div>
       )}
 
