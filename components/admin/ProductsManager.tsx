@@ -7,6 +7,16 @@ import { inr, safeImg } from "@/lib/utils";
 
 const OCCASIONS = ["Birthday", "Anniversary", "Wedding", "Baby Shower"];
 const BADGES = ["", "Bestseller", "New", "Premium", "Eggless"];
+const FLAVORS = [
+  "",
+  "Chocolate Truffle Cake",
+  "Biscoff Chocolate",
+  "Biscoff Vanilla",
+  "Chunky Nutella",
+  "White Chocolate & Blueberry",
+  "Strawberry Cheesecake",
+  "Vanilla & Butterscotch",
+];
 
 const EMPTY = {
   id: "",
@@ -18,7 +28,7 @@ const EMPTY = {
   occasions: [] as string[],
   is_eggless: false,
   badge: "",
-  rating: 4.8,
+  flavor: "",
   is_active: true,
   sort_order: 0,
 };
@@ -70,7 +80,7 @@ export default function ProductsManager() {
       occasions: p.occasions ?? [],
       is_eggless: p.is_eggless,
       badge: p.badge ?? "",
-      rating: Number(p.rating),
+      flavor: p.flavor ?? "",
       is_active: p.is_active,
       sort_order: p.sort_order,
     });
@@ -109,7 +119,7 @@ export default function ProductsManager() {
       occasions: editing.occasions,
       is_eggless: editing.is_eggless,
       badge: editing.badge,
-      rating: Number(editing.rating) || 4.8,
+      flavor: editing.flavor,
       is_active: editing.is_active,
       sort_order: Number(editing.sort_order) || 0,
     };
@@ -189,8 +199,10 @@ export default function ProductsManager() {
               </select>
             </div>
             <div>
-              <label className="alabel">Rating</label>
-              <input className="field" type="number" min={0} max={5} step={0.1} value={editing.rating} onChange={(e) => setEditing({ ...editing, rating: Number(e.target.value) })} />
+              <label className="alabel">Flavor</label>
+              <select className="field" value={editing.flavor} onChange={(e) => setEditing({ ...editing, flavor: e.target.value })}>
+                {FLAVORS.map((f) => <option key={f} value={f}>{f || "— Choose flavor —"}</option>)}
+              </select>
             </div>
             <div>
               <label className="alabel">Sort order</label>
