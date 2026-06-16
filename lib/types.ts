@@ -23,6 +23,7 @@ export interface Product {
   is_eggless: boolean;
   badge: string | null;
   rating: number;
+  flavor: string | null;
   is_active: boolean;
   sort_order: number;
   created_at?: string;
