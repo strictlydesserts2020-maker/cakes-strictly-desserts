@@ -78,7 +78,6 @@ body {
     radial-gradient(1100px 700px at 88% -8%, var(--pink-soft) 0%, transparent 55%),
     radial-gradient(900px 620px at -8% 6%, var(--lav-soft) 0%, transparent 50%),
     radial-gradient(900px 700px at 50% 118%, var(--peach-soft) 0%, transparent 55%);
-  background-attachment: fixed;
   line-height: 1.6;
   font-weight: 400;
   letter-spacing: 0.005em;
@@ -163,8 +162,8 @@ button { font-family: inherit; }
   height: var(--nav-h);
   display: flex; align-items: center;
   background: rgba(251,244,239,0.72);
-  backdrop-filter: blur(18px) saturate(1.4);
-  -webkit-backdrop-filter: blur(18px) saturate(1.4);
+  backdrop-filter: blur(8px);
+  -webkit-backdrop-filter: blur(8px);
   border-bottom: 1px solid transparent;
   transition: background .4s, box-shadow .4s, border-color .4s, height .4s;
 }
