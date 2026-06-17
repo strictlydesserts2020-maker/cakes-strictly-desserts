@@ -11,6 +11,7 @@ import {
   validPhone,
   validEmailOrPhone,
   FLAVOURS,
+  BENTO_FLAVOURS,
   waLink,
 } from "@/lib/utils";
 import { LOGO_DATA_URI } from "@/lib/brand";
@@ -86,7 +87,7 @@ export default function Storefront({
 
   // quick view
   const [qv, setQv] = useState<{ open: boolean; product: Product | null; wIdx: number; flav: string; qty: number }>(
-    { open: false, product: null, wIdx: 0, flav: FLAVOURS[0], qty: 1 }
+    { open: false, product: null, wIdx: 0, flav: (p.category_name === "Bento Cakes" ? BENTO_FLAVOURS : FLAVOURS)[0], qty: 1 }
   );
 
   // customise modal
@@ -1006,7 +1007,7 @@ export default function Storefront({
               </>}
               <label style={{ fontSize: ".7rem", fontWeight: 600, letterSpacing: ".06em", textTransform: "uppercase", color: "var(--gold2)", marginTop: ".8rem", display: "block" }}>Flavour</label>
               <div className="opt-row">
-                {FLAVOURS.map((f) => (
+                {(qv.product.category_name === "Bento Cakes" ? BENTO_FLAVOURS : FLAVOURS).map((f) => (
                   <span key={f} className={"opt" + (f === qv.flav ? " sel" : "")} role="button" tabIndex={0} onClick={() => setQv((s) => ({ ...s, flav: f }))}>{f}</span>
                 ))}
               </div>
