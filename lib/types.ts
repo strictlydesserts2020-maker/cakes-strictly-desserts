@@ -34,6 +34,7 @@ export interface Product {
 
 export interface Enquiry {
   id: string;
+  order_number?: number;
   name: string;
   contact: string | null;
   message: string;
