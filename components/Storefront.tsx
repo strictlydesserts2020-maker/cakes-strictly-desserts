@@ -31,7 +31,6 @@ interface Filters {
   search: string;
   category: string;
   occasion: string;
-  egg: boolean;
   min: number | null;
   max: number | null;
   sort: string;
@@ -79,15 +78,15 @@ export default function Storefront({
     search: "",
     category: "",
     occasion: "",
-    egg: false,
+   
     min: null,
     max: null,
     sort: "pop",
   });
 
   // quick view
-  const [qv, setQv] = useState<{ open: boolean; product: Product | null; wIdx: number; flav: string; egg: boolean; qty: number }>(
-    { open: false, product: null, wIdx: 0, flav: FLAVOURS[0], egg: false, qty: 1 }
+  const [qv, setQv] = useState<{ open: boolean; product: Product | null; wIdx: number; flav: string; qty: number }>(
+    { open: false, product: null, wIdx: 0, flav: FLAVOURS[0], qty: 1 }
   );
 
   // customise modal
@@ -152,7 +151,7 @@ export default function Storefront({
   const addToCart = useCallback((it: CartItem) => {
     setCart((items) => {
       const idx = items.findIndex(
-        (i) => i.pid === it.pid && i.weight === it.weight && i.flavour === it.flavour && i.egg === it.egg
+        (i) => i.pid === it.pid && i.weight === it.weight && i.flavour === it.flavour
       );
       if (idx >= 0) {
         const copy = items.slice();
@@ -297,7 +296,7 @@ export default function Storefront({
 
   // ---------- quick view ----------
   const openQuick = useCallback((p: Product) => {
-    setQv({ open: true, product: p, wIdx: 0, flav: FLAVOURS[0], egg: p.is_eggless, qty: 1 });
+    setQv({ open: true, product: p, wIdx: 0, flav: FLAVOURS[0] qty: 1 });
   }, []);
 
   const qvUnit = useMemo(() => {
@@ -315,7 +314,6 @@ export default function Storefront({
       img: safeImg(qv.product.image_url),
       weight: wo[qv.wIdx].l,
       flavour: qv.flav,
-      egg: qv.egg,
       unit: qvUnit,
       qty: qv.qty,
     });
@@ -336,14 +334,12 @@ export default function Storefront({
         return false;
       if (F.category && cat.toLowerCase() !== F.category.toLowerCase()) return false;
       if (F.occasion && (p.occasions || []).indexOf(F.occasion) < 0) return false;
-      if (F.egg && !p.is_eggless) return false;
       if (F.min != null && Number(p.price) < F.min) return false;
       if (F.max != null && Number(p.price) > F.max) return false;
       return true;
     });
     if (F.sort === "price_asc") list = list.slice().sort((a, b) => Number(a.price) - Number(b.price));
     else if (F.sort === "price_desc") list = list.slice().sort((a, b) => Number(b.price) - Number(a.price));
-    else if (F.sort === "rating") list = list.slice().sort((a, b) => Number(b.rating) - Number(a.rating));
     return list;
   }, [products, F]);
 
@@ -353,7 +349,6 @@ export default function Storefront({
     const tags: [string, string][] = [];
     if (F.category) tags.push(["Category: " + F.category, "category"]);
     if (F.occasion) tags.push(["Occasion: " + F.occasion, "occasion"]);
-    if (F.egg) tags.push(["Eggless", "egg"]);
     if (F.search) tags.push(['Search: "' + F.search + '"', "search"]);
     if (F.min != null || F.max != null)
       tags.push(["Price " + inr(F.min || 0) + "\u2013" + (F.max != null ? inr(F.max) : "\u221E"), "price"]);
@@ -367,14 +362,13 @@ export default function Storefront({
         n.min = null;
         n.max = null;
       } else if (k === "search") n.search = "";
-      else if (k === "egg") n.egg = false;
       else if (k === "category") n.category = "";
       else if (k === "occasion") n.occasion = "";
       return n;
     });
 
   const goCategory = (name: string) => {
-    setF({ search: "", category: name, occasion: "", egg: false, min: null, max: null, sort: F.sort });
+    setF({ search: "", category: name, occasion: "", min: null, max: null, sort: F.sort });
     go("shop");
   };
 
@@ -396,17 +390,11 @@ export default function Storefront({
             {p.badge}
           </span>
         ) : null}
-        {p.is_eggless ? (
-          <span className="badge badge-veg" style={{ position: "absolute", top: 12, right: 12, zIndex: 3 }}>
-            Eggless
-          </span>
-        ) : null}
+        
       </div>
       <div className="product-info">
         <h3 className="product-name">{p.name}</h3>
-        <div className="p-rating" aria-label={`Rated ${Number(p.rating).toFixed(1)} out of 5`}>
-          {stars(Number(p.rating))} <span style={{ color: "var(--muted)" }}>{Number(p.rating).toFixed(1)}</span>
-        </div>
+        
         <div style={{ display: "flex", alignItems: "center", justifyContent: "space-between", marginTop: "auto", paddingTop: ".5rem" }}>
           <span className="product-price">{inr(Number(p.price))}</span>
           <button className="btn btn-gold add-btn" onClick={() => openQuick(p)} aria-label={`Add ${p.name} to cart`}>
@@ -582,8 +570,7 @@ export default function Storefront({
               <div className="eyn-card">
                 <span className="eyn-emoji">🥚</span>
                 <div>
-                  <h4>Eggless Options Available</h4>
-                  <p>Most of our cakes come in delicious eggless variants — same taste, no compromise.</p>
+                  
                 </div>
               </div>
               <div className="eyn-card">
@@ -676,7 +663,6 @@ export default function Storefront({
                   <option value="pop">Most Popular</option>
                   <option value="price_asc">Price: Low to High</option>
                   <option value="price_desc">Price: High to Low</option>
-                  <option value="rating">Highest Rated</option>
                 </select>
               </div>
               <div className="active-filters">
@@ -868,7 +854,7 @@ export default function Storefront({
                 </div>
                 <div>
                   <div className="nm">{it.name}</div>
-                  <div className="mt">{it.weight} · {it.flavour}{it.egg ? " · Eggless" : ""}</div>
+                  <div className="mt">{it.weight} · {it.flavour}</div>
                   <div className="qc">
                     <button onClick={() => changeQty(i, -1)} aria-label="Decrease quantity">−</button>
                     <span>{it.qty}</span>
@@ -1008,8 +994,7 @@ export default function Storefront({
               <img src={safeImg(qv.product.image_url)} alt={qv.product.name} decoding="async" onError={onImgError} />
             </div>
             <div className="qv-body">
-              <div className="p-rating">{stars(Number(qv.product.rating))} <span style={{ color: "var(--muted)" }}>{Number(qv.product.rating).toFixed(1)}</span></div>
-              <h3>{qv.product.name}</h3>
+                  <h3>{qv.product.name}</h3>
               <div className="p-meta">{qv.product.category_name} · made to order</div>
               <div className="qv-price">{inr(qvUnit)}</div>
               <label style={{ fontSize: ".7rem", fontWeight: 600, letterSpacing: ".06em", textTransform: "uppercase", color: "var(--gold2)" }}>Size</label>
@@ -1030,9 +1015,7 @@ export default function Storefront({
                   <span>{qv.qty}</span>
                   <button onClick={() => setQv((s) => ({ ...s, qty: s.qty + 1 }))}>+</button>
                 </div>
-                <label style={{ display: "flex", alignItems: "center", gap: ".4rem", fontSize: ".8rem", color: "var(--cream2)", cursor: "pointer" }}>
-                  <input type="checkbox" checked={qv.egg} onChange={(e) => setQv((s) => ({ ...s, egg: e.target.checked }))} /> Eggless
-                </label>
+                
               </div>
               <button className="btn btn-gold" style={{ width: "100%", marginTop: "1.3rem" }} onClick={qvAdd}>Add to Cart</button>
             </div>
