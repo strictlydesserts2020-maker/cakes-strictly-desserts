@@ -77,6 +77,16 @@ export const FLAVOURS = [
   "Strawberry",
 ];
 
+export const BENTO_FLAVOURS = [
+  "Chocolate Truffle Cake",
+  "Biscoff Chocolate",
+  "Biscoff Vanilla",
+  "Chunky Nutella",
+  "White Chocolate & Blueberry",
+  "Strawberry Cheesecake",
+  "Vanilla & Butterscotch",
+];
+
 export const WHATSAPP_NUMBER =
   process.env.NEXT_PUBLIC_WHATSAPP_NUMBER || "917299047979";
 
