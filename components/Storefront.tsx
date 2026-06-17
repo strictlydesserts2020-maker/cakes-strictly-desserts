@@ -996,12 +996,14 @@ export default function Storefront({
                   <h3>{qv.product.name}</h3>
               <div className="p-meta">{qv.product.category_name} · made to order</div>
               <div className="qv-price">{inr(qvUnit)}</div>
+              {qv.product.category_name !== "Bento Cakes" && <>
               <label style={{ fontSize: ".7rem", fontWeight: 600, letterSpacing: ".06em", textTransform: "uppercase", color: "var(--gold2)" }}>Size</label>
               <div className="opt-row">
                 {weightOpts(qv.product.category_name).map((w, i) => (
                   <span key={w.l} className={"opt" + (i === qv.wIdx ? " sel" : "")} role="button" tabIndex={0} onClick={() => setQv((s) => ({ ...s, wIdx: i }))}>{w.l}</span>
                 ))}
               </div>
+              </>}
               <label style={{ fontSize: ".7rem", fontWeight: 600, letterSpacing: ".06em", textTransform: "uppercase", color: "var(--gold2)", marginTop: ".8rem", display: "block" }}>Flavour</label>
               <div className="opt-row">
                 {FLAVOURS.map((f) => (
