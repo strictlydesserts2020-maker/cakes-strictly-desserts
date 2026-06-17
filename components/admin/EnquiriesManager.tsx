@@ -1,12 +1,12 @@
 "use client";
 
-import { useEffect, useState, useCallback, Fragment } from "react";
+import { useEffect, useState, useCallback, Fragment, useMemo } from "react";
 import { createClient } from "@/lib/supabase/client";
 import type { Enquiry } from "@/lib/types";
 
-/* ── Excel export via SheetJS (loaded from CDN at runtime to keep bundle small) ── */
+/* ── Excel export via SheetJS ── */
 async function exportToExcel(rows: Enquiry[]) {
-  // @ts-ignore — dynamic CDN load
+  // @ts-ignore
   if (!window.XLSX) {
     await new Promise<void>((res, rej) => {
       const s = document.createElement("script");
@@ -18,8 +18,8 @@ async function exportToExcel(rows: Enquiry[]) {
   }
   // @ts-ignore
   const XLSX = window.XLSX;
-
   const data = rows.map((e) => ({
+    "Order #": e.order_number ? "SD-" + String(e.order_number).padStart(4, "0") : "",
     "Order Date": new Date(e.created_at).toLocaleDateString("en-IN"),
     "Order Time": new Date(e.created_at).toLocaleTimeString("en-IN"),
     "Name": e.name,
@@ -32,27 +32,31 @@ async function exportToExcel(rows: Enquiry[]) {
     "Delivery Date": e.delivery_date ?? "",
     "Message": e.message,
   }));
-
   const ws = XLSX.utils.json_to_sheet(data);
   const wb = XLSX.utils.book_new();
   XLSX.utils.book_append_sheet(wb, ws, "Enquiries");
-
-  // Column widths
   ws["!cols"] = [
-    { wch: 14 }, { wch: 12 }, { wch: 18 }, { wch: 16 }, { wch: 12 }, { wch: 14 },
-    { wch: 10 }, { wch: 14 }, { wch: 18 }, { wch: 16 }, { wch: 60 },
+    { wch: 10 }, { wch: 14 }, { wch: 12 }, { wch: 18 }, { wch: 16 },
+    { wch: 12 }, { wch: 14 }, { wch: 10 }, { wch: 14 }, { wch: 18 }, { wch: 16 }, { wch: 60 },
   ];
-
   XLSX.writeFile(wb, `strictly-desserts-enquiries-${new Date().toISOString().slice(0, 10)}.xlsx`);
 }
 
+const fmtOrderNo = (n?: number) =>
+  n != null ? "SD-" + String(n).padStart(4, "0") : "—";
+
+const statusStyle = (s: string) => {
+  if (s === "accepted") return { background: "#e8f8ee", color: "#1a7a3c", border: "1px solid #25d366" };
+  if (s === "rejected") return { background: "#fdecea", color: "#c0392b", border: "1px solid #e74c3c" };
+  return { background: "#fff8ea", color: "#8a6a00", border: "1px solid #f5c842" };
+};
+
 export default function EnquiriesManager() {
-  const supabase = createClient();
+  const supabase = useMemo(() => createClient(), []);
   const [rows, setRows] = useState<Enquiry[]>([]);
   const [loading, setLoading] = useState(true);
   const [open, setOpen] = useState<string | null>(null);
   const [saving, setSaving] = useState<string | null>(null);
-  // Inline editable fields keyed by enquiry id
   const [edits, setEdits] = useState<Record<string, { payment: string; date: string }>>({});
 
   const load = useCallback(async () => {
@@ -63,7 +67,6 @@ export default function EnquiriesManager() {
       .order("created_at", { ascending: false });
     const fetched = (data ?? []) as Enquiry[];
     setRows(fetched);
-    // Seed edit state
     const init: Record<string, { payment: string; date: string }> = {};
     fetched.forEach((e) => {
       init[e.id] = {
@@ -89,10 +92,8 @@ export default function EnquiriesManager() {
   }, [load]);
 
   const toggleHandled = (e: Enquiry) => patch(e.id, { is_handled: !e.is_handled });
-
   const setOrderStatus = (e: Enquiry, status: "accepted" | "rejected" | "pending") =>
     patch(e.id, { order_status: status });
-
   const savePaymentAndDate = (e: Enquiry) => {
     const ed = edits[e.id];
     if (!ed) return;
@@ -101,17 +102,10 @@ export default function EnquiriesManager() {
       delivery_date: ed.date === "" ? null : ed.date,
     });
   };
-
   const remove = async (e: Enquiry) => {
     if (!confirm("Delete this enquiry?")) return;
     await supabase.from("enquiries").delete().eq("id", e.id);
     load();
-  };
-
-  const statusColor = (s: string) => {
-    if (s === "accepted") return { background: "#e8f8ee", color: "#1a7a3c", border: "1px solid #25d366" };
-    if (s === "rejected") return { background: "#fdecea", color: "#c0392b", border: "1px solid #e74c3c" };
-    return { background: "#fff8ea", color: "#8a6a00", border: "1px solid #f5c842" };
   };
 
   return (
@@ -131,23 +125,31 @@ export default function EnquiriesManager() {
         </button>
       </div>
 
-      <div className="admin-card" style={{ overflowX: "auto" }}>
+      <div className="admin-card" style={{ overflowX: "visible" }}>
         {loading ? (
           <p style={{ color: "var(--muted)" }}>Loading…</p>
         ) : (
-          <table className="atable">
+          <table className="atable" style={{ width: "100%", tableLayout: "fixed" }}>
+            <colgroup>
+              <col style={{ width: "72px" }} />
+              <col style={{ width: "90px" }} />
+              <col style={{ width: "140px" }} />
+              <col style={{ width: "68px" }} />
+              <col style={{ width: "68px" }} />
+              <col style={{ width: "160px" }} />
+              <col style={{ width: "210px" }} />
+              <col style={{ width: "160px" }} />
+            </colgroup>
             <thead>
               <tr>
-                <th>Order Date</th>
-                <th>Order Time</th>
-                <th>Name</th>
-                <th>Contact</th>
+                <th>#</th>
+                <th>Date & Time</th>
+                <th>Customer</th>
                 <th>Type</th>
                 <th>Status</th>
-                <th>Actions</th>
                 <th>Order Status</th>
-                <th>Final Payment</th>
-                <th>Delivery Date</th>
+                <th>Payment & Delivery</th>
+                <th>Actions</th>
               </tr>
             </thead>
             <tbody>
@@ -155,103 +157,99 @@ export default function EnquiriesManager() {
                 const ed = edits[e.id] ?? { payment: "", date: "" };
                 const isSaving = saving === e.id;
                 const os = e.order_status ?? "pending";
+                const dt = new Date(e.created_at);
                 return (
                   <Fragment key={e.id}>
                     <tr>
-                      {/* When */}
-                      <td style={{ color: "var(--muted)", whiteSpace: "nowrap", fontSize: ".82rem" }}>
-                        {new Date(e.created_at).toLocaleDateString("en-IN")}
+                      {/* Order # */}
+                      <td style={{ fontSize: ".78rem", fontWeight: 600, color: "var(--gold)", whiteSpace: "nowrap" }}>
+                        {fmtOrderNo(e.order_number)}
                       </td>
-                      <td style={{ color: "var(--muted)", whiteSpace: "nowrap", fontSize: ".82rem" }}>
-                        {new Date(e.created_at).toLocaleTimeString("en-IN")}
+
+                      {/* Date & Time */}
+                      <td style={{ fontSize: ".78rem", color: "var(--muted)", lineHeight: 1.4 }}>
+                        <div>{dt.toLocaleDateString("en-IN")}</div>
+                        <div style={{ fontSize: ".72rem" }}>{dt.toLocaleTimeString("en-IN", { hour: "2-digit", minute: "2-digit" })}</div>
                       </td>
-                      {/* Name */}
-                      <td>{e.name}</td>
-                      {/* Contact */}
-                      <td>{e.contact || "—"}</td>
+
+                      {/* Customer */}
+                      <td style={{ overflow: "hidden" }}>
+                        <div style={{ fontWeight: 600, fontSize: ".85rem", overflow: "hidden", textOverflow: "ellipsis", whiteSpace: "nowrap" }}>{e.name}</div>
+                        <div style={{ fontSize: ".75rem", color: "var(--muted)", overflow: "hidden", textOverflow: "ellipsis", whiteSpace: "nowrap" }}>{e.contact || "—"}</div>
+                      </td>
+
                       {/* Type */}
-                      <td><span className="badge">{e.source}</span></td>
-                      {/* Handled status */}
+                      <td><span className="badge" style={{ fontSize: ".72rem" }}>{e.source}</span></td>
+
+                      {/* Status */}
                       <td>
-                        <span className={"pill " + (e.is_handled ? "on" : "off")}>
-                          {e.is_handled ? "Handled" : "New"}
+                        <span className={"pill " + (e.is_handled ? "on" : "off")} style={{ fontSize: ".75rem" }}>
+                          {e.is_handled ? "Done" : "New"}
                         </span>
                       </td>
-                      {/* Existing actions */}
+
+                      {/* Order Status */}
                       <td>
-                        <div className="row-actions">
-                          <button className="mini-btn" onClick={() => setOpen(open === e.id ? null : e.id)}>
-                            {open === e.id ? "Hide" : "View"}
-                          </button>
-                          <button className="mini-btn" onClick={() => toggleHandled(e)}>
-                            {e.is_handled ? "Mark new" : "Mark handled"}
-                          </button>
-                          <button className="mini-btn" style={{ color: "var(--rose)" }} onClick={() => remove(e)}>
-                            Delete
-                          </button>
+                        <span className="pill" style={{ ...statusStyle(os), display: "inline-block", fontSize: ".72rem", padding: "2px 8px", borderRadius: "20px", marginBottom: "4px" }}>
+                          {os.charAt(0).toUpperCase() + os.slice(1)}
+                        </span>
+                        <div style={{ display: "flex", gap: "3px" }}>
+                          <button
+                            className="mini-btn"
+                            style={os === "accepted" ? { background: "#e8f8ee", color: "#1a7a3c", fontSize: ".72rem", padding: "2px 6px" } : { fontSize: ".72rem", padding: "2px 6px" }}
+                            disabled={isSaving || os === "accepted"}
+                            onClick={() => setOrderStatus(e, "accepted")}
+                          >✓</button>
+                          <button
+                            className="mini-btn"
+                            style={os === "rejected" ? { background: "#fdecea", color: "#c0392b", fontSize: ".72rem", padding: "2px 6px" } : { fontSize: ".72rem", padding: "2px 6px" }}
+                            disabled={isSaving || os === "rejected"}
+                            onClick={() => setOrderStatus(e, "rejected")}
+                          >✗</button>
                         </div>
                       </td>
 
-                      {/* ── NEW: Order Status ── */}
-                      <td style={{ minWidth: "140px" }}>
+                      {/* Payment & Delivery */}
+                      <td>
                         <div style={{ display: "flex", flexDirection: "column", gap: "4px" }}>
-                          <span className="pill" style={{ ...statusColor(os), display: "inline-block", marginBottom: "4px", fontSize: ".78rem", padding: "2px 10px", borderRadius: "20px" }}>
-                            {os.charAt(0).toUpperCase() + os.slice(1)}
-                          </span>
-                          <div style={{ display: "flex", gap: "4px" }}>
+                          <div style={{ display: "flex", alignItems: "center", gap: "3px" }}>
+                            <span style={{ color: "var(--muted)", fontSize: ".8rem" }}>₹</span>
+                            <input
+                              type="number" min="0" step="0.01" placeholder="0"
+                              value={ed.payment}
+                              onChange={(ev) => setEdits((prev) => ({ ...prev, [e.id]: { ...ed, payment: ev.target.value } }))}
+                              style={{ width: "75px", padding: "3px 5px", border: "1px solid #ddd", borderRadius: "5px", fontSize: ".8rem" }}
+                            />
+                          </div>
+                          <div style={{ display: "flex", alignItems: "center", gap: "3px" }}>
+                            <input
+                              type="date"
+                              value={ed.date}
+                              onChange={(ev) => setEdits((prev) => ({ ...prev, [e.id]: { ...ed, date: ev.target.value } }))}
+                              style={{ padding: "3px 5px", border: "1px solid #ddd", borderRadius: "5px", fontSize: ".75rem", width: "120px" }}
+                            />
                             <button
                               className="mini-btn"
-                              style={os === "accepted" ? { background: "#e8f8ee", color: "#1a7a3c" } : {}}
-                              disabled={isSaving || os === "accepted"}
-                              onClick={() => setOrderStatus(e, "accepted")}
-                            >✓ Accept</button>
-                            <button
-                              className="mini-btn"
-                              style={os === "rejected" ? { background: "#fdecea", color: "#c0392b" } : {}}
-                              disabled={isSaving || os === "rejected"}
-                              onClick={() => setOrderStatus(e, "rejected")}
-                            >✗ Reject</button>
+                              style={{ background: "var(--gold)", color: "#fff", border: "none", fontSize: ".72rem", padding: "3px 6px" }}
+                              disabled={isSaving}
+                              onClick={() => savePaymentAndDate(e)}
+                            >{isSaving ? "…" : "💾"}</button>
                           </div>
                         </div>
                       </td>
 
-                      {/* ── NEW: Final Payment ── */}
-                      <td style={{ minWidth: "140px" }}>
-                        <div style={{ display: "flex", gap: "4px", alignItems: "center" }}>
-                          <span style={{ color: "var(--muted)", fontSize: ".85rem" }}>₹</span>
-                          <input
-                            type="number"
-                            min="0"
-                            step="0.01"
-                            placeholder="0.00"
-                            value={ed.payment}
-                            onChange={(ev) => setEdits((prev) => ({ ...prev, [e.id]: { ...ed, payment: ev.target.value } }))}
-                            style={{
-                              width: "90px", padding: "4px 6px", border: "1px solid #ddd",
-                              borderRadius: "6px", fontSize: ".85rem",
-                            }}
-                          />
-                        </div>
-                      </td>
-
-                      {/* ── NEW: Delivery Date ── */}
-                      <td style={{ minWidth: "180px" }}>
-                        <div style={{ display: "flex", gap: "4px", alignItems: "center", flexWrap: "wrap" }}>
-                          <input
-                            type="date"
-                            value={ed.date}
-                            onChange={(ev) => setEdits((prev) => ({ ...prev, [e.id]: { ...ed, date: ev.target.value } }))}
-                            style={{
-                              padding: "4px 6px", border: "1px solid #ddd",
-                              borderRadius: "6px", fontSize: ".82rem",
-                            }}
-                          />
-                          <button
-                            className="mini-btn"
-                            style={{ background: "var(--gold)", color: "#fff", border: "none" }}
-                            disabled={isSaving}
-                            onClick={() => savePaymentAndDate(e)}
-                          >{isSaving ? "…" : "Save"}</button>
+                      {/* Actions */}
+                      <td>
+                        <div style={{ display: "flex", flexDirection: "column", gap: "3px" }}>
+                          <button className="mini-btn" style={{ fontSize: ".75rem" }} onClick={() => setOpen(open === e.id ? null : e.id)}>
+                            {open === e.id ? "Hide msg" : "View msg"}
+                          </button>
+                          <button className="mini-btn" style={{ fontSize: ".75rem" }} onClick={() => toggleHandled(e)}>
+                            {e.is_handled ? "Mark new" : "Mark done"}
+                          </button>
+                          <button className="mini-btn" style={{ color: "var(--rose)", fontSize: ".75rem" }} onClick={() => remove(e)}>
+                            Delete
+                          </button>
                         </div>
                       </td>
                     </tr>
@@ -259,7 +257,7 @@ export default function EnquiriesManager() {
                     {/* Expandable message row */}
                     {open === e.id && (
                       <tr>
-                        <td colSpan={10} style={{ background: "var(--surface2)" }}>
+                        <td colSpan={8} style={{ background: "var(--surface2)" }}>
                           {e.category && <p style={{ marginBottom: ".4rem" }}><b>Category:</b> {e.category}</p>}
                           <pre style={{
                             whiteSpace: "pre-wrap", fontFamily: "var(--font-b)",
@@ -272,7 +270,7 @@ export default function EnquiriesManager() {
                 );
               })}
               {!rows.length && (
-                <tr><td colSpan={9} style={{ color: "var(--muted)" }}>No enquiries yet.</td></tr>
+                <tr><td colSpan={8} style={{ color: "var(--muted)" }}>No enquiries yet.</td></tr>
               )}
             </tbody>
           </table>
