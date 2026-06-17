@@ -43,6 +43,7 @@ export default function ProductsManager() {
   const [busy, setBusy] = useState(false);
   const [uploading, setUploading] = useState(false);
   const [msg, setMsg] = useState("");
+  const [filterCat, setFilterCat] = useState("");
 
   const load = useCallback(async () => {
     setLoading(true);
@@ -153,6 +154,8 @@ export default function ProductsManager() {
       f ? { ...f, occasions: f.occasions.includes(o) ? f.occasions.filter((x) => x !== o) : [...f.occasions, o] } : f
     );
 
+  const visibleProducts = filterCat ? products.filter(p => p.category_id === filterCat) : products;
+
   return (
     <>
       <div style={{ display: "flex", alignItems: "center", justifyContent: "space-between", flexWrap: "wrap", gap: "1rem" }}>
@@ -160,7 +163,18 @@ export default function ProductsManager() {
           <h1 className="admin-h1">Products</h1>
           <p className="admin-sub">Add, edit, enable/disable and price your cakes.</p>
         </div>
-        <button className="btn btn-gold" onClick={startNew}>+ Add Product</button>
+        <div style={{ display: "flex", alignItems: "center", gap: ".8rem" }}>
+          <select
+            className="field"
+            style={{ minWidth: 180, marginBottom: 0 }}
+            value={filterCat}
+            onChange={(e) => setFilterCat(e.target.value)}
+          >
+            <option value="">All Categories</option>
+            {categories.map((c) => <option key={c.id} value={c.id}>{c.name}</option>)}
+          </select>
+          <button className="btn btn-gold" onClick={startNew}>+ Add Product</button>
+        </div>
       </div>
 
       {msg && (
@@ -267,7 +281,7 @@ export default function ProductsManager() {
               </tr>
             </thead>
             <tbody>
-              {products.map((p) => (
+              {visibleProducts.map((p) => (
                 <tr key={p.id}>
                   <td><img src={safeImg(p.image_url) || undefined} alt="" loading="lazy" style={{width:48,height:48,objectFit:"cover"}} /></td>
                   <td>
@@ -286,7 +300,7 @@ export default function ProductsManager() {
                   </td>
                 </tr>
               ))}
-              {!products.length && (
+              {!visibleProducts.length && (
                 <tr><td colSpan={6} style={{ color: "var(--muted)" }}>No products yet. Click “Add Product”.</td></tr>
               )}
             </tbody>
