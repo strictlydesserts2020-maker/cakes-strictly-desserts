@@ -255,7 +255,6 @@ export default function Storefront({
           it.weight +
           ", " +
           it.flavour +
-          (it.egg ? ", Eggless" : "") +
           ") \u2014 " +
           inr(it.unit * it.qty)
       )
@@ -296,7 +295,7 @@ export default function Storefront({
 
   // ---------- quick view ----------
   const openQuick = useCallback((p: Product) => {
-    setQv({ open: true, product: p, wIdx: 0, flav: FLAVOURS[0] qty: 1 });
+    setQv({ open: true, product: p, wIdx: 0, flav: FLAVOURS[0], qty: 1 });
   }, []);
 
   const qvUnit = useMemo(() => {
