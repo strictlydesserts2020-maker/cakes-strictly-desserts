@@ -87,7 +87,7 @@ export default function Storefront({
 
   // quick view
   const [qv, setQv] = useState<{ open: boolean; product: Product | null; wIdx: number; flav: string; qty: number }>(
-    { open: false, product: null, wIdx: 0, flav: (p.category_name === "Bento Cakes" ? BENTO_FLAVOURS : FLAVOURS)[0], qty: 1 }
+    { open: false, product: null, wIdx: 0, flav: FLAVOURS[0], qty: 1 }
   );
 
   // customise modal
@@ -296,7 +296,7 @@ export default function Storefront({
 
   // ---------- quick view ----------
   const openQuick = useCallback((p: Product) => {
-    setQv({ open: true, product: p, wIdx: 0, flav: FLAVOURS[0], qty: 1 });
+    setQv({ open: true, product: p, wIdx: 0, flav: (p.category_name === "Bento Cakes" ? BENTO_FLAVOURS : FLAVOURS)[0], qty: 1 });
   }, []);
 
   const qvUnit = useMemo(() => {
