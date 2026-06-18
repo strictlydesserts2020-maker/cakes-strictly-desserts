@@ -873,31 +873,13 @@ export default function Storefront({
         {cart.length > 0 && (
           <div className="drawer-foot">
             <div className="sum-row"><span>Subtotal</span><span>{inr(subtotal)}</span></div>
-            {fulfil.mode === "pickup" ? (
+            {fulfil.mode === "pickup" && (
               <div className="sum-row free"><span>Pickup</span><span>FREE</span></div>
-            ) : del === 0 ? (
-              <div className="sum-row free"><span>Delivery</span><span>FREE</span></div>
-            ) : (
-              <div className="sum-row"><span>Delivery</span><span>{inr(del)}</span></div>
             )}
             {coupon.disc > 0 && (
               <div className="sum-row free"><span>Coupon ({coupon.code})</span><span>−{inr(coupon.disc)}</span></div>
             )}
-            {fulfil.mode !== "pickup" && subtotal > 0 && subtotal < FREE && (
-              <div className="dbar">
-                Add {inr(FREE - subtotal)} more for free delivery
-                <div className="trk"><div className="fil" style={{ width: Math.min((subtotal / FREE) * 100, 100) + "%" }} /></div>
-              </div>
-            )}
-            <div className="coupon-row">
-              <input className="coupon-input" placeholder="Promo code" value={couponInput} onChange={(e) => setCouponInput(e.target.value)} />
-              <button className="coupon-btn" onClick={applyCoupon}>Apply</button>
-            </div>
-            {couponMsg.text && (
-              <div style={{ fontSize: ".74rem", minHeight: "1em", marginBottom: ".3rem", color: couponMsg.ok ? "#5aa46e" : "var(--rose)" }}>
-                {couponMsg.text}
-              </div>
-            )}
+
             <div className="fulfil-row" style={{ margin: ".5rem 0 .2rem" }}>
               <label style={{ display: "block", fontFamily: "var(--font-b)", fontSize: ".74rem", fontWeight: 600, color: "var(--cream2)", marginBottom: ".4rem" }}>
                 How would you like your order?
