@@ -9,8 +9,7 @@ const nextConfig = {
       { protocol: "https", hostname: "*.supabase.co" },
     ],
   },
-};
-module.exports  async headers() {
+  async headers() {
     return [
       {
         source: '/_next/static/:path*',
@@ -22,4 +21,5 @@ module.exports  async headers() {
       },
     ];
   },
- = nextConfig;
+};
+module.exports = nextConfig;
