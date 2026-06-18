@@ -237,7 +237,7 @@ button { font-family: inherit; }
   background-image: linear-gradient(135deg, var(--pink-soft), var(--lav-soft) 55%, var(--peach-soft));
 }
 .ph img {
-  width: 100%; height: 100%; object-fit: contain; position: relative; z-index: 1;
+  width: 100%; height: 100%; object-fit: cover; position: relative; z-index: 1;
   transition: transform .9s cubic-bezier(.2,.8,.2,1), opacity .5s;
 }
 .ph img[data-broken] { display: none; }
@@ -276,7 +276,7 @@ button { font-family: inherit; }
 .product-card .product-img img,
 .product-card .card-img img,
 .product-card [class*="img"] img {
-  width: 100%; height: 100%; object-fit: contain;
+  width: 100%; height: 100%; object-fit: cover;
   transition: transform .9s cubic-bezier(.2,.8,.2,1);
 }
 .product-card:hover .product-img img,
