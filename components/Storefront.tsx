@@ -1009,7 +1009,7 @@ export default function Storefront({
               <label style={{ fontSize: ".7rem", fontWeight: 600, letterSpacing: ".06em", textTransform: "uppercase", color: "var(--gold2)", marginTop: ".8rem", display: "block" }}>Flavour</label>
               <div className="opt-row">
                 {(qv.product.category_name === "Bento Cakes" ? BENTO_FLAVOURS : FLAVOURS).map((f) => (
-                  <span key={f} className={"opt" + (f === qv.flav ? " sel" : "")} role="button" tabIndex={0} onClick={() => setQv((s) => ({ ...s, flav: f }))}>{f}</span>
+                  <span key={f} className={"opt" + (f === qv.flav ? " sel" : "")} role="button" tabIndex={0} onClick={() => setQv((s) => ({ ...s, flav: f }))}>{f}{["Chocolate Truffle Cake","Biscoff Chocolate","Biscoff Vanilla","Chunky Nutella"].includes(f)?" +₹50":""}</span>
                 ))}
               </div>
               <div style={{ display: "flex", alignItems: "center", gap: "1rem", marginTop: "1rem" }}>
