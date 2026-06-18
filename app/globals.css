@@ -426,6 +426,8 @@ input, select, textarea { font-family: var(--font-b); }
   }
   .nav-links.open { transform: none; opacity: 1; pointer-events: auto; }
   .nav-links a { width: 100%; padding: 0.7rem 0; font-size: 0.95rem; }
+  .nav-links a::after { display: none; }
+  .nav-links a.active { border-left: 2px solid var(--gold); padding-left: 0.6rem; }
 }
  
 .view{display:none}.view.active{display:block}
