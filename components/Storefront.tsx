@@ -303,7 +303,7 @@ export default function Storefront({
     if (!qv.product) return 0;
     const wo = weightOpts(qv.product.category_name);
     const base = Math.round(Number(qv.product.price) * wo[qv.wIdx].m);
-    return base + (qv.flav === "Chunky Nutella" ? 50 : 0);
+    return base + (["Chocolate Truffle Cake","Biscoff Chocolate","Biscoff Vanilla","Chunky Nutella"].includes(qv.flav) ? 50 : 0);
   }, [qv]);
 
   const qvAdd = useCallback(() => {
