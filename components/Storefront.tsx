@@ -1536,6 +1536,13 @@ function CustomiseModal({
     []
   );
 
+  useEffect(() => {
+    if (cat === "Bento Cakes") {
+      setWeight("300 gms");
+      setFlav(BENTO_FLAVOURS[0]);
+    }
+  }, [cat]);
+
   const onFile = (e: React.ChangeEvent<HTMLInputElement>) => {
     const f = e.target.files && e.target.files[0];
     const clear = (m: string) => { setRefName(""); setPrev(""); e.target.value = ""; if (m) setErr(m); };
@@ -1656,13 +1663,13 @@ function CustomiseModal({
         </select>
 
         <div className="cust-grid">
-          <div><label>Weight</label><input className="field" value={weight} onChange={(e) => setWeight(e.target.value)} placeholder="e.g. 1 kg" /></div>
+          <div><label>Weight</label><input className="field" value={weight} onChange={(e) => { if (cat !== "Bento Cakes") setWeight(e.target.value); }} placeholder="e.g. 1 kg" readOnly={cat === "Bento Cakes"} style={cat === "Bento Cakes" ? { background: "var(--surface2)", cursor: "not-allowed", opacity: 0.75 } : {}} /></div>
           <div><label>Servings</label><input className="field" value={serv} onChange={(e) => setServ(e.target.value)} placeholder="e.g. 8–10 people" /></div>
         </div>
 
         <label>Cake flavour <span style={{ textTransform: "none", fontWeight: 400, color: "var(--muted)" }}>(choose from catalogue)</span></label>
         <select className="field" value={flav} onChange={(e) => setFlav(e.target.value)}>
-          {FLAVOURS.map((f) => <option key={f} value={f}>{f}</option>)}
+          {(cat === "Bento Cakes" ? BENTO_FLAVOURS : FLAVOURS).map((f) => <option key={f} value={f}>{f}</option>)}
         </select>
 
         <label>Theme / Reference</label>
@@ -1673,12 +1680,12 @@ function CustomiseModal({
         {prev && <img className="preview-img" src={prev} style={{ display: "block", width: "100%", objectFit: "cover", marginTop: ".6rem" }} alt="reference preview" />}
         <p className="cust-hint">Pick your reference image — it will be uploaded automatically and the link included in your WhatsApp message. 📎</p>
 
-        <label>Tier</label>
+        {cat !== "Bento Cakes" && (<><label>Tier</label>
         <div className="cust-pills">
           {["Single tier", "Mini tier"].map((t) => (
             <span key={t} className={"cpill" + (tier === t ? " sel" : "")} role="button" tabIndex={0} onClick={() => setTier(t)}>{t}</span>
           ))}
-        </div>
+        </div></>)}
 
         <label>Specific design to recreate <span style={{ textTransform: "none", fontWeight: 400, color: "var(--muted)" }}>(optional)</span></label>
         <textarea className="field" style={{ minHeight: 70 }} value={design} onChange={(e) => setDesign(e.target.value)} placeholder="If you have any specific design to be recreated, please share the details here…" />
