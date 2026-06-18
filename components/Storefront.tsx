@@ -38,7 +38,7 @@ interface Filters {
 }
 
 const FREE = 2000;
-const DEL = 60;
+const DEL = 0;
 
 function onImgError(e: React.SyntheticEvent<HTMLImageElement>) {
   e.currentTarget.dataset.broken = "1";
