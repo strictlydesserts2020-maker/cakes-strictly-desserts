@@ -302,7 +302,8 @@ export default function Storefront({
   const qvUnit = useMemo(() => {
     if (!qv.product) return 0;
     const wo = weightOpts(qv.product.category_name);
-    return Math.round(Number(qv.product.price) * wo[qv.wIdx].m);
+    const base = Math.round(Number(qv.product.price) * wo[qv.wIdx].m);
+    return base + (qv.flav === "Chunky Nutella" ? 50 : 0);
   }, [qv]);
 
   const qvAdd = useCallback(() => {
