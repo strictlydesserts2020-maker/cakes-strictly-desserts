@@ -17,6 +17,10 @@ export function safeImg(u: string | null | undefined): string {
     /^data:image\/(png|jpe?g|webp|gif);/i.test(u) ||
     /^\//.test(u)
   ) {
+    if (u.includes('/storage/v1/object/public/')) {
+      u = u.replace('/storage/v1/object/public/', '/storage/v1/render/image/public/');
+      if (!u.includes('?')) u += '?width=800&quality=75&format=webp';
+    }
     return u;
   }
   return "";
