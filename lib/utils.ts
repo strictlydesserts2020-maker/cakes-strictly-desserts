@@ -19,7 +19,7 @@ export function safeImg(u: string | null | undefined): string {
   ) {
     if (u.includes('/storage/v1/object/public/')) {
       u = u.replace('/storage/v1/object/public/', '/storage/v1/render/image/public/');
-      if (!u.includes('?')) u += '?width=800&quality=75&format=webp';
+      if (!u.includes('?')) u += '?width=400&height=400&quality=75&format=webp&resize=cover';
     }
     return u;
   }
