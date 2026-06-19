@@ -930,10 +930,16 @@ export default function Storefront({
               )}
               {(fulfil.mode === "pickup" || fulfil.mode === "delivery") && (
                 <div style={{ display: "flex", gap: ".5rem" }}>
-                  <input type="date" value={fulfil.date} onChange={(e) => setFulfil((f) => ({ ...f, date: e.target.value }))}
-                    style={{ flex: 1, padding: ".55rem .7rem", background: "var(--bg)", border: "1px solid var(--border2)", borderRadius: "var(--r-sm)", fontFamily: "var(--font-b)", fontSize: ".82rem", color: "var(--cream)", outline: "none" }} />
-                  <input type="time" value={fulfil.time} onChange={(e) => setFulfil((f) => ({ ...f, time: e.target.value }))}
-                    style={{ flex: 1, padding: ".55rem .7rem", background: "var(--bg)", border: "1px solid var(--border2)", borderRadius: "var(--r-sm)", fontFamily: "var(--font-b)", fontSize: ".82rem", color: "var(--cream)", outline: "none" }} />
+                  <div style={{ flex: 1 }}>
+                    <div style={{ fontSize: ".72rem", fontFamily: "var(--font-b)", fontWeight: 600, color: "var(--cream2)", marginBottom: ".25rem" }}>📅 Date</div>
+                    <input type="date" value={fulfil.date} onChange={(e) => setFulfil((f) => ({ ...f, date: e.target.value }))}
+                      style={{ width: "100%", padding: ".55rem .7rem", background: "var(--bg)", border: "1px solid var(--border2)", borderRadius: "var(--r-sm)", fontFamily: "var(--font-b)", fontSize: "1rem", color: "var(--cream)", outline: "none", boxSizing: "border-box" }} />
+                  </div>
+                  <div style={{ flex: 1 }}>
+                    <div style={{ fontSize: ".72rem", fontFamily: "var(--font-b)", fontWeight: 600, color: "var(--cream2)", marginBottom: ".25rem" }}>🕐 Time</div>
+                    <input type="time" value={fulfil.time} onChange={(e) => setFulfil((f) => ({ ...f, time: e.target.value }))}
+                      style={{ width: "100%", padding: ".55rem .7rem", background: "var(--bg)", border: "1px solid var(--border2)", borderRadius: "var(--r-sm)", fontFamily: "var(--font-b)", fontSize: "1rem", color: "var(--cream)", outline: "none", boxSizing: "border-box" }} />
+                  </div>
                 </div>
               )}
             </div>
