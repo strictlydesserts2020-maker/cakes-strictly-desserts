@@ -92,7 +92,7 @@ export const BENTO_FLAVOURS = [
 ];
 
 export const WHATSAPP_NUMBER =
-  process.env.NEXT_PUBLIC_WHATSAPP_NUMBER || "917299047979";
+  process.env.NEXT_PUBLIC_WHATSAPP_NUMBER || "919003082979";
 
 export function waLink(text: string): string {
   return "https://wa.me/" + WHATSAPP_NUMBER + "?text=" + encodeURIComponent(text);
