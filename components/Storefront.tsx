@@ -1450,7 +1450,7 @@ function DeliveryProcessPage({ go, waLink }: { go: (v: any) => void; waLink: (ms
           <p>If you have concerns about transportation, venue distance, outdoor events or large celebration cakes, our team will help you choose the safest option.</p>
           <div className="dp-footer-cta-btns">
             <a className="btn btn-gold btn-lg" href={waLink("Hi! I need help choosing the safest delivery option.")} target="_blank" rel="noopener">💬 Get in Touch</a>
-            <a className="btn btn-ghost btn-lg" href="tel:+917299047979">📞 Call us at +91 72990 47979</a>
+            <a className="btn btn-ghost btn-lg" href="tel:+919003082979">📞 Call us at +91 72990 47979</a>
           </div>
         </div>
       </section>
@@ -1468,7 +1468,7 @@ function ContactSection({ notify }: { notify: (m: string) => void }) {
           <h4>Visit Us</h4>
           <p>D16, 8th Street, Second Avenue,<br />W Ext Rd, Annanagar East,<br />Chennai, Tamil Nadu 600102</p>
         </a>
-        <a className="ci-card" href="tel:+917299047979">
+        <a className="ci-card" href="tel:+919003082979">
           <div className="ci-icon">📞</div>
           <h4>Call / WhatsApp</h4>
           <p>+91 72990 47979</p>
