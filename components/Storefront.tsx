@@ -195,7 +195,7 @@ export default function Storefront({
   const del = fulfil.mode === "pickup" ? 0 : subtotal >= FREE ? 0 : DEL;
   const total = subtotal + del - coupon.disc;
 
-  const placeOrder = useCallback(() => {
+  const placeOrder = useCallback(async () => {
     if (!cart.length) {
       notify("Your cart is empty");
       return;
@@ -280,6 +280,22 @@ export default function Storefront({
     if (orderNote.trim()) {
       L.push("");
       L.push("Special instructions: " + orderNote.trim());
+    }
+    try {
+      await fetch("/api/enquiries", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          name: customerName.trim(),
+          contact: customerPhone.trim(),
+          message: L.join("\n"),
+          category: "cart",
+          source: "cart",
+          payload: { cart, fulfil, subtotal, del, coupon, total, orderNote },
+        }),
+      });
+    } catch {
+      /* non-blocking */
     }
     window.open(waLink(L.join("\n")), "_blank", "noopener");
     notify("Opening WhatsApp to confirm your order \uD83C\uDF82");
