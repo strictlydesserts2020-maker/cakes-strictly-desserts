@@ -318,7 +318,7 @@ export default function Storefront({
     if (!qv.product) return 0;
     const wo = weightOpts(qv.product.category_name);
     const base = Math.round(Number(qv.product.price) * wo[qv.wIdx].m);
-    return base + (["Chocolate Truffle Cake","Biscoff Chocolate","Biscoff Vanilla","Chunky Nutella"].includes(qv.flav) ? 50 : 0);
+    return base + (qv.product.category_name !== "Mini tiers" && ["Chocolate Truffle Cake","Biscoff Chocolate","Biscoff Vanilla","Chunky Nutella"].includes(qv.flav) ? 50 : 0);
   }, [qv]);
 
   const qvAdd = useCallback(() => {
@@ -1023,7 +1023,7 @@ export default function Storefront({
               <label style={{ fontSize: ".7rem", fontWeight: 600, letterSpacing: ".06em", textTransform: "uppercase", color: "var(--gold2)", marginTop: ".8rem", display: "block" }}>Flavour</label>
               <div className="opt-row">
                 {(qv.product.category_name === "Bento Cakes" ? BENTO_FLAVOURS : qv.product.category_name === "Mini tiers" ? MINI_TIERS_FLAVOURS : FLAVOURS).map((f) => (
-                  <span key={f} className={"opt" + (f === qv.flav ? " sel" : "")} role="button" tabIndex={0} onClick={() => setQv((s) => ({ ...s, flav: f }))}>{f}{["Chocolate Truffle Cake","Biscoff Chocolate","Biscoff Vanilla","Chunky Nutella"].includes(f)?" +₹50":""}</span>
+                  <span key={f} className={"opt" + (f === qv.flav ? " sel" : "")} role="button" tabIndex={0} onClick={() => setQv((s) => ({ ...s, flav: f }))}>{f}{qv.product.category_name !== "Mini tiers" && ["Chocolate Truffle Cake","Biscoff Chocolate","Biscoff Vanilla","Chunky Nutella"].includes(f)?" +₹50":""}</span>
                 ))}
               </div>
               <div style={{ display: "flex", alignItems: "center", gap: "1rem", marginTop: "1rem" }}>
