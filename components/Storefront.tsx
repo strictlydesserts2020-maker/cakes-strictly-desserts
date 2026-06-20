@@ -436,7 +436,7 @@ export default function Storefront({
       <nav className={"navbar" + (scrolled ? " scrolled" : "")}>
         <div className="nav-inner">
           <a href="#" className="nav-logo" onClick={(e) => { e.preventDefault(); go("home"); }}>
-            <img src={LOGO_DATA_URI} alt="logo" />
+            <img src={LOGO_DATA_URI} alt="Strictly Desserts" />
             <span className="lw">
               Strictly Desserts
             </span>
@@ -717,7 +717,7 @@ export default function Storefront({
         <div className="container">
           <div className="page-head">
             <span className="section-eyebrow eyebrow-c">Find your perfect cake</span>
-            <h1>Shop by <em>Category</em></h1>
+            <h2>Shop by <em>Category</em></h2>
             <p>Pick a category to explore every cake in that collection.</p>
           </div>
           <div className="cat-grid">
@@ -757,7 +757,7 @@ export default function Storefront({
         <div className="container">
           <div className="page-head">
             <span className="section-eyebrow eyebrow-c">Our Story</span>
-            <h1>About <em>Strictly Desserts</em></h1>
+            <h2>About <em>Strictly Desserts</em></h2>
           </div>
           <div className="about-grid" style={{ paddingBottom: "5rem" }}>
             <div className="ph">
@@ -789,7 +789,7 @@ export default function Storefront({
         <div className="container">
           <div className="page-head">
             <span className="section-eyebrow eyebrow-c">Get in touch</span>
-            <h1>Order or <em>Enquire</em></h1>
+            <h2>Order or <em>Enquire</em></h2>
           </div>
           <ContactSection notify={notify} />
         </div>
@@ -800,7 +800,7 @@ export default function Storefront({
         <div className="container">
           <div className="footer-grid">
             <div className="footer-brand">
-              <img src={LOGO_DATA_URI} alt="logo" />
+              <img src={LOGO_DATA_URI} alt="Strictly Desserts" />
               <p>Handcrafted cakes &amp; luxury desserts, baked fresh in Chennai and styled to make every celebration unforgettable.</p>
             </div>
             <div className="footer-col">
@@ -857,7 +857,7 @@ export default function Storefront({
         <div className="drawer-body">
           {!cart.length ? (
             <div className="empty-cart-d">
-              <img src={LOGO_DATA_URI} alt="" width={72} height={72} />
+              <img src={LOGO_DATA_URI} alt="Strictly Desserts" width={72} height={72} />
               <p>Your cart is empty.</p>
             </div>
           ) : (
@@ -1141,7 +1141,7 @@ function GiftHampersPage({ go, waLink }: { go: (v: any) => void; waLink: (msg: s
           <div className="gh-hero-inner">
             <div className="gh-hero-text">
               <span className="section-eyebrow">Thoughtful Gifts, Made With Love</span>
-              <h1 className="gh-hero-title">Thoughtful Gifts<br />For Every Occasion</h1>
+              <h2 className="gh-hero-title">Thoughtful Gifts<br />For Every Occasion</h2>
               <p className="gh-hero-desc">
                 From baby naming ceremonies to festive celebrations, corporate events and everything in between —
                 we create hampers and return gifts that leave a lasting impression.
@@ -1352,7 +1352,7 @@ function DeliveryProcessPage({ go, waLink }: { go: (v: any) => void; waLink: (ms
         <div className="container">
           <div className="dp-hero-content">
             <span className="section-eyebrow eyebrow-c">Delivery Process</span>
-            <h1 className="dp-hero-title">Cake Delivery & Pickup</h1>
+            <h2 className="dp-hero-title">Cake Delivery & Pickup</h2>
             <p className="dp-hero-tag">Every Cake Deserves a Safe Journey</p>
             <p className="dp-hero-desc">Our cakes are handcrafted with so much love and care. We follow a safe delivery process to ensure they reach you in the best possible condition.</p>
           </div>
