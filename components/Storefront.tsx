@@ -37,7 +37,6 @@ interface Filters {
   sort: string;
 }
 
-const FREE = 2000;
 const DEL = 0;
 
 function onImgError(e: React.SyntheticEvent<HTMLImageElement>) {
@@ -183,16 +182,13 @@ export default function Storefront({
     if (v === "SWEET10") {
       setCoupon({ code: v, disc: Math.round(subtotal * 0.1) });
       setCouponMsg({ text: "\u2713 10% off applied!", ok: true });
-    } else if (v === "FREESHIP") {
-      setCoupon({ code: v, disc: 0 });
-      setCouponMsg({ text: "\u2713 Free shipping applied!", ok: true });
     } else {
       setCoupon({ code: "", disc: 0 });
       setCouponMsg({ text: "\u2717 Invalid code (try SWEET10)", ok: false });
     }
   }, [couponInput, subtotal]);
 
-  const del = fulfil.mode === "pickup" ? 0 : subtotal >= FREE ? 0 : DEL;
+  const del = fulfil.mode === "pickup" ? 0 : DEL;
   const total = subtotal + del - coupon.disc;
 
   const placeOrder = useCallback(async () => {
