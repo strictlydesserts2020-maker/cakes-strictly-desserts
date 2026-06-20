@@ -1567,7 +1567,9 @@ function CustomiseModal({
   const [prev, setPrev] = useState("");
   const [err, setErr] = useState("");
 
-  const today = useMemo(
+  const [refFiles, setRefFiles] = useState<{name: string, dataUri: string}[]>([]);
+
+    const today = useMemo(
     () => new Date(Date.now() - new Date().getTimezoneOffset() * 60000).toISOString().split("T")[0],
     []
   );
@@ -1580,24 +1582,30 @@ function CustomiseModal({
   }, [cat]);
 
   const onFile = (e: React.ChangeEvent<HTMLInputElement>) => {
-    const f = e.target.files && e.target.files[0];
-    const clear = (m: string) => { setRefName(""); setPrev(""); e.target.value = ""; if (m) setErr(m); };
-    if (!f) return clear("");
-    const FILE_TYPES = ["image/jpeg", "image/png", "image/webp"];
-    if (FILE_TYPES.indexOf(f.type) === -1 || !/\.(jpe?g|png|webp)$/i.test(f.name)) return clear("Please upload a JPG, PNG or WEBP image.");
-    if (f.size > 5 * 1024 * 1024) return clear("Image is too large — maximum size is 5 MB.");
+    const fileList = Array.from(e.target.files ?? []).slice(0, 4);
+    const clear = (msg: string) => { setErr(msg); setRefName(""); setPrev(""); setRefFiles([]); };
+    e.target.value = "";
+    if (!fileList.length) return clear("");
+    const invalid = fileList.find(f => !["image/jpeg","image/png","image/webp"].includes(f.type));
+    if (invalid) return clear("Please upload JPEG, PNG, or WebP images only.");
+    const tooBig = fileList.find(f => f.size > 5 * 1024 * 1024);
+    if (tooBig) return clear("Each image must be under 5 MB.");
     setErr("");
-    setRefName(f.name);
-    const rd = new FileReader();
-    rd.onload = (ev) => {
-      const src = String(ev.target?.result || "");
-      if (!/^data:image\/(png|jpe?g|webp);/i.test(src)) return clear("That file is not a valid image.");
-      setPrev(src);
-    };
-    rd.onerror = () => clear("Could not read that file.");
-    rd.readAsDataURL(f);
-  };
-
+    setRefName(fileList.length === 1 ? fileList[0].name : `${fileList.length} images selected`);
+    const results: {name: string, dataUri: string}[] = [];
+    let loaded = 0;
+    fileList.forEach((f) => {
+      const rd = new FileReader();
+      rd.onload = (ev) => {
+        const src = ev.target?.result as string;
+        if (!/^data:image\/(png|jpe?g|webp);/i.test(src)) return clear("That file is not a valid image.");
+        results.push({ name: f.name, dataUri: src });
+        loaded++;
+        if (loaded === fileList.length) { setPrev(results[0].dataUri); setRefFiles(results); }
+      };
+      rd.readAsDataURL(f);
+    });
+  }
   const send = useCallback(async () => {
     const nm = cleanText(name, 60);
     if (!nm || !ph1) { setErr("Please add at least your name and primary contact number."); return; }
@@ -1647,22 +1655,14 @@ function CustomiseModal({
     L.push("ORDER TRANSIT: " + transit);
     // Upload reference image to Supabase Storage and get a shareable URL
     let imageUrl = "";
-    if (prev && refName) {
+    const imageUrls: string[] = [];
+    for (const rf of refFiles) {
       try {
-        const upRes = await fetch("/api/upload-image", {
-          method: "POST",
-          headers: { "Content-Type": "application/json" },
-          body: JSON.stringify({ dataUri: prev, fileName: refName }),
-        });
-        const upData = await upRes.json();
-        if (upData.url) imageUrl = upData.url;
-      } catch { /* non-blocking */ }
+        const upRes = await fetch("/api/upload-image", { method: "POST", headers: { "Content-Type": "application/json" }, body: JSON.stringify({ dataUri: rf.dataUri, fileName: rf.name }) });
+        if (upRes.ok) { const d = await upRes.json(); imageUrls.push(d.url || rf.name); } else { imageUrls.push(rf.name); }
+      } catch { imageUrls.push(rf.name); }
     }
-
-    if (refName) {
-      L.push("");
-      L.push("📎 Reference image: " + (imageUrl || refName));
-    }
+    if (imageUrls.length) { L.push(""); imageUrls.forEach((u, idx) => L.push(`📎 Reference image ${idx + 1}: ${u}`)); }
 
     try {
       await fetch("/api/enquiries", {
@@ -1684,7 +1684,7 @@ function CustomiseModal({
     window.open(waLink(L.join("\n")), "_blank", "noopener");
     onClose();
     notify("Opening WhatsApp to send your customisation 🎂");
-  }, [name, ph1, ph2, cat, weight, serv, flav, theme, tier, design, cakeMsg, date, time, transit, addr, refName, prev, onClose, notify]);
+  }, [name, ph1, ph2, cat, weight, serv, flav, theme, tier, design, cakeMsg, date, time, transit, addr, refName, refFiles, prev, onClose, notify]);
 
   return (
     <div className="modal-overlay show" onTouchMove={(e) => e.preventDefault()} onClick={(e) => { if (e.target === e.currentTarget) onClose(); }}>
@@ -1712,9 +1712,9 @@ function CustomiseModal({
         <input className="field" value={theme} onChange={(e) => setTheme(e.target.value)} placeholder="e.g. Pastel floral, jungle theme, gold drip…" />
 
         <label>Reference image</label>
-        <input type="file" accept="image/jpeg,image/png,image/webp" className="cust-file" onChange={onFile} />
+        <input type="file" accept="image/jpeg,image/png,image/webp" className="cust-file" multiple onChange={onFile} />
         {prev && <img className="preview-img" src={prev} style={{ display: "block", width: "100%", objectFit: "cover", marginTop: ".6rem" }} alt="reference preview" />}
-        <p className="cust-hint">Pick your reference image — it will be uploaded automatically and the link included in your WhatsApp message. 📎</p>
+        <p className="cust-hint">Upload up to 4 reference images — they will be uploaded automatically and links included in your WhatsApp message. 📎</p>
 
         {cat !== "Bento Cakes" && (<><label>Tier</label>
         <div className="cust-pills">
