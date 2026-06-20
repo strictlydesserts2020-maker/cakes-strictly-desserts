@@ -51,18 +51,26 @@ export function stars(r: number): string {
   return s;
 }
 
-/** Weight/serving options depend on whether it's cupcakes. */
+/** Weight/serving options depend on category. */
 export function weightOpts(categoryName?: string) {
-  return categoryName === "Cupcakes"
-    ? [
-        { l: "Box of 6", m: 1 },
-        { l: "Box of 12", m: 1.9 },
-      ]
-    : [
-        { l: "0.5 kg", m: 1 },
-        { l: "1 kg", m: 1.85 },
-        { l: "2 kg", m: 3.5 },
-      ];
+  if (categoryName === "Cupcakes") {
+    return [
+      { l: "Box of 6", m: 1 },
+      { l: "Box of 12", m: 1.9 },
+    ];
+  }
+  if (categoryName === "1 Kg mini tiers") {
+    return [
+      { l: "1 kg", m: 1 },
+      { l: "1.5 kg", m: 1.5 },
+      { l: "2 kg", m: 2 },
+    ];
+  }
+  return [
+    { l: "0.5 kg", m: 1 },
+    { l: "1 kg", m: 1.85 },
+    { l: "2 kg", m: 3.5 },
+  ];
 }
 
 export function slugify(s: string): string {
