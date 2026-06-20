@@ -46,9 +46,11 @@ function onImgError(e: React.SyntheticEvent<HTMLImageElement>) {
 export default function Storefront({
   categories,
   products,
+  customiseImg,
 }: {
   categories: Category[];
   products: Product[];
+  customiseImg?: string | null;
 }) {
   const [view, setView] = useState<View>("home");
   const [scrolled, setScrolled] = useState(true);
@@ -689,7 +691,7 @@ export default function Storefront({
               <div className="products-grid">
                 {/* Customise Your Cake — always first */}
                 <article className="ccard cust-tile" onClick={() => setCustOpen(true)}>
-                  <div className="ph cust-ph"><span className="cust-q">?</span></div>
+                  <div className="ph cust-ph">{customiseImg ? <img src={customiseImg} alt="Customise your cake" className="cust-img" style={{width:"100%",height:"100%",objectFit:"cover"}} /> : <span className="cust-q">?</span>}</div>
                   <div className="body">
                     <h3>Customise Your Cake</h3>
                     <p>Don&apos;t see what you want? Design your own cake from scratch — any category, any flavour.</p>
@@ -723,7 +725,7 @@ export default function Storefront({
           <div className="cat-grid">
             {/* Customise Your Cake tile (first) */}
             <article className="ccard cust-tile" onClick={() => setCustOpen(true)}>
-              <div className="ph cust-ph"><span className="cust-q">?</span></div>
+              <div className="ph cust-ph">{customiseImg ? <img src={customiseImg} alt="Customise your cake" className="cust-img" style={{width:"100%",height:"100%",objectFit:"cover"}} /> : <span className="cust-q">?</span>}</div>
               <div className="body">
                 <h3>Customise Your Cake</h3>
                 <p>Don&apos;t see what you want? Design your own cake from scratch — any category, any flavour.</p>
