@@ -617,6 +617,11 @@ textarea.field{resize:vertical;min-height:110px}
 .drawer-close{background:none;border:none;font-size:1.3rem;cursor:pointer;color:var(--muted)}
 .drawer-body{flex:1;overflow:auto;padding:1.2rem 1.5rem}
 .drawer-foot{padding:1.3rem 1.5rem;border-top:1px solid var(--border2);background:var(--surface)}
+.cart-note{background:var(--surface2);border:1px solid var(--border2);border-radius:var(--r-sm);padding:.85rem 1rem;margin-bottom:1rem;font-size:.75rem;color:var(--cream2);line-height:1.55}
+.cart-note-title{font-family:var(--font-d);font-weight:700;font-size:.82rem;color:var(--cream);margin-bottom:.45rem}
+.cart-note ol{margin:0;padding-left:1.1rem;display:flex;flex-direction:column;gap:.35rem}
+.cart-note li{margin:0}
+.cart-note-sign{margin-top:.6rem;font-size:.73rem;color:var(--gold2);font-weight:500}
 .citem{display:grid;grid-template-columns:64px 1fr auto;gap:.9rem;align-items:center;padding:.9rem 0;border-bottom:1px solid var(--border2)}
 .citem .ph{width:64px;height:64px;border-radius:12px}
 .citem .nm{font-family:var(--font-d);font-size:.96rem;color:var(--cream)}
