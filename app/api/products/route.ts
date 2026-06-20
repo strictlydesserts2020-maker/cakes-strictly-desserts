@@ -3,7 +3,7 @@ import { createClient } from "@/lib/supabase/server";
 import { getAdmin } from "@/lib/auth";
 export async function GET() {
   const supabase = createClient();
-  const {data,error} = await supabase.from("products").select("*,categories(name)").order("sort_order",{ascending:true});
+  const {data,error} = await supabase.from("products").select("*,categories(name,is_active)").order("sort_order",{ascending:true});
   if (error) return NextResponse.json({error:error.message},{status:500});
   return NextResponse.json({data});
 }
