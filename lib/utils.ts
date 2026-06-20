@@ -62,8 +62,8 @@ export function weightOpts(categoryName?: string) {
   if (categoryName === "Mini tiers") {
     return [
       { l: "1 kg", m: 1 },
-      { l: "1.5 kg", m: 1.5 },
-      { l: "2 kg", m: 2 },
+      { l: "1.5 kg", m: 1 },
+      { l: "2 kg", m: 1 },
     ];
   }
   return [
@@ -107,6 +107,16 @@ export const MINI_TIERS_FLAVOURS = [
   "Strawberry Cheesecake",
   "Biscoff Chocolate",
 ];
+
+/** Per-flavour addon prices for Mini tiers: [0.5 kg add, 1 kg add] */
+export const MINI_TIERS_ADDON: Record<string, [number, number]> = {
+  "Butterscotch": [800, 1650],
+  "Chocolate Truffle": [1100, 2000],
+  "Chunky Nutella": [850, 1650],
+  "White Chocolate & Blueberry": [1150, 2250],
+  "Strawberry Cheesecake": [950, 1650],
+  "Biscoff Chocolate": [1150, 2250],
+};
 
 export const WHATSAPP_NUMBER =
   process.env.NEXT_PUBLIC_WHATSAPP_NUMBER || "919003082979";
