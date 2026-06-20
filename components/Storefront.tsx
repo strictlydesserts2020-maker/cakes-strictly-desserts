@@ -339,6 +339,7 @@ export default function Storefront({
   const filtered = useMemo(() => {
     let list = products.filter((p) => {
       const cat = p.category_name || "";
+      if (p.categories && p.categories.is_active === false) return false;
       if (
         F.search &&
         p.name.toLowerCase().indexOf(F.search.toLowerCase()) < 0 &&
