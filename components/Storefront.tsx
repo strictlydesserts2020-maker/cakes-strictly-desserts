@@ -1016,6 +1016,12 @@ export default function Storefront({
                   <h3>{qv.product.name}</h3>
               <div className="p-meta">{qv.product.category_name} · made to order</div>
               <div className="qv-price">{inr(qvUnit)}</div>
+              <label style={{ fontSize: ".7rem", fontWeight: 600, letterSpacing: ".06em", textTransform: "uppercase", color: "var(--gold2)", marginTop: ".8rem", display: "block" }}>Flavour</label>
+              <div className="opt-row">
+                {(qv.product.category_name === "Bento Cakes" ? BENTO_FLAVOURS : qv.product.category_name === "Mini tiers" ? MINI_TIERS_FLAVOURS : FLAVOURS).map((f) => (
+                  <span key={f} className={"opt" + (f === qv.flav ? " sel" : "")} role="button" tabIndex={0} onClick={() => setQv((s) => ({ ...s, flav: f }))}>{f}{qv.product?.category_name !== "Mini tiers" && ["Chocolate Truffle Cake","Biscoff Chocolate","Biscoff Vanilla","Chunky Nutella"].includes(f)?" +₹50":""}</span>
+                ))}
+              </div>
               {qv.product.category_name !== "Bento Cakes" && <>
               <label style={{ fontSize: ".7rem", fontWeight: 600, letterSpacing: ".06em", textTransform: "uppercase", color: "var(--gold2)" }}>Size</label>
               <div className="opt-row">
@@ -1024,12 +1030,6 @@ export default function Storefront({
                 ))}
               </div>
               </>}
-              <label style={{ fontSize: ".7rem", fontWeight: 600, letterSpacing: ".06em", textTransform: "uppercase", color: "var(--gold2)", marginTop: ".8rem", display: "block" }}>Flavour</label>
-              <div className="opt-row">
-                {(qv.product.category_name === "Bento Cakes" ? BENTO_FLAVOURS : qv.product.category_name === "Mini tiers" ? MINI_TIERS_FLAVOURS : FLAVOURS).map((f) => (
-                  <span key={f} className={"opt" + (f === qv.flav ? " sel" : "")} role="button" tabIndex={0} onClick={() => setQv((s) => ({ ...s, flav: f }))}>{f}{qv.product?.category_name !== "Mini tiers" && ["Chocolate Truffle Cake","Biscoff Chocolate","Biscoff Vanilla","Chunky Nutella"].includes(f)?" +₹50":""}</span>
-                ))}
-              </div>
               <div style={{ display: "flex", alignItems: "center", gap: "1rem", marginTop: "1rem" }}>
                 <div className="qc">
                   <button onClick={() => setQv((s) => ({ ...s, qty: Math.max(1, s.qty - 1) }))}>−</button>
