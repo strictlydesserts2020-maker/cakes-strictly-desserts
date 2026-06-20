@@ -761,7 +761,7 @@ export default function Storefront({
           </div>
           <div className="about-grid" style={{ paddingBottom: "5rem" }}>
             <div className="ph">
-              <img src="https://images.unsplash.com/photo-1488477181946-6428a0291777?auto=format&fit=crop&w=800&q=72" onError={onImgError} loading="lazy" decoding="async" alt="" />
+              <img src="https://images.unsplash.com/photo-1488477181946-6428a0291777?auto=format&fit=crop&w=800&q=72" onError={onImgError} loading="lazy" decoding="async" alt="Freshly handcrafted cakes by Strictly Desserts, Anna Nagar Chennai" />
             </div>
             <div>
               <h2 className="sec-title">Baked with love, <em>finished by hand</em></h2>
