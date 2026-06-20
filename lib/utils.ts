@@ -99,6 +99,15 @@ export const BENTO_FLAVOURS = [
   "Vanilla & Butterscotch",
 ];
 
+export const MINI_TIERS_FLAVOURS = [
+  "Butterscotch",
+  "Chocolate Truffle",
+  "Chunky Nutella",
+  "White Chocolate & Blueberry",
+  "Strawberry Cheesecake",
+  "Biscoff Chocolate",
+];
+
 export const WHATSAPP_NUMBER =
   process.env.NEXT_PUBLIC_WHATSAPP_NUMBER || "919003082979";
 
