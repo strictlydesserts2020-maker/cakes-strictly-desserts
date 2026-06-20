@@ -15,6 +15,6 @@ export default async function HomePage() {
   const products = (prodRows ?? [])
     .filter((p: any) => p.categories?.is_active !== false)
     .map((p: any) => ({ ...p, category_name: p.categories?.name ?? "" }));
-  const customiseImg = custRow?.image_url ?? null;
+  const customiseImg: string | null = (custRow as any)?.image_url ?? null;
   return <Storefront categories={categories} products={products} customiseImg={customiseImg} />;
 }
