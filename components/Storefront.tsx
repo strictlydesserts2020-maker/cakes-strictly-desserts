@@ -13,6 +13,7 @@ import {
   FLAVOURS,
   BENTO_FLAVOURS,
   MINI_TIERS_FLAVOURS,
+  MINI_TIERS_ADDON,
   waLink,
 } from "@/lib/utils";
 import { LOGO_DATA_URI } from "@/lib/brand";
@@ -316,8 +317,11 @@ export default function Storefront({
 
   const qvUnit = useMemo(() => {
     if (!qv.product) return 0;
-    const wo = weightOpts(qv.product.category_name);
-    const base = Math.round(Number(qv.product.price) * wo[qv.wIdx].m);
+    const base = qv.product.price * weightOpts(qv.product.category_name)[qv.wIdx].m;
+    if (qv.product.category_name === "Mini tiers" && qv.wIdx > 0) {
+      const addon = MINI_TIERS_ADDON[qv.flav] ?? [0, 0];
+      return base + addon[qv.wIdx - 1];
+    }
     return base + (qv.product?.category_name !== "Mini tiers" && ["Chocolate Truffle Cake","Biscoff Chocolate","Biscoff Vanilla","Chunky Nutella"].includes(qv.flav) ? 50 : 0);
   }, [qv]);
 
