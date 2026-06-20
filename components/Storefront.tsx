@@ -262,7 +262,7 @@ export default function Storefront({
     );
     L.push("");
     L.push("Subtotal: " + inr(subtotal));
-    L.push((fulfil.mode === "pickup" ? "Pickup: " : "Delivery: ") + (del === 0 ? "FREE" : inr(del)));
+    L.push((fulfil.mode === "pickup" ? "Pickup: " : "Delivery: ") + (del === 0 ? "" : inr(del)));
     if (coupon.disc > 0) L.push("Coupon (" + coupon.code + "): -" + inr(coupon.disc));
     L.push("Total: " + inr(total));
     L.push("");
