@@ -887,15 +887,7 @@ export default function Storefront({
         </div>
         {cart.length > 0 && (
           <div className="drawer-foot">
-            <div className="cart-note">
-              <p className="cart-note-title">Note:</p>
-              <ol>
-                <li>Delivery charges to be paid directly to cab driver upon receiving the cake as per app actual charges. While we pack the cake safe, we will not be able to take responsibility for any damages caused during transit as the Chennai roads, traffic &amp; drivers are too unreliable.</li>
-                <li>Pickup can be done from our Anna Nagar East outlet.</li>
-                <li>A word of caution ⚠️ Dark colors on cakes look stunning but may leave temporary stains on hands, lips, and teeth! If you wish to proceed with lighter shades, pls let us know in advance.</li>
-              </ol>
-              <p className="cart-note-sign">I shall share the payment details once you let me know the details requested above..! 😊</p>
-            </div>
+
             <div className="sum-row"><span>Subtotal</span><span>{inr(subtotal)}</span></div>
             {fulfil.mode === "pickup" && (
               <div className="sum-row free"><span>Pickup</span><span>FREE</span></div>
@@ -994,6 +986,15 @@ export default function Storefront({
             <button className="btn btn-gold" style={{ width: "100%", marginTop: ".8rem" }} onClick={placeOrder}>
               Order on WhatsApp →
             </button>
+            <div className="cart-note">
+              <p className="cart-note-title">Note:</p>
+              <ol>
+                <li>Delivery charges to be paid directly to cab driver upon receiving the cake as per app actual charges. While we pack the cake safe, we will not be able to take responsibility for any damages caused during transit as the Chennai roads, traffic &amp; drivers are too unreliable.</li>
+                <li>Pickup can be done from our Anna Nagar East outlet.</li>
+                <li>A word of caution ⚠️ Dark colors on cakes look stunning but may leave temporary stains on hands, lips, and teeth! If you wish to proceed with lighter shades, pls let us know in advance.</li>
+              </ol>
+              <p className="cart-note-sign">I shall share the payment details once you let me know the details requested above..! 😊</p>
+            </div>
           </div>
         )}
       </aside>
