@@ -30,6 +30,7 @@ export interface Product {
   updated_at?: string;
   // joined / derived on the storefront
   category_name?: string;
+  categories?: { name: string; is_active: boolean };
 }
 
 export interface Enquiry {
