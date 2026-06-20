@@ -59,7 +59,7 @@ export function weightOpts(categoryName?: string) {
       { l: "Box of 12", m: 1.9 },
     ];
   }
-  if (categoryName === "1 Kg mini tiers") {
+  if (categoryName === "Mini tiers") {
     return [
       { l: "1 kg", m: 1 },
       { l: "1.5 kg", m: 1.5 },
