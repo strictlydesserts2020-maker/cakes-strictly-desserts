@@ -946,3 +946,19 @@ button, a, [role="button"], .add-btn, .btn, .ccard {
     font-size: 16px !important;
   }
 }
+
+/* ===== MOBILE-ONLY LAYOUT (≤640px — phone browsers, no change on desktop) ===== */
+@media(max-width:640px){
+  /* Category strip → horizontal swipe scroll */
+  .cat-grid{display:flex;flex-direction:row;overflow-x:auto;flex-wrap:nowrap;scroll-snap-type:x mandatory;-webkit-overflow-scrolling:touch;padding-bottom:.5rem;gap:1rem}
+  .cat-grid::-webkit-scrollbar{display:none}
+  .ccard{min-width:72vw;max-width:72vw;flex-shrink:0;scroll-snap-align:start}
+
+  /* Products → 2-column grid like Amazon */
+  .products-grid{grid-template-columns:repeat(2,1fr);gap:.65rem}
+  .product-card .product-img{aspect-ratio:1/1}
+  .product-card .product-info{padding:.6rem .65rem .75rem}
+  .product-card .product-name{font-size:.8rem;line-height:1.3}
+  .product-card .product-price{font-size:.9rem}
+  .add-btn{padding:.42rem .65rem;font-size:.58rem;letter-spacing:.03em}
+}
