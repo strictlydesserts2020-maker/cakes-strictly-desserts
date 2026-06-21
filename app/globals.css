@@ -599,6 +599,15 @@ textarea.field{resize:vertical;min-height:110px}
   /* Bottom-sheet modal on mobile for easy scrolling */
   .modal-overlay{padding:0;align-items:flex-end}
   .modal{border-radius:20px 20px 0 0;max-height:88vh;width:100%;max-width:100%;border-bottom-left-radius:0;border-bottom-right-radius:0;overflow-y:scroll;-webkit-overflow-scrolling:touch}
+
+  /* Home page category grid → horizontal swipe on mobile */
+  .cat-grid{display:flex;flex-direction:row;flex-wrap:nowrap;overflow-x:auto;-webkit-overflow-scrolling:touch;scroll-snap-type:x mandatory;padding-bottom:.5rem;gap:1rem}
+  .cat-grid::-webkit-scrollbar{display:none}
+  .cat-grid .ccard{min-width:75vw;max-width:75vw;flex-shrink:0;scroll-snap-align:start}
+  /* Category strip → horizontal swipe on mobile */
+  .cat-strip{flex-wrap:nowrap;overflow-x:auto;-webkit-overflow-scrolling:touch;scroll-snap-type:x mandatory;padding-bottom:.5rem;justify-content:flex-start}
+  .cat-strip::-webkit-scrollbar{display:none}
+  .cat-strip .cat-tile{min-width:72vw;max-width:72vw;flex-shrink:0;scroll-snap-align:start;width:auto}
 }
 
 /* CART DRAWER */
