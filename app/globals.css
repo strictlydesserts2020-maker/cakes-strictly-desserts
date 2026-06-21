@@ -967,4 +967,7 @@ button, a, [role="button"], .add-btn, .btn, .ccard {
   .cat-strip{overflow-x:auto;-webkit-overflow-scrolling:touch;scroll-snap-type:x mandatory;padding-bottom:.5rem}
   .cat-strip::-webkit-scrollbar{display:none}
   .cat-tile{min-width:72vw;max-width:72vw;flex-shrink:0;scroll-snap-align:start}
+  /* Quick-view modal: single column + full image on mobile */
+  .qv{grid-template-columns:1fr}
+  .qv .ph{aspect-ratio:4/5;height:auto;min-height:0}
 }
