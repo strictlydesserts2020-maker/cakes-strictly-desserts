@@ -500,6 +500,20 @@ export default function Storefront({
           </div>
         </section>
 
+        {/* CUSTOMISE YOUR CAKE CTA */}
+        <section className="block" style={{ paddingTop: 0, paddingBottom: 0 }}>
+          <div className="container">
+            <div className="hamper-banner" style={{ background: "linear-gradient(135deg, #fff8f0 0%, #fce8f0 100%)", textAlign: "center" }}>
+              <div className="hamper-banner-badge">🎨 Custom Cakes</div>
+              <h2 className="hamper-banner-title">Customise Your <em>Cake</em></h2>
+              <p className="hamper-banner-desc">Don&apos;t see what you want? Design your own cake from scratch — any category, any flavour, any occasion. Share your inspiration and we&apos;ll bring it to life.</p>
+              <button className="btn btn-gold" style={{ marginTop: "1.5rem", fontSize: "1rem", padding: "0.85rem 2.5rem" }} onClick={() => setCustOpen(true)}>
+                Start Customising →
+              </button>
+            </div>
+          </div>
+        </section>
+
         <section className="block" style={{ paddingTop: 0 }}>
           <div className="container">
             <div className="center" style={{ marginBottom: "2rem" }}>
@@ -694,18 +708,7 @@ export default function Storefront({
                 ))}
               </div>
               <div className="products-grid">
-                {/* Customise Your Cake — always first */}
-                <article className="ccard cust-tile" onClick={() => setCustOpen(true)}>
-                  <div className="ph cust-ph">{customiseImg ? <img src={customiseImg} alt="Customise your cake" className="cust-img" style={{width:"100%",height:"100%",objectFit:"cover"}} /> : <span className="cust-q">?</span>}</div>
-                  <div className="body">
-                    <h3>Customise Your Cake</h3>
-                    <p>Don&apos;t see what you want? Design your own cake from scratch — any category, any flavour.</p>
-                    <span className="go">
-                      Start customising{" "}
-                      <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><path d="M5 12h14M13 6l6 6-6 6" /></svg>
-                    </span>
-                  </div>
-                </article>
+                
                 {filtered.length ? (
                   filtered.map((p) => <ProductCard key={p.id} p={p} />)
                 ) : (
