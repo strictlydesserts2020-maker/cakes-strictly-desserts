@@ -503,7 +503,7 @@ export default function Storefront({
         {/* CUSTOMISE YOUR CAKE CTA */}
         <section className="block" style={{ paddingTop: 0, paddingBottom: 0 }}>
           <div className="container">
-            <div className="hamper-banner" style={{ background: "linear-gradient(135deg, #fff8f0 0%, #fce8f0 100%)", textAlign: "center" }}>
+            <div className="hamper-banner" style={{ background: "linear-gradient(135deg, #d4456b 0%, #8B1A4A 100%)", textAlign: "center", color: "#fff" }}>
               <div className="hamper-banner-badge">🎨 Custom Cakes</div>
               <h2 className="hamper-banner-title">Customise Your <em>Cake</em></h2>
               <p className="hamper-banner-desc">Don&apos;t see what you want? Design your own cake from scratch — any category, any flavour, any occasion. Share your inspiration and we&apos;ll bring it to life.</p>
