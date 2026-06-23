@@ -100,6 +100,16 @@ export const BENTO_FLAVOURS = [
 ];
 
 export const MINI_TIERS_FLAVOURS = [
+  "Butterscotch",
+  "Chocolate Truffle",
+  "Chunky Nutella",
+  "White Chocolate & Blueberry",
+  "Strawberry Cheesecake",
+  "Biscoff Chocolate",
+];
+
+/** Flavours shown in the Customise Your Cake modal when Mini tiers is selected */
+export const MINI_TIERS_CUST_FLAVOURS = [
   "Rasmalai",
   "Vanilla & Mixed Berry",
   "Mocha Hazelnut",
