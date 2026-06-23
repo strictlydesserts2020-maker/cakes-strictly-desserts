@@ -61,6 +61,6 @@ export default function GoogleAnalytics() {
                 <Suspense fallback={null}>
                         <GARouteTracker />
                 </Suspense>
-          </>>
+          </>
         );
-}</>
+}
