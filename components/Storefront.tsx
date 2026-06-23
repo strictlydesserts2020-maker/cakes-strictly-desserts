@@ -18,6 +18,7 @@ import {
   waLink,
 } from "@/lib/utils";
 import { LOGO_DATA_URI } from "@/lib/brand";
+import { analytics } from "@/lib/analytics";
 
 type View = "home" | "shop" | "categories" | "about" | "contact" | "gift-hampers" | "delivery-process";
 
@@ -144,6 +145,7 @@ export default function Storefront({
 
 
   const go = useCallback((v: View) => {
+    analytics.navClick(NAV_LABELS[v] ?? v);
     setView(v);
     setNavOpen(false);
     window.scrollTo({ top: 0, behavior: "smooth" });
@@ -298,6 +300,7 @@ export default function Storefront({
     } catch {
       /* non-blocking */
     }
+    analytics.orderNowClick("WhatsApp Order");
     window.open(waLink(L.join("\n")), "_blank", "noopener");
     notify("Opening WhatsApp to confirm your order \uD83C\uDF82");
     setCart([]);
@@ -313,6 +316,7 @@ export default function Storefront({
 
   // ---------- quick view ----------
   const openQuick = useCallback((p: Product) => {
+    analytics.productView(p.name, p.category_name ?? "Products");
     setQv({ open: true, product: p, wIdx: 0, flav: (p.category_name === "Bento Cakes" ? BENTO_FLAVOURS : FLAVOURS)[0], qty: 1 });
   }, []);
 
@@ -390,6 +394,7 @@ export default function Storefront({
     });
 
   const goCategory = (name: string) => {
+    analytics.cakeCategoryClick(name);
     setF({ search: "", category: name, occasion: "", min: null, max: null, sort: F.sort });
     go("shop");
   };
@@ -841,7 +846,7 @@ export default function Storefront({
               <h4>Stay in touch</h4>
               <p style={{ color: "#B5A299", fontSize: ".86rem", marginBottom: "1rem" }}>Follow the latest bakes &amp; launches.</p>
               <div className="footer-social">
-                <a href="https://www.instagram.com/strictlydesserts" target="_blank" rel="noopener" aria-label="Instagram">
+                <a href="https://www.instagram.com/strictlydesserts" onClick={() => analytics.instagramClick()} target="_blank" rel="noopener" aria-label="Instagram">
                   <svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.6"><rect x="2" y="2" width="20" height="20" rx="5" /><circle cx="12" cy="12" r="4" /><circle cx="17.5" cy="6.5" r="1" fill="currentColor" stroke="none" /></svg>
                 </a>
                 <a href={waLink("Hi Strictly Desserts!")} target="_blank" rel="noopener" aria-label="WhatsApp">
@@ -858,7 +863,7 @@ export default function Storefront({
       </footer>
 
       {/* WHATSAPP FAB */}
-      <a className="wa-fab" href={waLink("Hi Strictly Desserts! I'd like to enquire about a cake.")} target="_blank" rel="noopener" aria-label="Chat with us on WhatsApp">
+      <a className="wa-fab" onClick={() => analytics.whatsappClick("WhatsApp FAB")} href={waLink("Hi Strictly Desserts! I'd like to enquire about a cake.")} target="_blank" rel="noopener" aria-label="Chat with us on WhatsApp">
         <svg viewBox="0 0 24 24" fill="currentColor" aria-hidden="true">
           <path d="M17.47 14.38c-.3-.15-1.74-.86-2.01-.96-.27-.1-.47-.15-.66.15-.2.3-.76.96-.93 1.16-.17.2-.34.22-.64.07-.3-.15-1.25-.46-2.38-1.47-.88-.78-1.47-1.75-1.64-2.05-.17-.3-.02-.46.13-.61.13-.13.3-.34.45-.51.15-.17.2-.3.3-.5.1-.2.05-.37-.02-.52-.08-.15-.66-1.59-.9-2.18-.24-.57-.48-.5-.66-.5-.17-.01-.37-.01-.57-.01s-.52.07-.79.37c-.27.3-1.04 1.01-1.04 2.46s1.06 2.86 1.21 3.06c.15.2 2.09 3.2 5.07 4.49.71.31 1.26.49 1.69.62.71.23 1.36.2 1.87.12.57-.08 1.74-.71 1.99-1.4.24-.69.24-1.28.17-1.4-.07-.13-.27-.2-.57-.35zM12.04 21.5h-.01a9.45 9.45 0 0 1-4.82-1.32l-.35-.21-3.58.94.96-3.49-.23-.36a9.42 9.42 0 0 1-1.45-5.03c0-5.21 4.25-9.46 9.47-9.46 2.53 0 4.9.99 6.69 2.78a9.4 9.4 0 0 1 2.77 6.69c0 5.22-4.25 9.46-9.46 9.46zm8.06-17.52A11.36 11.36 0 0 0 12.04.5C5.78.5.69 5.59.69 11.85c0 2.09.55 4.13 1.59 5.93L.6 23.5l5.86-1.54a11.3 11.3 0 0 0 5.57 1.42h.01c6.26 0 11.35-5.09 11.35-11.35 0-3.03-1.18-5.88-3.33-8.03z" />
         </svg>
@@ -1692,6 +1697,7 @@ function CustomiseModal({
       /* non-blocking */
     }
 
+    analytics.contactFormSubmit("Customise Form");
     window.open(waLink(L.join("\n")), "_blank", "noopener");
     onClose();
     notify("Opening WhatsApp to send your customisation 🎂");
