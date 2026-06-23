@@ -1758,8 +1758,7 @@ function CustomiseModal({
 
         <div className="cust-note">
           <b>Please note</b>
-          Delivery charges are paid directly to the cab driver on receiving the cake, as per the app&apos;s actual charges. Pickup can be done from our Anna Nagar East outlet.<br /><br />
-          Payment details will be shared once we receive the details above. 😊
+          1. Delivery charges to be paid directly to cab driver upon receiving the cake as per app actual charges. While we pack the cake safe, we will not be able to take responsibility for any damages caused during transit as the Chennai roads, traffic &amp; drivers are too unreliable. 2. Pickup can be done from our Anna Nagar East outlet. 3. A word of caution ⚠️ Dark colors on cakes look stunning but may leave temporary stains on hands, lips, and teeth! If you wish to proceed with lighter shades, pls let us know in advance. I shall share the payment details once you let me know the details requested above..! 😊
         </div>
 
         <div className="err">{err}</div>
