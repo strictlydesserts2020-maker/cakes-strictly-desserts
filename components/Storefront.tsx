@@ -504,14 +504,18 @@ export default function Storefront({
         {/* CUSTOMISE YOUR CAKE CTA */}
         <section className="block" style={{ paddingTop: 0, paddingBottom: 0 }}>
           <div className="container">
-            <div className="hamper-banner" style={{ background: "linear-gradient(135deg, #d4456b 0%, #8B1A4A 100%)", color: "#fff", paddingRight: "260px" }}>
-              <div className="hamper-banner-badge">🎨 Custom Cakes</div>
-              <h2 className="hamper-banner-title">Customise Your <em>Cake</em></h2>
-              <p className="hamper-banner-desc">Don&apos;t see what you want? Design your own cake from scratch — any category, any flavour, any occasion. Share your inspiration and we&apos;ll bring it to life.</p>
-              <button className="btn btn-gold" style={{ marginTop: "1.5rem", fontSize: "1rem", padding: "0.85rem 2.5rem" }} onClick={() => setCustOpen(true)}>
-                Start Customising →
-              </button>
-              <img src="/customise-banner.jpg" alt="Custom Cake" style={{ position: "absolute", right: "2.5rem", top: "50%", transform: "translateY(-50%)", height: "210px", width: "auto", borderRadius: "14px", objectFit: "cover", boxShadow: "0 8px 32px rgba(0,0,0,0.25)" }} />
+            <div className="hamper-banner" style={{ background: "linear-gradient(135deg, #d4456b 0%, #8B1A4A 100%)", color: "#fff", display: "flex", flexWrap: "wrap", alignItems: "center", gap: "1.5rem 2rem", padding: "2rem 2.5rem" }}>
+              <div style={{ flex: "1 1 260px", minWidth: 0 }}>
+                <div className="hamper-banner-badge">🎨 Custom Cakes</div>
+                <h2 className="hamper-banner-title">Customise Your <em>Cake</em></h2>
+                <p className="hamper-banner-desc">Don&apos;t see what you want? Design your own cake from scratch — any category, any flavour, any occasion. Share your inspiration and we&apos;ll bring it to life.</p>
+                <button className="btn btn-gold" style={{ marginTop: "1.5rem", fontSize: "1rem", padding: "0.85rem 2.5rem" }} onClick={() => setCustOpen(true)}>
+                  Start Customising →
+                </button>
+              </div>
+              <div style={{ flex: "0 0 auto", display: "flex", justifyContent: "center", alignSelf: "center" }}>
+                <img src="/customise-banner.jpg" alt="Custom Cake" style={{ height: "200px", width: "auto", borderRadius: "14px", objectFit: "cover", boxShadow: "0 8px 32px rgba(0,0,0,0.25)", maxWidth: "260px" }} />
+              </div>
             </div>
           </div>
         </section>
