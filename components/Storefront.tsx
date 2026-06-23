@@ -72,6 +72,7 @@ export default function Storefront({
   const [customerName, setCustomerName] = useState("");
   const [customerPhone, setCustomerPhone] = useState("");
   const [orderErr, setOrderErr] = useState("");
+  const [orderSending, setOrderSending] = useState(false);
   const [fulfil, setFulfil] = useState<{ mode: string; date: string; time: string; addr: string }>({
     mode: "",
     date: "",
@@ -199,6 +200,7 @@ export default function Storefront({
   const total = subtotal + del - coupon.disc;
 
   const placeOrder = useCallback(async () => {
+    if (orderSending) return; setOrderSending(true);
     if (!cart.length) {
       notify("Your cart is empty");
       return;
@@ -300,6 +302,7 @@ export default function Storefront({
     } catch {
       /* non-blocking */
     }
+    setOrderSending(false);
     analytics.orderNowClick("WhatsApp Order");
     window.open(waLink(L.join("\n")), "_blank", "noopener");
     notify("Opening WhatsApp to confirm your order \uD83C\uDF82");
@@ -1004,7 +1007,7 @@ export default function Storefront({
               <p style={{ color: "var(--rose)", fontSize: ".78rem", margin: ".2rem 0 .3rem", fontFamily: "var(--font-b)" }}>{orderErr}</p>
             )}
             <div className="sum-row total"><span>Total</span><span>{inr(total)}</span></div>
-            <button className="btn btn-gold" style={{ width: "100%", marginTop: ".8rem" }} onClick={placeOrder}>
+            <button className="btn btn-gold" style={{ width: "100%", marginTop: ".8rem" }} onClick={placeOrder} disabled={orderSending}>
               Order on WhatsApp →
             </button>
             <div className="cart-note">
@@ -1582,6 +1585,7 @@ function CustomiseModal({
   const [refName, setRefName] = useState("");
   const [prev, setPrev] = useState("");
   const [err, setErr] = useState("");
+  const [sending, setSending] = useState(false);
 
   const [refFiles, setRefFiles] = useState<{name: string, dataUri: string}[]>([]);
 
@@ -1623,6 +1627,7 @@ function CustomiseModal({
     });
   }
   const send = useCallback(async () => {
+    if (sending) return; setSending(true);
     const nm = cleanText(name, 60);
     if (!nm || !ph1) { setErr("Please add at least your name and primary contact number."); return; }
     if (!validPhone(ph1)) { setErr("Please enter a valid primary contact number (10–15 digits)."); return; }
@@ -1699,6 +1704,7 @@ function CustomiseModal({
 
     analytics.contactFormSubmit("Customise Form");
     window.open(waLink(L.join("\n")), "_blank", "noopener");
+    setSending(false);
     onClose();
     notify("Opening WhatsApp to send your customisation 🎂");
   }, [name, ph1, ph2, cat, weight, serv, flav, theme, tier, design, cakeMsg, date, time, transit, addr, refName, refFiles, prev, onClose, notify]);
@@ -1780,7 +1786,7 @@ function CustomiseModal({
         <div className="err">{err}</div>
         <div className="modal-actions">
           <button className="btn btn-ghost" onClick={onClose}>Cancel</button>
-          <button className="btn btn-gold" onClick={send}>Send on WhatsApp →</button>
+          <button className="btn btn-gold" onClick={send} disabled={sending}>Send on WhatsApp →</button>
         </div>
       </div>
     </div>
