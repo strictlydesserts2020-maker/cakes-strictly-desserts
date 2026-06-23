@@ -100,15 +100,22 @@ export const BENTO_FLAVOURS = [
 ];
 
 export const MINI_TIERS_FLAVOURS = [
+  "Rasmalai",
+  "Vanilla & Mixed Berry",
+  "Mocha Hazelnut",
+  "Brownie Batter",
+  "Dried Fruits & Toffee Sauce",
+  "Snickers",
+  "Banana & Nutella",
   "Butterscotch",
   "Chocolate Truffle",
   "Chunky Nutella",
   "White Chocolate & Blueberry",
   "Strawberry Cheesecake",
   "Biscoff Chocolate",
+  "Black Forest",
+  "Red Velvet Cheesecake",
 ];
-
-/** Per-flavour addon prices for Mini tiers: [0.5 kg add, 1 kg add] */
 export const MINI_TIERS_ADDON: Record<string, [number, number]> = {
   "Butterscotch": [800, 1650],
   "Chocolate Truffle": [1100, 2000],
