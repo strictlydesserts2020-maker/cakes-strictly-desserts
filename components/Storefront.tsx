@@ -13,6 +13,7 @@ import {
   FLAVOURS,
   BENTO_FLAVOURS,
   MINI_TIERS_FLAVOURS,
+  MINI_TIERS_CUST_FLAVOURS,
   MINI_TIERS_ADDON,
   waLink,
 } from "@/lib/utils";
@@ -1709,7 +1710,7 @@ function CustomiseModal({
 
         <label>Cake flavour <span style={{ textTransform: "none", fontWeight: 400, color: "var(--muted)" }}>(choose from catalogue)</span></label>
         <select className="field" value={flav} onChange={(e) => setFlav(e.target.value)}>
-          {(cat === "Bento Cakes" ? BENTO_FLAVOURS : FLAVOURS).map((f) => <option key={f} value={f}>{f}</option>)}
+          {(cat === "Bento Cakes" ? BENTO_FLAVOURS : cat === "Mini tiers" ? MINI_TIERS_CUST_FLAVOURS : FLAVOURS).map((f) => <option key={f} value={f}>{f}</option>)}
         </select>
 
         <label>Theme / Reference</label>
