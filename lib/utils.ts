@@ -100,12 +100,21 @@ export const BENTO_FLAVOURS = [
 ];
 
 export const MINI_TIERS_FLAVOURS = [
+  "Rasmalai",
+  "Vanilla & Mixed Berry",
+  "Mocha Hazelnut",
+  "Brownie Batter",
+  "Dried Fruits & Toffee Sauce",
+  "Snickers",
+  "Banana & Nutella",
   "Butterscotch",
   "Chocolate Truffle",
   "Chunky Nutella",
   "White Chocolate & Blueberry",
   "Strawberry Cheesecake",
   "Biscoff Chocolate",
+  "Black Forest",
+  "Red Velvet Cheesecake",
 ];
 export const MINI_TIERS_ADDON: Record<string, [number, number]> = {
   "Butterscotch": [800, 1650],
