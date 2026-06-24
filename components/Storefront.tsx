@@ -1683,6 +1683,35 @@ function CustomiseModal({
     }
 
     analytics.contactFormSubmit("Customise Form");
+    // Upload reference image to Supabase Storage and get a shareable URL
+    let imageUrl = "";
+    const imageUrls: string[] = [];
+    for (const rf of refFiles) {
+      try {
+        const upRes = await fetch("/api/upload-image", { method: "POST", headers: { "Content-Type": "application/json" }, body: JSON.stringify({ dataUri: rf.dataUri, fileName: rf.name }) });
+        if (upRes.ok) { const d = await upRes.json(); imageUrls.push(d.url || rf.name); } else { imageUrls.push(rf.name); }
+      } catch { imageUrls.push(rf.name); }
+    }
+    if (imageUrls.length) { L.push(""); imageUrls.forEach((u, idx) => L.push(`📎 Reference image ${idx + 1}: ${u}`)); }
+
+    try {
+      await fetch("/api/enquiries", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          name: nm,
+          contact: ph1,
+          message: L.join("\n"),
+          category: cat,
+          source: "customise",
+          payload: { weight, serv, flav, theme, tier, design, cakeMsg, date, time, transit, addr, ph1, ph2, refName, imageUrl },
+        }),
+      });
+    } catch {
+      /* non-blocking */
+    }
+
+    analytics.contactFormSubmit("Customise Form");
     window.open(waLink(L.join("\n")), "_blank", "noopener");
     setSending(false);
     onClose();
