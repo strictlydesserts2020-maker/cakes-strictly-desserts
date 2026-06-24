@@ -990,7 +990,6 @@ export default function Storefront({
                             ))}
                           </div>;
                     })()}
-                      style={{ width: "100%", padding: ".55rem .7rem", background: "var(--bg)", border: "1px solid var(--border2)", borderRadius: "var(--r-sm)", fontFamily: "var(--font-b)", fontSize: "1rem", color: "var(--cream)", outline: "none", boxSizing: "border-box" }} />
                   </div>
                 </div>
               )}
