@@ -961,7 +961,35 @@ export default function Storefront({
                   </div>
                   <div style={{ flex: 1 }}>
                     <div style={{ fontSize: ".72rem", fontFamily: "var(--font-b)", fontWeight: 600, color: "var(--cream2)", marginBottom: ".25rem" }}>🕐 Time</div>
-                    <input type="time" value={fulfil.time} onChange={(e) => setFulfil((f) => ({ ...f, time: e.target.value }))}
+                    {(() => {
+                      const SLOTS = [
+                        { l: "11am – 2pm", v: "11am–2pm", cut: 14 },
+                        { l: "2pm – 5pm",  v: "2pm–5pm",  cut: 17 },
+                        { l: "5pm – 8pm",  v: "5pm–8pm",  cut: 20 },
+                      ];
+                      const now = new Date();
+                      const isToday = fulfil.date === now.toISOString().split("T")[0];
+                      const avail = SLOTS.filter(s => !isToday || now.getHours() < s.cut);
+                      return avail.length === 0
+                        ? <p style={{ margin: 0, fontSize: "13px", color: "var(--muted, #999)" }}>No slots left today — please pick another date.</p>
+                        : <div style={{ display: "flex", gap: "8px", flexWrap: "wrap", marginTop: "4px" }}>
+                            {avail.map(s => (
+                              <button key={s.v} type="button"
+                                onClick={() => setFulfil({ ...fulfil, time: s.v })}
+                                style={{
+                                  padding: "8px 16px",
+                                  borderRadius: "var(--r-sm, 8px)",
+                                  border: fulfil.time === s.v ? "2px solid var(--gold, #c8a96e)" : "1.5px solid var(--border, #ddd)",
+                                  background: fulfil.time === s.v ? "var(--gold, #c8a96e)" : "transparent",
+                                  color: fulfil.time === s.v ? "#fff" : "inherit",
+                                  cursor: "pointer", fontSize: "13px",
+                                  fontWeight: fulfil.time === s.v ? 600 : 400,
+                                  transition: "all 0.2s",
+                                }}
+                              >{s.l}</button>
+                            ))}
+                          </div>;
+                    })()}
                       style={{ width: "100%", padding: ".55rem .7rem", background: "var(--bg)", border: "1px solid var(--border2)", borderRadius: "var(--r-sm)", fontFamily: "var(--font-b)", fontSize: "1rem", color: "var(--cream)", outline: "none", boxSizing: "border-box" }} />
                   </div>
                 </div>
