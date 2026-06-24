@@ -1663,26 +1663,6 @@ function CustomiseModal({
     L.push("Single tier / Mini tier: " + tier);
     if (design) { L.push(""); L.push("Specific design to recreate: " + cleanText(design, 300)); }
     L.push("");
-    L.push("ORDER ITEMS");
-    L.push("Cake flavor: " + flav);
-    L.push("Design: " + (cleanText(design, 300) || cleanText(theme, 300) || "-"));
-    L.push("Msg on cake: " + (cleanText(cakeMsg, 300) || "-"));
-    L.push("");
-    L.push("DATE & TIME: " + (dt || "-"));
-    L.push("NAME: " + nm);
-    L.push("ADDRESS: " + (cleanText(addr, 300) || "-"));
-    L.push("CONTACT (primary): " + ph1);
-    L.push("CONTACT (secondary): " + (ph2 || "-"));
-    L.push("ORDER TRANSIT: " + transit);
-    // Upload reference image to Supabase Storage and get a shareable URL
-    let imageUrl = "";
-    const imageUrls: string[] = [];
-    for (const rf of refFiles) {
-      try {
-        const upRes = await fetch("/api/upload-image", { method: "POST", headers: { "Content-Type": "application/json" }, body: JSON.stringify({ dataUri: rf.dataUri, fileName: rf.name }) });
-        if (upRes.ok) { const d = await upRes.json(); imageUrls.push(d.url || rf.name); } else { imageUrls.push(rf.name); }
-      } catch { imageUrls.push(rf.name); }
-    }
     if (imageUrls.length) { L.push(""); imageUrls.forEach((u, idx) => L.push(`📎 Reference image ${idx + 1}: ${u}`)); }
 
     try {
