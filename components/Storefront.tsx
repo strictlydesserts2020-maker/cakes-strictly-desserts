@@ -379,6 +379,7 @@ export default function Storefront({
       img: safeImg(qv.product.image_url),
       weight: wo[qv.wIdx].l,
       flavour: qv.flav,
+      egg: qv.egg,
       unit: qvUnit,
       qty: qv.qty,
     });
