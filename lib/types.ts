@@ -56,6 +56,7 @@ export interface CartItem {
   img: string;
   weight: string;
   flavour: string;
+    egg: boolean;
   unit: number;
   qty: number;
 }
