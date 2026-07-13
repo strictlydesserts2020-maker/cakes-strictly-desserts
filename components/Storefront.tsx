@@ -114,11 +114,23 @@ export default function Storefront({
     if (window.location.hash === "#manage-sd") {
       window.location.href = "/admin";
     }
+    // deep-link: restore ?cat= and ?p= on first load
+    const sp = new URLSearchParams(window.location.search);
+    const catSlug = sp.get("cat");
+    const prodId = sp.get("p");
+    if (catSlug) {
+      const catName = categories.find((c) => c.name.toLowerCase().replace(/\s+/g, "-") === catSlug)?.name ?? "";
+      if (catName) { setF((f) => ({ ...f, category: catName })); setView("shop"); }
+    }
+    if (prodId) {
+      const prod = products.find((pr) => pr.id === prodId);
+      if (prod) setQv({ open: true, product: prod, wIdx: 0, flav: FLAVOURS[0], egg: prod.is_eggless, qty: 1 });
+    }
     return () => {
       cancelAnimationFrame(tmo);
       window.removeEventListener("scroll", onScroll);
     };
-  }, []);
+  }, []); // eslint-disable-line react-hooks/exhaustive-deps
   // Lock body scroll on iOS Safari when any modal is open
   useEffect(() => {
     const anyOpen = qv.open || custOpen;
@@ -143,6 +155,31 @@ export default function Storefront({
       document.body.style.width = '';
     };
   }, [qv.open, custOpen]);
+
+
+  // URL sync: update ?cat= when category/view changes
+  useEffect(() => {
+    const params = new URLSearchParams(window.location.search);
+    if (view === "shop" && F.category) {
+      params.set("cat", F.category.toLowerCase().replace(/\s+/g, "-"));
+    } else {
+      params.delete("cat");
+    }
+    const qs = params.toString();
+    window.history.replaceState(null, "", qs ? "/?" + qs : "/");
+  }, [view, F.category]);
+
+  // URL sync: update ?p= when product modal opens/closes
+  useEffect(() => {
+    const params = new URLSearchParams(window.location.search);
+    if (qv.open && qv.product) {
+      params.set("p", String(qv.product.id));
+    } else {
+      params.delete("p");
+    }
+    const qs = params.toString();
+    window.history.replaceState(null, "", qs ? "/?" + qs : "/");
+  }, [qv.open, qv.product]);
 
 
   const go = useCallback((v: View) => {
