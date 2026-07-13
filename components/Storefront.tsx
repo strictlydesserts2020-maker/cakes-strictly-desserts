@@ -92,8 +92,8 @@ export default function Storefront({
   });
 
   // quick view
-  const [qv, setQv] = useState<{ open: boolean; product: Product | null; wIdx: number; flav: string; qty: number }>(
-    { open: false, product: null, wIdx: 0, flav: FLAVOURS[0], qty: 1 }
+  const [qv, setQv] = useState<{ open: boolean; product: Product | null; wIdx: number; flav: string; egg: boolean; qty: number }>(
+    { open: false, product: null, wIdx: 0, flav: FLAVOURS[0],egg: false,  qty: 1 }
   );
 
   // customise modal
