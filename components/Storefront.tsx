@@ -126,6 +126,9 @@ export default function Storefront({
       const prod = products.find((pr) => pr.id === prodId);
       if (prod) setQv({ open: true, product: prod, wIdx: 0, flav: FLAVOURS[0], egg: prod.is_eggless, qty: 1 });
     }
+    if (sp.get("customise")) {
+      setCustOpen(true);
+    }
     return () => {
       cancelAnimationFrame(tmo);
       window.removeEventListener("scroll", onScroll);
@@ -180,6 +183,19 @@ export default function Storefront({
     const qs = params.toString();
     window.history.replaceState(null, "", qs ? "/?" + qs : "/");
   }, [qv.open, qv.product]);
+
+
+  // URL sync: update ?customise= when the customise modal opens/closes
+  useEffect(() => {
+    const params = new URLSearchParams(window.location.search);
+    if (custOpen) {
+      params.set("customise", "1");
+    } else {
+      params.delete("customise");
+    }
+    const qs = params.toString();
+    window.history.replaceState(null, "", qs ? "/?" + qs : "/");
+  }, [custOpen]);
 
 
   const go = useCallback((v: View) => {
