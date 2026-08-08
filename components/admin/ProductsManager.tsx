@@ -43,6 +43,50 @@ export default function ProductsManager() {
   const [busy, setBusy] = useState(false);
   const [uploading, setUploading] = useState(false);
   const [msg, setMsg] = useState("");
+
+  // ── Image byte-size for the "Size" column (Supabase storage metadata + HEAD fallback) ──
+  const [sizes, setSizes] = useState<Record<string, number | null>>({});
+  const fmtSize = (b?: number | null) => {
+    if (b == null) return "—";
+    if (b >= 1048576) return (b / 1048576).toFixed(1) + " MB";
+    if (b >= 1024) return Math.round(b / 1024) + " KB";
+    return b + " B";
+  };
+  useEffect(() => {
+    if (!products.length) return;
+    let cancelled = false;
+    const fileName = (u: string) => {
+      const raw = u.split("?")[0].split("/").pop() || "";
+      try { return decodeURIComponent(raw); } catch { return raw; }
+    };
+    (async () => {
+      const byName: Record<string, number> = {};
+      try {
+        const { data: files } = await supabase.storage
+          .from("product-images")
+          .list("products", { limit: 1000 });
+        (files ?? []).forEach((f: any) => {
+          if (f?.name && f?.metadata?.size != null) byName[f.name] = f.metadata.size;
+        });
+      } catch {}
+      const next: Record<string, number | null> = {};
+      await Promise.all(
+        products.map(async (p: any) => {
+          const url = p.image_url;
+          if (!url) { next[p.id] = null; return; }
+          const key = fileName(url);
+          if (byName[key] != null) { next[p.id] = byName[key]; return; }
+          try {
+            const r = await fetch(url, { method: "HEAD" });
+            const len = r.headers.get("content-length");
+            next[p.id] = len ? Number(len) : null;
+          } catch { next[p.id] = null; }
+        })
+      );
+      if (!cancelled) setSizes(next);
+    })();
+    return () => { cancelled = true; };
+  }, [products, supabase]);
   const [filterCat, setFilterCat] = useState("");
 
   const load = useCallback(async () => {
@@ -277,7 +321,7 @@ export default function ProductsManager() {
           <table className="atable">
             <thead>
               <tr>
-                <th></th><th>Name</th><th>Category</th><th>Price</th><th>Status</th><th>Actions</th>
+                <th></th><th>Name</th><th>Category</th><th>Price</th><th>Size</th><th>Status</th><th>Actions</th>
               </tr>
             </thead>
             <tbody>
@@ -290,6 +334,14 @@ export default function ProductsManager() {
                   </td>
                   <td>{p.category_name || "—"}</td>
                   <td>{inr(Number(p.price))}</td>
+                  <td>
+                    {(() => {
+                      const b = sizes[p.id];
+                      const big = b != null && b >= 1048576;
+                      const mid = b != null && b >= 512000 && b < 1048576;
+                      return <span style={{ fontVariantNumeric: "tabular-nums", fontWeight: big ? 700 : 400, color: big ? "var(--rose)" : mid ? "#b8860b" : "var(--muted)" }}>{fmtSize(b)}</span>;
+                    })()}
+                  </td>
                   <td><span className={"pill " + (p.is_active ? "on" : "off")}>{p.is_active ? "Active" : "Hidden"}</span></td>
                   <td>
                     <div className="row-actions">
@@ -301,7 +353,7 @@ export default function ProductsManager() {
                 </tr>
               ))}
               {!visibleProducts.length && (
-                <tr><td colSpan={6} style={{ color: "var(--muted)" }}>No products yet. Click “Add Product”.</td></tr>
+                <tr><td colSpan={7} style={{ color: "var(--muted)" }}>No products yet. Click “Add Product”.</td></tr>
               )}
             </tbody>
           </table>
