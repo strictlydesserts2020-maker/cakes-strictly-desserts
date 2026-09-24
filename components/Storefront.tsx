@@ -552,12 +552,12 @@ export default function Storefront({
             </div>
             <div className="cat-strip">
               {categories.map((c) => (
-                <div key={c.id} className="cat-tile" onClick={() => goCategory(c.name)}>
+                <a key={c.id} href={`/cakes/${c.slug}`} className="cat-tile" onClick={(e) => { e.preventDefault(); goCategory(c.name); }} style={{ textDecoration: "none", color: "inherit", cursor: "pointer" }}>
                   <div className="ph">
                     <img src={safeImg(c.image_url)} alt={c.name} loading="lazy" decoding="async" onError={onImgError} />
                   </div>
                   <span className="label">{c.name}</span>
-                </div>
+                </a>
               ))}
             </div>
           </div>
@@ -814,7 +814,7 @@ export default function Storefront({
               </div>
             </article>
             {categories.map((c) => (
-              <article key={c.id} className="ccard" onClick={() => goCategory(c.name)}>
+              <a key={c.id} href={`/cakes/${c.slug}`} className="ccard" onClick={(e) => { e.preventDefault(); goCategory(c.name); }} style={{ textDecoration: "none", color: "inherit", cursor: "pointer" }}>
                 <div className="ph">
                   <img src={safeImg(c.image_url)} alt={c.name} loading="lazy" decoding="async" onError={onImgError} />
                 </div>
@@ -826,7 +826,7 @@ export default function Storefront({
                     <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><path d="M5 12h14M13 6l6 6-6 6" /></svg>
                   </span>
                 </div>
-              </article>
+              </a>
             ))}
           </div>
         </div>
