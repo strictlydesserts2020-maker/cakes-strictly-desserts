@@ -12,21 +12,29 @@ function idPrefix(handle: string) {
   return handle.split("-").pop() || "";
 }
 
-async function getProduct(handle: string) {
+async function getProduct(catSlug: string, handle: string) {
   const prefix = idPrefix(handle);
   if (!prefix) return null;
   const supabase = createClient();
-  const { data } = await supabase
-    .from("products")
-    .select("*, categories(name, slug)")
-    .ilike("id", prefix + "%")
+  const { data: cat } = await supabase
+    .from("categories")
+    .select("id, name, slug")
+    .eq("slug", catSlug)
     .eq("is_active", true)
-    .limit(1);
-  return (data && data[0]) || null;
+    .maybeSingle();
+  if (!cat) return null;
+  const { data: prods } = await supabase
+    .from("products")
+    .select("*")
+    .eq("category_id", (cat as any).id)
+    .eq("is_active", true);
+  const p: any = (prods || []).find((x: any) => String(x.id).startsWith(prefix));
+  if (!p) return null;
+  return { ...p, categories: { name: (cat as any).name, slug: (cat as any).slug } };
 }
 
 export async function generateMetadata({ params }: { params: { category: string; product: string } }): Promise<Metadata> {
-  const p: any = await getProduct(params.product);
+  const p: any = await getProduct(params.category, params.product);
   if (!p) return { title: "Cake | Strictly Desserts" };
   const catSlug = p.categories?.slug || params.category;
   const title = `${p.name} — ${inr(Number(p.price))} | Strictly Desserts`;
@@ -44,7 +52,7 @@ export async function generateMetadata({ params }: { params: { category: string;
 }
 
 export default async function ProductPage({ params }: { params: { category: string; product: string } }) {
-  const p: any = await getProduct(params.product);
+  const p: any = await getProduct(params.category, params.product);
   if (!p) notFound();
   const catName = p.categories?.name || "Cakes";
   const catSlug = p.categories?.slug || params.category;
