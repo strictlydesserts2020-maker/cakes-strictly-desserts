@@ -43,13 +43,15 @@ const jsonLd = {
   "@type": "Bakery",
   name: "Strictly Desserts",
   url: "https://www.strictlydesserts.in",
+  telephone: "+91-90030-82979",
+  image: "https://www.strictlydesserts.in/opengraph-image",
   description: "Handcrafted birthday, wedding, bento & customised cakes in Anna Nagar, Chennai.",
   address: {
     "@type": "PostalAddress",
-    streetAddress: "Anna Nagar East",
+    streetAddress: "D16, 8th Street, Second Avenue, W Ext Rd, Anna Nagar East",
     addressLocality: "Chennai",
     addressRegion: "Tamil Nadu",
-    postalCode: "600040",
+    postalCode: "600102",
     addressCountry: "IN",
   },
   geo: { "@type": "GeoCoordinates", latitude: "13.0856", longitude: "80.2128" },
@@ -61,7 +63,7 @@ const jsonLd = {
     opens: "09:00",
     closes: "21:00",
   }],
-  sameAs: ["https://www.instagram.com/strictly.desserts"],
+  sameAs: ["https://www.instagram.com/strictlydesserts"],
 };
 
 export default function RootLayout({ children }: { children: React.ReactNode }) {
