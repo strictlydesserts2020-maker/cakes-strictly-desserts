@@ -51,10 +51,12 @@ export default function Storefront({
   categories,
   products,
   customiseImg,
+  flavours = [],
 }: {
   categories: Category[];
   products: Product[];
   customiseImg?: string | null;
+  flavours?: any[];
 }) {
   const [view, setView] = useState<View>("home");
   const [scrolled, setScrolled] = useState(true);
@@ -92,6 +94,25 @@ export default function Storefront({
   });
 
   // quick view
+  const fl = useMemo(() => {
+    const rows = (flavours ?? []) as Array<{ name: string; menu: string; surcharge: number; addon_15: number; addon_2: number }>;
+    const names = (m: string) => rows.filter((r) => r.menu === m).map((r) => r.name);
+    const mini = names("mini"), bento = names("bento"), generic = names("generic"), miniCust = names("mini_cust");
+    const addon: Record<string, [number, number]> = {};
+    rows.filter((r) => r.menu === "mini").forEach((r) => { addon[r.name] = [Number(r.addon_15) || 0, Number(r.addon_2) || 0]; });
+    const bentoAddon: Record<string, number> = {};
+    rows.filter((r) => r.menu === "bento").forEach((r) => { bentoAddon[r.name] = Number(r.surcharge) || 0; });
+    if (!bento.length) { ["Chocolate Truffle Cake", "Biscoff Chocolate", "Biscoff Vanilla", "Chunky Nutella"].forEach((n) => { bentoAddon[n] = 50; }); }
+    return {
+      FLAVOURS: generic.length ? generic : FLAVOURS,
+      BENTO_FLAVOURS: bento.length ? bento : BENTO_FLAVOURS,
+      MINI_TIERS_FLAVOURS: mini.length ? mini : MINI_TIERS_FLAVOURS,
+      MINI_TIERS_CUST_FLAVOURS: miniCust.length ? miniCust : MINI_TIERS_CUST_FLAVOURS,
+      MINI_TIERS_ADDON: mini.length ? addon : MINI_TIERS_ADDON,
+      bentoAddon,
+    };
+  }, [flavours]);
+
   const [qv, setQv] = useState<{ open: boolean; product: Product | null; wIdx: number; flav: string; egg: boolean; qty: number }>(
     { open: false, product: null, wIdx: 0, flav: FLAVOURS[0],egg: false,  qty: 1 }
   );
@@ -373,17 +394,17 @@ export default function Storefront({
   // ---------- quick view ----------
   const openQuick = useCallback((p: Product) => {
     analytics.productView(p.name, p.category_name ?? "Products");
-    setQv({ open: true, product: p, wIdx: 0, flav: (p.category_name === "Bento Cakes" ? BENTO_FLAVOURS : FLAVOURS)[0], egg: p.is_eggless, qty: 1 });
+    setQv({ open: true, product: p, wIdx: 0, flav: (p.category_name === "Bento Cakes" ? fl.BENTO_FLAVOURS : fl.FLAVOURS)[0], egg: p.is_eggless, qty: 1 });
   }, []);
 
   const qvUnit = useMemo(() => {
     if (!qv.product) return 0;
     const base = qv.product.price * weightOpts(qv.product.category_name)[qv.wIdx].m;
     if (qv.product.category_name === "Mini tiers" && qv.wIdx > 0) {
-      const addon = MINI_TIERS_ADDON[qv.flav] ?? [0, 0];
+      const addon = fl.MINI_TIERS_ADDON[qv.flav] ?? [0, 0];
       return base + addon[qv.wIdx - 1];
     }
-    return base + (qv.product?.category_name !== "Mini tiers" && ["Chocolate Truffle Cake","Biscoff Chocolate","Biscoff Vanilla","Chunky Nutella"].includes(qv.flav) ? 50 : 0);
+    return base + (qv.product?.category_name !== "Mini tiers" ? (fl.bentoAddon[qv.flav] || 0) : 0);
   }, [qv]);
 
   const qvAdd = useCallback(() => {
@@ -1118,8 +1139,8 @@ export default function Storefront({
               <div className="qv-price">{inr(qvUnit)}</div>
               <label style={{ fontSize: ".7rem", fontWeight: 600, letterSpacing: ".06em", textTransform: "uppercase", color: "var(--gold2)", marginTop: ".8rem", display: "block" }}>Flavour</label>
               <div className="opt-row">
-                {(qv.product.category_name === "Bento Cakes" ? BENTO_FLAVOURS : qv.product.category_name === "Mini tiers" ? MINI_TIERS_FLAVOURS : FLAVOURS).map((f) => (
-                  <span key={f} className={"opt" + (f === qv.flav ? " sel" : "")} role="button" tabIndex={0} onClick={() => setQv((s) => ({ ...s, flav: f }))}>{f}{qv.product?.category_name !== "Mini tiers" && ["Chocolate Truffle Cake","Biscoff Chocolate","Biscoff Vanilla","Chunky Nutella"].includes(f)?" +₹50":""}</span>
+                {(qv.product.category_name === "Bento Cakes" ? fl.BENTO_FLAVOURS : qv.product.category_name === "Mini tiers" ? fl.MINI_TIERS_FLAVOURS : fl.FLAVOURS).map((f) => (
+                  <span key={f} className={"opt" + (f === qv.flav ? " sel" : "")} role="button" tabIndex={0} onClick={() => setQv((s) => ({ ...s, flav: f }))}>{f}{qv.product?.category_name !== "Mini tiers" && (fl.bentoAddon[f] || 0) > 0 ? " +₹" + fl.bentoAddon[f] : ""}</span>
                 ))}
               </div>
               {qv.product.category_name !== "Bento Cakes" && <>
@@ -1151,6 +1172,9 @@ export default function Storefront({
           initialCat={F.category || "All"}
           onClose={() => setCustOpen(false)}
           notify={notify}
+          genFlavours={fl.FLAVOURS}
+          bentoFlavours={fl.BENTO_FLAVOURS}
+          miniCustFlavours={fl.MINI_TIERS_CUST_FLAVOURS}
         />
       )}
 
@@ -1641,17 +1665,23 @@ function CustomiseModal({
   initialCat,
   onClose,
   notify,
+  genFlavours,
+  bentoFlavours,
+  miniCustFlavours,
 }: {
   categories: Category[];
   initialCat: string;
   onClose: () => void;
   notify: (m: string) => void;
+  genFlavours: string[];
+  bentoFlavours: string[];
+  miniCustFlavours: string[];
 }) {
   const catNames = useMemo(() => ["All", ...categories.map((c) => c.name)], [categories]);
   const [cat, setCat] = useState(catNames.includes(initialCat) ? initialCat : "All");
   const [weight, setWeight] = useState("");
   const [serv, setServ] = useState("");
-  const [flav, setFlav] = useState(FLAVOURS[0]);
+  const [flav, setFlav] = useState(genFlavours[0]);
   const [theme, setTheme] = useState("");
   const [tier, setTier] = useState("Single tier");
   const [design, setDesign] = useState("");
@@ -1678,7 +1708,7 @@ function CustomiseModal({
   useEffect(() => {
     if (cat === "Bento Cakes") {
       setWeight("300 gms");
-      setFlav(BENTO_FLAVOURS[0]);
+      setFlav(bentoFlavours[0]);
     }
   }, [cat]);
 
@@ -1798,7 +1828,7 @@ function CustomiseModal({
 
         <label>Cake flavour <span style={{ textTransform: "none", fontWeight: 400, color: "var(--muted)" }}>(choose from catalogue)</span></label>
         <select className="field" value={flav} onChange={(e) => setFlav(e.target.value)}>
-          {(cat === "Bento Cakes" ? BENTO_FLAVOURS : cat === "Mini tiers" ? MINI_TIERS_CUST_FLAVOURS : FLAVOURS).map((f) => <option key={f} value={f}>{f}</option>)}
+          {(cat === "Bento Cakes" ? bentoFlavours : cat === "Mini tiers" ? miniCustFlavours : genFlavours).map((f) => <option key={f} value={f}>{f}</option>)}
         </select>
 
         <label>Theme / Reference</label>
