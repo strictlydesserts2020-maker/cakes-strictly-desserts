@@ -6,15 +6,17 @@ export const dynamic = "force-dynamic";
 
 export default async function HomePage() {
   const supabase = createClient();
-  const [{ data: catRows }, { data: prodRows }, { data: custRow }] = await Promise.all([
+  const [{ data: catRows }, { data: prodRows }, { data: custRow }, { data: flavRows }] = await Promise.all([
     supabase.from("categories").select("*").eq("is_active", true).order("sort_order", { ascending: true }),
     supabase.from("products").select("*,categories(name,is_active)").eq("is_active", true).order("sort_order", { ascending: true }),
     supabase.from("categories").select("image_url").eq("slug", "customise-your-cake").single(),
+    supabase.from("flavours").select("name,menu,surcharge,addon_15,addon_2").eq("is_active", true).order("menu", { ascending: true }).order("sort_order", { ascending: true }),
   ]);
   const categories = (catRows ?? []) as any[];
   const products = (prodRows ?? [])
     .filter((p: any) => p.categories?.is_active !== false)
     .map((p: any) => ({ ...p, category_name: p.categories?.name ?? "" }));
   const customiseImg: string | null = (custRow as any)?.image_url ?? null;
-  return <Storefront categories={categories} products={products} customiseImg={customiseImg} />;
+  const flavours = (flavRows ?? []) as any[];
+  return <Storefront categories={categories} products={products} customiseImg={customiseImg} flavours={flavours} />;
 }
