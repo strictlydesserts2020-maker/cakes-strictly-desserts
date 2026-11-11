@@ -404,9 +404,7 @@ export default function Storefront({
   const qvUnit = useMemo(() => {
     if (!qv.product) return 0;
     if (qv.product.category_name === "Trending Cakes") {
-      const dc = Number((qv.product as any).design_charges) || 0;
-      const addon = fl.MINI_TIERS_ADDON[qv.flav] ?? [0, 0];
-      return dc + (qv.wIdx > 0 ? addon[qv.wIdx - 1] : 0);
+      return (qv.product.price || 0) + (fl.bentoAddon[qv.flav] || 0);
     }
     const base = qv.product.price * weightOpts(qv.product.category_name)[qv.wIdx].m;
     if (qv.product.category_name === "Mini tiers" && qv.wIdx > 0) {
