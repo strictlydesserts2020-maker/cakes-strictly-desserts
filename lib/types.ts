@@ -26,6 +26,7 @@ export interface Product {
   flavor: string | null;
   is_active: boolean;
   sort_order: number;
+  design_charges?: number;
   created_at?: string;
   updated_at?: string;
   // joined / derived on the storefront
