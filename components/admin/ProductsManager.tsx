@@ -31,6 +31,7 @@ const EMPTY = {
   flavor: "",
   is_active: true,
   sort_order: 0,
+  design_charges: 0,
 };
 type Form = typeof EMPTY;
 
@@ -120,6 +121,7 @@ export default function ProductsManager() {
       name: p.name,
       description: p.description ?? "",
       price: Number(p.price),
+      design_charges: Number(p.design_charges) || 0,
       category_id: p.category_id ?? "",
       image_url: p.image_url ?? "",
       occasions: p.occasions ?? [],
@@ -159,6 +161,7 @@ export default function ProductsManager() {
       name: editing.name.trim(),
       description: editing.description,
       price: Number(editing.price) || 0,
+      design_charges: Number(editing.design_charges) || 0,
       category_id: editing.category_id || null,
       image_url: editing.image_url,
       occasions: editing.occasions,
@@ -253,6 +256,10 @@ export default function ProductsManager() {
               <input className="field" type="number" min={0} value={editing.price} onChange={(e) => setEditing({ ...editing, price: Number(e.target.value) })} />
             </div>
             <div>
+              <label className="alabel">Design Charges (₹)</label>
+              <input className="field" type="number" min={0} value={editing.design_charges} onChange={(e) => setEditing({ ...editing, design_charges: Number(e.target.value) })} />
+            </div>
+            <div>
               <label className="alabel">Category</label>
               <select className="field" value={editing.category_id} onChange={(e) => setEditing({ ...editing, category_id: e.target.value })}>
                 <option value="">— none —</option>
@@ -321,7 +328,7 @@ export default function ProductsManager() {
           <table className="atable">
             <thead>
               <tr>
-                <th></th><th>Name</th><th>Category</th><th>Price</th><th>Size</th><th>Status</th><th>Actions</th>
+                <th></th><th>Name</th><th>Category</th><th>Price</th><th>Design</th><th>Size</th><th>Status</th><th>Actions</th>
               </tr>
             </thead>
             <tbody>
@@ -334,6 +341,7 @@ export default function ProductsManager() {
                   </td>
                   <td>{p.category_name || "—"}</td>
                   <td>{inr(Number(p.price))}</td>
+                  <td>+{inr(Number(p.design_charges || 0))}</td>
                   <td>
                     {(() => {
                       const b = sizes[p.id];
@@ -353,7 +361,7 @@ export default function ProductsManager() {
                 </tr>
               ))}
               {!visibleProducts.length && (
-                <tr><td colSpan={7} style={{ color: "var(--muted)" }}>No products yet. Click “Add Product”.</td></tr>
+                <tr><td colSpan={8} style={{ color: "var(--muted)" }}>No products yet. Click “Add Product”.</td></tr>
               )}
             </tbody>
           </table>
