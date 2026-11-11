@@ -580,6 +580,12 @@ export default function Storefront({
                   <span className="label">{c.name}</span>
                 </a>
               ))}
+              <a href="/cakes/celebration-package" className="cat-tile" style={{ textDecoration: "none", color: "inherit", cursor: "pointer" }}>
+                <div className="ph">
+                  <img src="/celebration/tile.webp" alt="Celebration Cake Package" loading="lazy" decoding="async" />
+                </div>
+                <span className="label">Celebration Cake Package</span>
+              </a>
             </div>
           </div>
         </section>
