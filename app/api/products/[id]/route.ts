@@ -6,7 +6,7 @@ export async function PATCH(req:Request,{params}:{params:{id:string}}) {
   if (!admin) return NextResponse.json({error:"Unauthorized"},{status:401});
   const body = await req.json().catch(()=>({}));
   const patch:Record<string,unknown>={};
-  for (const k of ["name","description","price","category_id","image_url","occasions","is_eggless","badge","rating","is_active","sort_order"]) if (k in body) patch[k]=body[k];
+  for (const k of ["name","description","price","category_id","image_url","occasions","is_eggless","badge","rating","is_active","sort_order","design_charges"]) if (k in body) patch[k]=body[k];
   const supabase = createClient();
   const {data,error} = await supabase.from("products").update(patch).eq("id",params.id).select().single();
   if (error) return NextResponse.json({error:error.message},{status:500});
