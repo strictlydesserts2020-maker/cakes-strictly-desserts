@@ -50,7 +50,7 @@ export default function CelebrationPackagePage() {
           </p>
         </header>
 
-        <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fit, minmax(210px, 1fr))", gap: "1rem", marginBottom: "2.4rem" }}>
+        <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fit, minmax(150px, 1fr))", gap: "1rem", marginBottom: "2.4rem" }}>
           {GALLERY.map((g) => (
             <figure key={g.src} style={{ margin: 0, borderRadius: "22px", overflow: "hidden", border: "5px solid #fff", boxShadow: "var(--shadow)", aspectRatio: "1 / 1" }}>
               <img src={g.src} alt={g.alt} width={640} height={640} loading="lazy" decoding="async" style={{ width: "100%", height: "100%", objectFit: "cover", display: "block" }} />
