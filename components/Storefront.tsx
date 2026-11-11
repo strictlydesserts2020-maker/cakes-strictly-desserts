@@ -403,6 +403,11 @@ export default function Storefront({
 
   const qvUnit = useMemo(() => {
     if (!qv.product) return 0;
+    if (qv.product.category_name === "Trending Cakes") {
+      const dc = Number((qv.product as any).design_charges) || 0;
+      const addon = fl.MINI_TIERS_ADDON[qv.flav] ?? [0, 0];
+      return dc + (qv.wIdx > 0 ? addon[qv.wIdx - 1] : 0);
+    }
     const base = qv.product.price * weightOpts(qv.product.category_name)[qv.wIdx].m;
     if (qv.product.category_name === "Mini tiers" && qv.wIdx > 0) {
       const addon = fl.MINI_TIERS_ADDON[qv.flav] ?? [0, 0];
@@ -1149,7 +1154,7 @@ export default function Storefront({
               <div className="qv-price">{inr(qvUnit)}</div>
               <label style={{ fontSize: ".7rem", fontWeight: 600, letterSpacing: ".06em", textTransform: "uppercase", color: "var(--gold2)", marginTop: ".8rem", display: "block" }}>Flavour</label>
               <div className="opt-row">
-                {(qv.product.category_name === "Bento Cakes" ? fl.BENTO_FLAVOURS : qv.product.category_name === "Mini tiers" ? fl.MINI_TIERS_FLAVOURS : fl.FLAVOURS).map((f) => (
+                {(qv.product.category_name === "Bento Cakes" ? fl.BENTO_FLAVOURS : (qv.product.category_name === "Mini tiers" || qv.product.category_name === "Trending Cakes") ? fl.MINI_TIERS_FLAVOURS : fl.FLAVOURS).map((f) => (
                   <span key={f} className={"opt" + (f === qv.flav ? " sel" : "")} role="button" tabIndex={0} onClick={() => setQv((s) => ({ ...s, flav: f }))}>{f}{qv.product?.category_name !== "Mini tiers" && (fl.bentoAddon[f] || 0) > 0 ? " +₹" + fl.bentoAddon[f] : ""}</span>
                 ))}
               </div>
