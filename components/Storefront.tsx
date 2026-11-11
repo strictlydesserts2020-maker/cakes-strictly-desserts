@@ -147,6 +147,10 @@ export default function Storefront({
       const prod = products.find((pr) => pr.id === prodId);
       if (prod) setQv({ open: true, product: prod, wIdx: 0, flav: FLAVOURS[0], egg: prod.is_eggless, qty: 1 });
     }
+    const vw = sp.get("view");
+    if (vw && ["home", "shop", "categories", "about", "contact", "gift-hampers", "delivery-process"].includes(vw)) {
+      setView(vw as View);
+    }
     if (sp.get("customise")) {
       setCustOpen(true);
     }
