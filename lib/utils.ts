@@ -66,6 +66,13 @@ export function weightOpts(categoryName?: string) {
       { l: "2 kg", m: 1 },
     ];
   }
+  if (categoryName === "Trending Cakes") {
+    return [
+      { l: "1 kg", m: 1 },
+      { l: "1.5 kg", m: 1 },
+      { l: "2 kg", m: 1 },
+    ];
+  }
   if (categoryName === "Bento Cakes") {
     return [{ l: "Approx 300-350 g", m: 1 }];
   }
