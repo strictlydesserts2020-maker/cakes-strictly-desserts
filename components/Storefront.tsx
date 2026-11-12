@@ -510,7 +510,7 @@ export default function Storefront({
         <h3 className="product-name">{p.name}</h3>
         
         <div style={{ display: "flex", alignItems: "center", justifyContent: "space-between", marginTop: "auto", paddingTop: ".5rem" }}>
-          <span className="product-price">{inr(Number(p.price))}</span>
+          <span className="product-price">{p.category_name === "Trending Cakes" ? "" : inr(Number(p.price))}</span>
           <button className="btn btn-gold add-btn" onClick={() => openQuick(p)} aria-label={`Add ${p.name} to cart`}>
             Add +
           </button>
