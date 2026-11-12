@@ -398,7 +398,7 @@ export default function Storefront({
   // ---------- quick view ----------
   const openQuick = useCallback((p: Product) => {
     analytics.productView(p.name, p.category_name ?? "Products");
-    setQv({ open: true, product: p, wIdx: 0, flav: (p.category_name === "Bento Cakes" ? fl.BENTO_FLAVOURS : fl.FLAVOURS)[0], egg: p.is_eggless, qty: 1 });
+    setQv({ open: true, product: p, wIdx: 0, flav: p.category_name === "Trending Cakes" ? "" : (p.category_name === "Bento Cakes" ? fl.BENTO_FLAVOURS : fl.FLAVOURS)[0], egg: p.is_eggless, qty: 1 });
   }, []);
 
   const qvUnit = useMemo(() => {
@@ -421,6 +421,7 @@ export default function Storefront({
 
   const qvAdd = useCallback(() => {
     if (!qv.product) return;
+    if (qv.product.category_name === "Trending Cakes" && !qv.flav) { alert("Please choose a flavour."); return; }
     const wo = weightOpts(qv.product.category_name);
     addToCart({
       pid: qv.product.id,
@@ -1177,7 +1178,7 @@ export default function Storefront({
                 </div>
                 
               </div>
-              <button className="btn btn-gold" style={{ width: "100%", marginTop: "1.3rem" }} onClick={qvAdd}>Add to Cart</button>
+              <button className="btn btn-gold" style={{ width: "100%", marginTop: "1.3rem", opacity: (qv.product?.category_name === "Trending Cakes" && !qv.flav) ? 0.5 : 1, cursor: (qv.product?.category_name === "Trending Cakes" && !qv.flav) ? "not-allowed" : "pointer" }} disabled={qv.product?.category_name === "Trending Cakes" && !qv.flav} onClick={qvAdd}>{(qv.product?.category_name === "Trending Cakes" && !qv.flav) ? "Select a flavour" : "Add to Cart"}</button>
             </div>
           </div>
         </div>
