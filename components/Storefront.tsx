@@ -1782,7 +1782,7 @@ function CustomiseModal({
     const dt = [fmtDate(date), fmtTime(time)].filter(Boolean).join(", ");
 
     const L: string[] = [];
-    L.push("Hi Strictly Desserts! 🎂 I'd like to customise a cake.");
+    L.push("Hi Strictly Desserts! I'd like to customise a cake.");
     L.push("");
     L.push("CATEGORY: " + cat);
     L.push("");
@@ -1803,7 +1803,20 @@ function CustomiseModal({
         if (upRes.ok) { const d = await upRes.json(); imageUrls.push(d.url || rf.name); } else { imageUrls.push(rf.name); }
       } catch { imageUrls.push(rf.name); }
     }
-    if (imageUrls.length) { L.push(""); imageUrls.forEach((u, idx) => L.push(`📎 Reference image ${idx + 1}: ${u}`)); }
+    if (imageUrls.length) { L.push(""); imageUrls.forEach((u, idx) => L.push(`Reference image ${idx + 1}: ${u}`)); }
+
+    L.push("");
+    L.push("ORDER ITEMS");
+    L.push("Message on cake: " + (cleanText(cakeMsg, 300) || "-"));
+    L.push("");
+    L.push("DATE & TIME: " + (dt || "-"));
+    L.push("Order transit: " + transit);
+    L.push("");
+    L.push("YOUR DETAILS");
+    L.push("Name: " + nm);
+    L.push("Address: " + (cleanText(addr, 400) || "-"));
+    L.push("Contact (primary): " + ph1);
+    if (ph2) L.push("Contact (secondary): " + ph2);
 
     try {
       await fetch("/api/enquiries", {
