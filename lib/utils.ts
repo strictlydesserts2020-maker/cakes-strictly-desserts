@@ -68,8 +68,12 @@ export function weightOpts(categoryName?: string) {
   }
   if (categoryName === "Trending Cakes") {
     return [
-      { l: "0.5 kg", m: 1 },
+      { l: "0.5 kg", m: 0.5 },
       { l: "1 kg", m: 1 },
+      { l: "1.5 kg", m: 1.5 },
+      { l: "2 kg", m: 2 },
+      { l: "2.5 kg", m: 2.5 },
+      { l: "3 kg", m: 3 },
     ];
   }
   if (categoryName === "Bento Cakes") {
