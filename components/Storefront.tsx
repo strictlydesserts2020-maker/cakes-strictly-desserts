@@ -407,7 +407,8 @@ export default function Storefront({
       const dc = Number((qv.product as any).design_charges) || 0;
       const taddon = fl.MINI_TIERS_ADDON[qv.flav] ?? [0, 0];
       const tw = weightOpts(qv.product.category_name)[qv.wIdx].m;
-      const tflav = qv.wIdx === 0 ? (taddon[0] || 0) : (taddon[1] || 0) * tw;
+      const twhole = Math.floor(tw);
+      const tflav = twhole * (taddon[1] || 0) + ((tw - twhole) >= 0.5 ? (taddon[0] || 0) : 0);
       return dc + tflav;
     }
     const base = qv.product.price * weightOpts(qv.product.category_name)[qv.wIdx].m;
