@@ -1757,12 +1757,13 @@ function CustomiseModal({
     });
   }
   const send = useCallback(async () => {
-    if (sending) return; setSending(true);
+    if (sending) return;
     const nm = cleanText(name, 60);
     if (!nm || !ph1) { setErr("Please add at least your name and primary contact number."); return; }
     if (!validPhone(ph1)) { setErr("Please enter a valid primary contact number (10–15 digits)."); return; }
     if (ph2 && !validPhone(ph2)) { setErr("Secondary number doesn't look valid."); return; }
     setErr("");
+    setSending(true);
 
     const fmtDate = (d: string) => {
       if (!d) return "";
