@@ -398,7 +398,7 @@ export default function Storefront({
   // ---------- quick view ----------
   const openQuick = useCallback((p: Product) => {
     analytics.productView(p.name, p.category_name ?? "Products");
-    setQv({ open: true, product: p, wIdx: 0, flav: p.category_name === "Trending Cakes" ? "" : (p.category_name === "Bento Cakes" ? fl.BENTO_FLAVOURS : fl.FLAVOURS)[0], egg: p.is_eggless, qty: 1 });
+    setQv({ open: true, product: p, wIdx: 0, flav: p.category_name === "Trending Cakes" ? "Butterscotch" : (p.category_name === "Bento Cakes" ? fl.BENTO_FLAVOURS : fl.FLAVOURS)[0], egg: p.is_eggless, qty: 1 });
   }, []);
 
   const qvUnit = useMemo(() => {
