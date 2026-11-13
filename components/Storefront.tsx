@@ -799,8 +799,8 @@ export default function Storefront({
       {/* SHOP */}
       <div className={viewClass("shop")}>
         <div className="container">
-          <button className="back-btn" onClick={() => go(prevViewRef.current)} style={{ display: "inline-flex", alignItems: "center", gap: ".4rem", background: "transparent", border: "1px solid var(--line, #e6ddd2)", padding: ".45rem 1rem", borderRadius: "999px", cursor: "pointer", color: "var(--ink, #4a2c1a)", fontWeight: 600, marginBottom: "1rem" }}>← Back</button>
           <div className="page-head">
+            <div style={{ textAlign: "left", width: "100%" }}>{renderBack()}</div>
             <span className="section-eyebrow eyebrow-c">Handcrafted in Chennai</span>
             <h1>Our <em>Collection</em></h1>
             <p>Bento · Birthday · Wedding · Custom — every one made to order</p>
@@ -841,8 +841,8 @@ export default function Storefront({
       {/* CATEGORIES */}
       <div className={viewClass("categories")}>
         <div className="container">
-          {renderBack()}
           <div className="page-head">
+            <div style={{ textAlign: "left", width: "100%" }}>{renderBack()}</div>
             <span className="section-eyebrow eyebrow-c">Find your perfect cake</span>
             <h2>Shop by <em>Category</em></h2>
             <p>Pick a category to explore every cake in that collection.</p>
@@ -882,8 +882,8 @@ export default function Storefront({
       {/* ABOUT */}
       <div className={viewClass("about")}>
         <div className="container">
-          {renderBack()}
           <div className="page-head">
+            <div style={{ textAlign: "left", width: "100%" }}>{renderBack()}</div>
             <span className="section-eyebrow eyebrow-c">Our Story</span>
             <h2>About <em>Strictly Desserts</em></h2>
           </div>
@@ -904,21 +904,21 @@ export default function Storefront({
 
       {/* GIFT HAMPERS */}
       <div className={viewClass("gift-hampers")}>
-        <div className="container" style={{ paddingTop: "1.2rem" }}>{renderBack()}</div>
+        <div className="container" style={{ paddingTop: "96px" }}>{renderBack()}</div>
         <GiftHampersPage go={go} waLink={waLink} />
       </div>
 
       {/* DELIVERY PROCESS */}
       <div className={viewClass("delivery-process")}>
-        <div className="container" style={{ paddingTop: "1.2rem" }}>{renderBack()}</div>
+        <div className="container" style={{ paddingTop: "96px" }}>{renderBack()}</div>
         <DeliveryProcessPage go={go} waLink={waLink} />
       </div>
 
       {/* CONTACT */}
       <div className={viewClass("contact")}>
         <div className="container">
-          {renderBack()}
           <div className="page-head">
+            <div style={{ textAlign: "left", width: "100%" }}>{renderBack()}</div>
             <span className="section-eyebrow eyebrow-c">Get in touch</span>
             <h2>Order or <em>Enquire</em></h2>
           </div>
