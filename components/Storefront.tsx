@@ -231,6 +231,10 @@ export default function Storefront({
     window.scrollTo({ top: 0, behavior: "smooth" });
   }, []);
 
+  const renderBack = () => (
+    <button className="back-btn" onClick={() => go(prevViewRef.current)} style={{ display: "inline-flex", alignItems: "center", gap: ".4rem", background: "transparent", border: "1px solid var(--line, #e6ddd2)", padding: ".45rem 1rem", borderRadius: "999px", cursor: "pointer", color: "var(--ink, #4a2c1a)", fontWeight: 600, marginBottom: "1rem" }}>← Back</button>
+  );
+
   // ---------- cart helpers ----------
   const cartCount = useMemo(() => cart.reduce((n, i) => n + i.qty, 0), [cart]);
   const subtotal = useMemo(() => cart.reduce((s, i) => s + i.unit * i.qty, 0), [cart]);
@@ -837,6 +841,7 @@ export default function Storefront({
       {/* CATEGORIES */}
       <div className={viewClass("categories")}>
         <div className="container">
+          {renderBack()}
           <div className="page-head">
             <span className="section-eyebrow eyebrow-c">Find your perfect cake</span>
             <h2>Shop by <em>Category</em></h2>
@@ -877,6 +882,7 @@ export default function Storefront({
       {/* ABOUT */}
       <div className={viewClass("about")}>
         <div className="container">
+          {renderBack()}
           <div className="page-head">
             <span className="section-eyebrow eyebrow-c">Our Story</span>
             <h2>About <em>Strictly Desserts</em></h2>
@@ -898,17 +904,20 @@ export default function Storefront({
 
       {/* GIFT HAMPERS */}
       <div className={viewClass("gift-hampers")}>
+        <div className="container" style={{ paddingTop: "1.2rem" }}>{renderBack()}</div>
         <GiftHampersPage go={go} waLink={waLink} />
       </div>
 
       {/* DELIVERY PROCESS */}
       <div className={viewClass("delivery-process")}>
+        <div className="container" style={{ paddingTop: "1.2rem" }}>{renderBack()}</div>
         <DeliveryProcessPage go={go} waLink={waLink} />
       </div>
 
       {/* CONTACT */}
       <div className={viewClass("contact")}>
         <div className="container">
+          {renderBack()}
           <div className="page-head">
             <span className="section-eyebrow eyebrow-c">Get in touch</span>
             <h2>Order or <em>Enquire</em></h2>
