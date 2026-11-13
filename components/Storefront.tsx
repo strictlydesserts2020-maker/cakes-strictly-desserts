@@ -59,6 +59,7 @@ export default function Storefront({
   flavours?: any[];
 }) {
   const [view, setView] = useState<View>("home");
+  const prevViewRef = useRef<View>("home");
   const [scrolled, setScrolled] = useState(true);
   const [navOpen, setNavOpen] = useState(false);
   const [loaded, setLoaded] = useState(false);
@@ -225,7 +226,7 @@ export default function Storefront({
 
   const go = useCallback((v: View) => {
     analytics.navClick(NAV_LABELS[v] ?? v);
-    setView(v);
+    setView((cur) => { prevViewRef.current = cur; return v; });
     setNavOpen(false);
     window.scrollTo({ top: 0, behavior: "smooth" });
   }, []);
@@ -794,6 +795,7 @@ export default function Storefront({
       {/* SHOP */}
       <div className={viewClass("shop")}>
         <div className="container">
+          <button className="back-btn" onClick={() => go(prevViewRef.current)} style={{ display: "inline-flex", alignItems: "center", gap: ".4rem", background: "transparent", border: "1px solid var(--line, #e6ddd2)", padding: ".45rem 1rem", borderRadius: "999px", cursor: "pointer", color: "var(--ink, #4a2c1a)", fontWeight: 600, marginBottom: "1rem" }}>← Back</button>
           <div className="page-head">
             <span className="section-eyebrow eyebrow-c">Handcrafted in Chennai</span>
             <h1>Our <em>Collection</em></h1>
