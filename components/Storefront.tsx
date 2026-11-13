@@ -421,6 +421,10 @@ export default function Storefront({
       const addon = fl.MINI_TIERS_ADDON[qv.flav] ?? [0, 0];
       return base + addon[qv.wIdx - 1];
     }
+    if (qv.product.category_name === "Mini tiers") {
+      const miniPremium = (qv.flav === "Chocolate Truffle" || qv.flav === "Chunky Nutella" || qv.flav === "Biscoff Chocolate") ? 300 : 0;
+      return base + miniPremium;
+    }
     return base + (qv.product?.category_name !== "Mini tiers" ? (fl.bentoAddon[qv.flav] || 0) : 0);
   }, [qv]);
 
