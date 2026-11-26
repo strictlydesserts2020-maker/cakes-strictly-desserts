@@ -4,6 +4,7 @@ import { notFound } from "next/navigation";
 import { createClient } from "@/lib/supabase/server";
 import type { Category, Product } from "@/lib/types";
 import { inr, safeImg, slugify } from "@/lib/utils";
+import { staticCategoryBySlug, staticProductsInCategory } from "@/lib/catalog";
 
 export const dynamic = "force-dynamic";
 
@@ -15,19 +16,26 @@ function handle(p: Product) {
 
 async function getData(slug: string) {
   const supabase = createClient();
-  const { data: cat } = await supabase
+  const { data: cat, error: catErr } = await supabase
     .from("categories")
     .select("*")
     .eq("slug", slug)
     .eq("is_active", true)
     .maybeSingle();
+  if (catErr) {
+    // Supabase down/restricted: serve the static catalogue snapshot.
+    const sc = staticCategoryBySlug(slug);
+    if (!sc) return { cat: null as Category | null, products: [] as Product[] };
+    return { cat: sc as Category, products: staticProductsInCategory(sc.id) as Product[] };
+  }
   if (!cat) return { cat: null as Category | null, products: [] as Product[] };
-  const { data: prods } = await supabase
+  const { data: prods, error: prodErr } = await supabase
     .from("products")
     .select("*")
     .eq("category_id", (cat as Category).id)
     .eq("is_active", true)
     .order("sort_order", { ascending: true });
+  if (prodErr) return { cat: cat as Category, products: staticProductsInCategory((cat as Category).id) as Product[] };
   return { cat: cat as Category, products: (prods ?? []) as Product[] };
 }
 

@@ -7,11 +7,7 @@ export async function middleware(request: NextRequest) {
 }
 
 export const config = {
-  matcher: [
-    /*
-     * Match all paths except static assets & images so the auth
-     * session cookie stays fresh and /admin stays protected.
-     */
-    "/((?!_next/static|_next/image|favicon.ico|.*\\.(?:svg|png|jpg|jpeg|gif|webp)$).*)",
-  ],
+  // Only the admin area needs the Supabase session check. Running it on
+  // every public page made the whole shop depend on Supabase auth.
+  matcher: ["/admin/:path*", "/api/admin/:path*"],
 };

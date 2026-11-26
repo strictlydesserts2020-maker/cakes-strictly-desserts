@@ -3,6 +3,11 @@
 //  formatting, validation and security behaviour stay identical.
 // ------------------------------------------------------------
 
+import imageMap from "@/data/image-map.json";
+
+/** Supabase Storage object path -> local copy in /public/catalog (served by Vercel's CDN). */
+const LOCAL_IMAGES = imageMap as Record<string, string>;
+
 /** Indian Rupee formatting, e.g. ₹1,299 */
 export function inr(n: number): string {
   return "\u20B9" + Math.round(n).toLocaleString("en-IN");
@@ -18,6 +23,9 @@ export function safeImg(u: string | null | undefined): string {
     /^\//.test(u)
   ) {
     if (u.includes('/storage/v1/object/public/')) {
+      // Prefer the local copy so photos don't use Supabase bandwidth.
+      const local = LOCAL_IMAGES[u.split('/storage/v1/object/public/')[1].split('?')[0]];
+      if (local) return local;
       u = u.replace('/storage/v1/object/public/', '/storage/v1/render/image/public/');
       if (!u.includes('?')) u += '?width=900&height=900&quality=92&format=webp&resize=cover';
     }

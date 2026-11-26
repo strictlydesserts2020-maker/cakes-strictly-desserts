@@ -1,0 +1,66 @@
+[
+{
+"id": "da1d2717-4fe7-44f1-80e7-d7add310b588",
+"title": "Baby Naming & Seemantham Favours",
+"image_url": null,
+"icon_emoji": "🍼",
+"bg_color": "#fdf0e6",
+"sort_order": 1
+},
+{
+"id": "b38b0993-7799-454d-999c-0a21ce977fbe",
+"title": "Birthday Return Gifts",
+"image_url": null,
+"icon_emoji": "🎂",
+"bg_color": "#fdeef0",
+"sort_order": 2
+},
+{
+"id": "b3d12264-23af-4308-ac1c-a5349bdc5195",
+"title": "Children's Snack Boxes",
+"image_url": null,
+"icon_emoji": "🍫",
+"bg_color": "#f0f7ee",
+"sort_order": 3
+},
+{
+"id": "5b9df51a-b292-4dab-820b-1c845414f09b",
+"title": "Festive Gift Hampers",
+"image_url": null,
+"icon_emoji": "🪔",
+"bg_color": "#fdf6e3",
+"sort_order": 4
+},
+{
+"id": "fa1cb8f0-eced-4caf-9c01-e25d21aa8c90",
+"title": "Wedding & Event Favours",
+"image_url": null,
+"icon_emoji": "💍",
+"bg_color": "#f3eeff",
+"sort_order": 5
+},
+{
+"id": "78d7c117-4f1e-4ec1-bd61-66bafdcf8fe4",
+"title": "Corporate Gifting",
+"image_url": null,
+"icon_emoji": "🏢",
+"bg_color": "#e8f4ff",
+"sort_order": 6
+},
+{
+"id": "8bcbbcb1-7007-4953-9e95-da84e4e3c6e6",
+"title": "Employee Appreciation Gifts",
+"image_url": null,
+"icon_emoji": "👏",
+"bg_color": "#f0fdf4",
+"sort_order": 7
+},
+{
+"id": "b79febec-a839-451a-960a-321bb87ac213",
+"title": "Custom Branded Hampers",
+"image_url": null,
+"icon_emoji": "🎀",
+"bg_color": "#fff0f6",
+"sort_order": 8
+}
+]

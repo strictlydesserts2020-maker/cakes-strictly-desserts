@@ -1,5 +1,6 @@
 "use client";
 
+import STATIC_HAMPERS from "@/data/hampers.json";
 import { useState, useEffect, useMemo, useCallback, useRef } from "react";
 import type { Category, Product, CartItem } from "@/lib/types";
 import {
@@ -1277,6 +1278,7 @@ function GiftHampersPage({ go, waLink }: { go: (v: any) => void; waLink: (msg: s
         .order("sort_order", { ascending: true })
         .then(({ data }) => {
           if (data && data.length > 0) setHamperCats(data);
+          else if (STATIC_HAMPERS.length > 0) setHamperCats(STATIC_HAMPERS as any);
           else setHamperCats([
             { id:"1", icon_emoji:"🍼", title:"Baby Naming & Seemantham Favours", bg_color:"#fdf0e6", image_url:null },
             { id:"2", icon_emoji:"🎂", title:"Birthday Return Gifts",            bg_color:"#fdeef0", image_url:null },

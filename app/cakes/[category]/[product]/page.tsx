@@ -3,6 +3,7 @@ import Link from "next/link";
 import { notFound } from "next/navigation";
 import { createClient } from "@/lib/supabase/server";
 import { inr, safeImg, waLink } from "@/lib/utils";
+import { staticCategoryBySlug, staticProductsInCategory } from "@/lib/catalog";
 
 export const dynamic = "force-dynamic";
 
@@ -16,18 +17,20 @@ async function getProduct(catSlug: string, handle: string) {
   const prefix = idPrefix(handle);
   if (!prefix) return null;
   const supabase = createClient();
-  const { data: cat } = await supabase
+  let { data: cat, error: catErr } = await supabase
     .from("categories")
     .select("id, name, slug")
     .eq("slug", catSlug)
     .eq("is_active", true)
     .maybeSingle();
+  if (catErr) cat = staticCategoryBySlug(catSlug) as any; // Supabase down: static snapshot
   if (!cat) return null;
-  const { data: prods } = await supabase
+  let { data: prods, error: prodErr } = await supabase
     .from("products")
     .select("*")
     .eq("category_id", (cat as any).id)
     .eq("is_active", true);
+  if (catErr || prodErr) prods = staticProductsInCategory((cat as any).id) as any;
   const p: any = (prods || []).find((x: any) => String(x.id).startsWith(prefix));
   if (!p) return null;
   return { ...p, categories: { name: (cat as any).name, slug: (cat as any).slug } };

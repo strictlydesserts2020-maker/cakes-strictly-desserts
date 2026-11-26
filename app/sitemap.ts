@@ -1,5 +1,6 @@
 import { MetadataRoute } from "next";
 import { slugify } from "@/lib/utils";
+import { staticCategories, staticProducts } from "@/lib/catalog";
 
 export const revalidate = 3600;
 
@@ -35,7 +36,16 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
       }
     }
   } catch {
-    // fall back to homepage-only sitemap on any error
+    // ignore; static fallback below
+  }
+  if (entries.length === 1) {
+    // Supabase unavailable: build the sitemap from the static catalogue snapshot.
+    for (const c of staticCategories()) entries.push({ url: `${base}/cakes/${c.slug}`, lastModified: now, changeFrequency: "weekly", priority: 0.9 });
+    for (const p of staticProducts()) {
+      const cslug = p.categories?.slug;
+      if (!cslug || p.categories?.is_active === false) continue;
+      entries.push({ url: `${base}/cakes/${cslug}/${slugify(p.name) || "cake"}-${String(p.id).slice(0, 8)}`, lastModified: now, changeFrequency: "weekly", priority: 0.8 });
+    }
   }
   return entries;
 }

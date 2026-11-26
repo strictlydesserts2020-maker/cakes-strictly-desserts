@@ -1,17 +1,24 @@
 import { createClient } from "@/lib/supabase/server";
 import type { Category, Product } from "@/lib/types";
 import Storefront from "@/components/Storefront";
+import { staticCategories, staticProducts, staticCustomiseImg, staticFlavours } from "@/lib/catalog";
 
 export const dynamic = "force-dynamic";
 
 export default async function HomePage() {
   const supabase = createClient();
-  const [{ data: catRows }, { data: prodRows }, { data: custRow }, { data: flavRows }] = await Promise.all([
+  const [{ data: catRows0, error: catErr }, { data: prodRows0, error: prodErr }, { data: custRow0 }, { data: flavRows0, error: flavErr }] = await Promise.all([
     supabase.from("categories").select("*").eq("is_active", true).order("sort_order", { ascending: true }),
     supabase.from("products").select("*,categories(name,is_active)").eq("is_active", true).order("sort_order", { ascending: true }),
     supabase.from("categories").select("image_url").eq("slug", "customise-your-cake").single(),
     supabase.from("flavours").select("name,menu,surcharge,addon_15,addon_2").eq("is_active", true).order("menu", { ascending: true }).order("sort_order", { ascending: true }),
   ]);
+  // If Supabase is down/restricted, fall back to the static catalogue snapshot.
+  const down = !!(catErr || prodErr || !catRows0 || !prodRows0);
+  const catRows = down ? staticCategories() : catRows0;
+  const prodRows = down ? staticProducts() : prodRows0;
+  const custRow = down ? { image_url: staticCustomiseImg() } : custRow0;
+  const flavRows = flavErr || !flavRows0 ? staticFlavours() : flavRows0;
   const categories = (catRows ?? []) as any[];
   const products = (prodRows ?? [])
     .filter((p: any) => p.categories?.is_active !== false)
