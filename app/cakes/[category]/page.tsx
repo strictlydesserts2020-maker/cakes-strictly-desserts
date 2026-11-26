@@ -1,12 +1,18 @@
 import type { Metadata } from "next";
 import Link from "next/link";
 import { notFound } from "next/navigation";
-import { createClient } from "@/lib/supabase/server";
+import { createPublicClient } from "@/lib/supabase/public";
 import type { Category, Product } from "@/lib/types";
 import { inr, safeImg, slugify } from "@/lib/utils";
-import { staticCategoryBySlug, staticProductsInCategory } from "@/lib/catalog";
+import { staticCategoryBySlug, staticProductsInCategory, staticCategories } from "@/lib/catalog";
 
-export const dynamic = "force-dynamic";
+// Cached on Vercel's CDN and refreshed every 5 minutes, so pages open instantly.
+export const revalidate = 300;
+
+// Pre-build the category pages at deploy time; new ones are built on first visit.
+export function generateStaticParams() {
+  return staticCategories().map((c) => ({ category: String(c.slug) }));
+}
 
 const SITE = "https://www.strictlydesserts.in";
 
@@ -15,7 +21,7 @@ function handle(p: Product) {
 }
 
 async function getData(slug: string) {
-  const supabase = createClient();
+  const supabase = createPublicClient();
   const { data: cat, error: catErr } = await supabase
     .from("categories")
     .select("*")
