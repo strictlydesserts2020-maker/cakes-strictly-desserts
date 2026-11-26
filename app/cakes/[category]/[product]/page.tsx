@@ -1,11 +1,17 @@
 import type { Metadata } from "next";
 import Link from "next/link";
 import { notFound } from "next/navigation";
-import { createClient } from "@/lib/supabase/server";
+import { createPublicClient } from "@/lib/supabase/public";
 import { inr, safeImg, waLink } from "@/lib/utils";
 import { staticCategoryBySlug, staticProductsInCategory } from "@/lib/catalog";
 
-export const dynamic = "force-dynamic";
+// Cached on Vercel's CDN and refreshed every 5 minutes, so pages open instantly.
+export const revalidate = 300;
+
+// Product pages are built on first visit, then served from the CDN cache.
+export function generateStaticParams() {
+  return [];
+}
 
 const SITE = "https://www.strictlydesserts.in";
 
@@ -16,7 +22,7 @@ function idPrefix(handle: string) {
 async function getProduct(catSlug: string, handle: string) {
   const prefix = idPrefix(handle);
   if (!prefix) return null;
-  const supabase = createClient();
+  const supabase = createPublicClient();
   let { data: cat, error: catErr } = await supabase
     .from("categories")
     .select("id, name, slug")

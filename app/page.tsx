@@ -1,12 +1,13 @@
-import { createClient } from "@/lib/supabase/server";
+import { createPublicClient } from "@/lib/supabase/public";
 import type { Category, Product } from "@/lib/types";
 import Storefront from "@/components/Storefront";
 import { staticCategories, staticProducts, staticCustomiseImg, staticFlavours } from "@/lib/catalog";
 
-export const dynamic = "force-dynamic";
+// Cached on Vercel's CDN and refreshed every 5 minutes, so pages open instantly.
+export const revalidate = 300;
 
 export default async function HomePage() {
-  const supabase = createClient();
+  const supabase = createPublicClient();
   const [{ data: catRows0, error: catErr }, { data: prodRows0, error: prodErr }, { data: custRow0 }, { data: flavRows0, error: flavErr }] = await Promise.all([
     supabase.from("categories").select("*").eq("is_active", true).order("sort_order", { ascending: true }),
     supabase.from("products").select("*,categories(name,is_active)").eq("is_active", true).order("sort_order", { ascending: true }),
